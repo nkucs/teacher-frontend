@@ -32,12 +32,17 @@ export const asyncRouterMap = [
           name: '添加题目',
           component: () => import('@/views/problem/ProblemDetail'),
           meta: { title: '添加题目', permission: [ 'dashboard' ] }
+        },{
+          path: '/problem/modify', // todo
+          name: '修改题目',
+          component: () => import('@/views/problem/ProblemModify'),
+          meta: { title: '修改题目', permission: [ 'dashboard' ] }
         }]
       },
       {
         path: '/stat/course',
         name: '统计信息',
-        component: BlankLayout,
+        component: () => import('@/views/stat/StatCourse'),
         meta: { title: '统计信息', icon: 'dashboard', permission: [ 'dashboard' ] },
         children: [{
           path: '/stat/course', // todo

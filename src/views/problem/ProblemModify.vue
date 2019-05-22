@@ -1,7 +1,7 @@
 <template>
 	<div class="ant-layout-has-sider" >
 		<div class="title">
-			<h1 class="title-text">添加题目</h1>
+			<h1 class="title-text">修改题目</h1>
 			<div class="view">
 				<a href="./ProblemDetail.vue" disabled="">编辑</a>
 				<div class="ant-divider ant-divider-vertical"></div>
