@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
+import menu from '@/components/menu/index' // eslint-disable-line
 
 export const asyncRouterMap = [
 
@@ -62,14 +63,23 @@ export const asyncRouterMap = [
         path: '/exam/list',
         name: '考试中心',
         component: () => import('@/views/exam/ExamList'),
-        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] }
+        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] },
+        children:[
+          {
+            path: '/exam/student',
+            name: '添加考试学生',
+            component: () => import('@/views/exam/ExamStudent'),
+            meta: {title: '添加考试学生页', permission: ['dashboard']}
+          },
+        ]
       },
       {
         path: '/experiment/list',
         name: '实验列表',
         component: () => import('@/views/experiment/ExperimentList'),
         meta: { title: '实验列表', icon: 'dashboard', permission: [ 'dashboard' ] }
-      }
+      },
+      
     ]
   },
   {
