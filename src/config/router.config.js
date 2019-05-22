@@ -19,7 +19,7 @@ export const asyncRouterMap = [
       {
         path: '/problem/list',
         name: '题目管理',
-        component: BlankLayout,
+        component: PageView,
         meta: { title: '题目管理', icon: 'dashboard', permission: [ 'dashboard' ] },
         children: [{
           path: '/problem/list', // todo
@@ -37,7 +37,7 @@ export const asyncRouterMap = [
       {
         path: '/stat/course',
         name: '统计信息',
-        component: BlankLayout,
+        component: PageView,
         meta: { title: '统计信息', icon: 'dashboard', permission: [ 'dashboard' ] },
         children: [{
           path: '/stat/course', // todo
