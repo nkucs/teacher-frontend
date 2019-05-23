@@ -10,13 +10,28 @@
     >
       <a-input
         v-decorator="[
-          'name',
+          'courseName',
           {rules: [{ required: true, message: '请填写课程名称！' }]}
         ]"
-        placeholder="输入内容"
+        placeholder="输入名称..."
       />
     </a-form-item>
     
+    <a-form-item
+      label="描述："
+      :label-col="{ span: 5 }"
+      :wrapper-col="{ span: 12 }"
+    >
+      <a-textarea 
+        v-decorator="[
+          'courseDetail',
+          {rules: [{ required: true, message: '请填写课程描述！' }]}
+        ]"
+        placeholder="课程描述..."
+        :rows="5"
+      />
+    </a-form-item>
+
     <a-form-item
       :wrapper-col="{ span: 12, offset: 5 }"
     >
