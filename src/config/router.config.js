@@ -66,8 +66,14 @@ export const asyncRouterMap = [
       {
         path: '/exam/list',
         name: '考试中心',
-        component: () => import('@/views/exam/ExamList'),
-        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] }
+        component: BlankLayout,
+        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] },
+        children: [{
+          path: '/exam/addproblems', // todo
+          name: '添加考试题目',
+          component: () => import('@/views/exam/ExamAddProblems'),
+          meta: { title: '添加考试题目'}
+        }]
       },
       {
         path: '/experiment/list',
