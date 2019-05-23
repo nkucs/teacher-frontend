@@ -2,7 +2,6 @@
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
 
 export const asyncRouterMap = [
-
   {
     path: '/',
     name: 'index',
@@ -14,7 +13,7 @@ export const asyncRouterMap = [
         path: '/course',
         name: '课程管理',
         component: () => import('@/views/course/Course'),
-        meta: { title: '课程管理', icon: 'dashboard', permission: ['dashboard'] }
+        meta: { title: '课程管理', icon: 'dashboard', permission: [ 'dashboard' ] },
       },
       {
         path: '/problem/list',
