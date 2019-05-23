@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-button id="addBTN" type=primary>{{ addLecture }}</a-button>
+    <addCourse/>
     <div id="inputBox">
       <span id="inputTitle">{{ inputTitle }}</span>
       <a-input
@@ -32,13 +32,16 @@
 </template>
 
 <script>
+import addCourse from '../../../components/course/addCourseForm'
 export default {
   mounted() {
     this.getMyLectures()
   },
+  components: {
+    addCourse
+  },
   data () {
     return {
-      addLecture: '+ 新增课时',
       inputTitle: '课时名称:',
       inputHint: '请输入查询课时名字',
       lectureName: '',

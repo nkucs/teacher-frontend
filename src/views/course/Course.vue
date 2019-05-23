@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 <template>
   <div>
     <a-tabs defaultActiveKey="1" tabBarGutter="10%">
@@ -31,7 +29,6 @@ import lecture from './lecture/Lecture.vue'
 export default {
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
     }
   },
   components: {
@@ -57,4 +54,4 @@ a {
   color: #42b983;
 }
 </style>
->>>>>>> b907751d241d7ef9e05d3c2bde1a0f9bf1de5333
+
