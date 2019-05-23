@@ -25,19 +25,11 @@
 </template>
 
 <script>
-import lecture from './Lecture.vue'
+import lecture from './lecture/Lecture.vue'
 export default {
-  name: 'HelloWorld',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
-    }
-  },
-  methods: {
-    showDetail (type) {
-      if (type === 1) {
-        return
-      }
     }
   },
   components: {
