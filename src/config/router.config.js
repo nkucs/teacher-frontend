@@ -2,7 +2,6 @@
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
 
 export const asyncRouterMap = [
-
   {
     path: '/',
     name: 'index',
@@ -14,7 +13,7 @@ export const asyncRouterMap = [
         path: '/course',
         name: '课程管理',
         component: () => import('@/views/course/Course'),
-        meta: { title: '课程管理', icon: 'dashboard', permission: [ 'dashboard' ] }
+        meta: { title: '课程管理', icon: 'dashboard', permission: [ 'dashboard' ] },
       },
       {
         path: '/problem/list',
@@ -66,8 +65,20 @@ export const asyncRouterMap = [
       {
         path: '/exam/list',
         name: '考试中心',
-        component: () => import('@/views/exam/ExamList'),
-        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] }
+        component: BlankLayout,
+        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] },
+        children: [{
+          path: '/exam/addproblems', // todo
+          name: '添加考试题目',
+          component: () => import('@/views/exam/ExamAddProblems'),
+          meta: { title: '添加考试题目'}
+        },
+        {
+          path: '/exam/addstudent', // todo
+          name: '添加考试学生',
+          component: () => import('@/views/exam/ExamAddStudent'),
+          meta: { title: '添加考试学生'}
+        }]
       },
       {
         path: '/experiment/list',
