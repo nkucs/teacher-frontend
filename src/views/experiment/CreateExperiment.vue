@@ -27,6 +27,18 @@
     </a-modal>
 
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
+      <a-form-item v-bind="formItemLayout" label="实验名称：">
+      <a-input placeholder='请输入实验名称'
+        v-decorator="['experiment-name',expNameConfig]"
+      />
+    </a-form-item>
+
+    <a-form-item v-bind="formItemLayout" label="实验描述：">
+       <a-input placeholder='请输入实验描述'
+        v-decorator="['experiment-description',expDescriptionConfig]"
+      />
+    </a-form-item>
+
       <a-form-item v-bind="formItemLayout" label="练习题目">
         <a-button @click="addExercises">
           点击添加题目
@@ -96,6 +108,18 @@
         rules: [{
           required: true,
           message: '请确定是否需要提交实验报告！'
+        }]
+      },
+      expNameConfig: {
+        rules:[{
+          required: true,
+          message: '请输入实验名称！'
+        }]  
+      },
+      expDescriptionConfig: {
+        rules:[{
+          required:true,
+          message: '请输入实验描述！'
         }]
       },
       formValues: null,
