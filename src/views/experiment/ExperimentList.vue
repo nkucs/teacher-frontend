@@ -14,6 +14,8 @@
       新建实验
     </a-button>
 
+    <div class="margin"></div>
+
     <a-table :dataSource="listData">
       <a-table-column
         title="实验ID"
