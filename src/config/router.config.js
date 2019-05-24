@@ -56,6 +56,12 @@ export const asyncRouterMap = [
           name: '考试情况',
           component: () => import('@/views/stat/StatExam'),
           meta: { title: '考试情况', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/stat/overview', // todo
+          name: '统计概览',
+          component: () => import('@/views/stat/StatOverview'),
+          meta: { title: '统计概览', permission: [ 'dashboard' ] }
         }]
       },
       {
