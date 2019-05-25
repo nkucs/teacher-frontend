@@ -6,7 +6,7 @@
     >
       <a-list-item slot="renderItem" slot-scope="item">    
         <a-card :hoverable="true">           
-          <div  slot="title">{{ item.title }}</div>
+          <div slot="title">{{ item.title }}</div>
           <a slot="extra">{{ item.time }}</a>
           <a>{{ item.content }}</a>         
           <template class="ant-card-actions" slot="actions">
