@@ -44,6 +44,7 @@ export default {
       lectureName: '',
       searchBTNText: '搜索',
       resetBTNText: '重置',
+      dividerNode: false,
       dividerNote: '',
       defaultDividerNote: '默认显示全部课时',
       editLectureText: '编辑',

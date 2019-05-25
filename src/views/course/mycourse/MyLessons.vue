@@ -3,7 +3,8 @@
     <a slot="id" slot-scope="text" href="javascript:;">{{text}}</a>
     <span slot="customTitle"> 课程ID</span>
     <span slot="action" slot-scope="text, record">
-      <a href="javascript:;">编辑</a>
+      <!-- <a href="javascript:;">编辑</a> -->
+      <edit-course></edit-course>
       <a-divider type="vertical" />
       <a href="javascript:;">详情</a>
       <a-divider type="vertical" />
@@ -14,6 +15,7 @@
   </a-table>
 </template>
 <script>
+import editCourse from './editCourseForm'
 const columns = [{
   dataIndex: 'id',
   key: 'id',
@@ -61,6 +63,9 @@ export default {
       data,
       columns,
     }
+  },
+  components: {
+    editCourse
   }
 }
 </script>
