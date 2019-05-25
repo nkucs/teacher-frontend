@@ -38,13 +38,47 @@
       >
         <!-- 页面表单部分 -->
         <div>
-          <a-table
-            :rowSelection="rowSelection"
-            :columns="examstudent"
-            :dataSource="examdata"
-            rowKey="id"
-          >
-            <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
+          <a-table :rowSelection="rowSelection" :columns="columns" :dataSource="data" rowKey="id">
+            <template
+              v-for="col in ['type','exam_id','password']"
+              :slot="col"
+              slot-scope="text, record"
+            >
+              <div v-if="(col =='type')" :key="col">
+                <a-select
+                  v-if="record.editable"
+                  :defaultValue="text"
+                  style="width: 120px"
+                  @change="e => handleChange(e, record.key, col)"
+                >
+                  <a-select-option value="A">A</a-select-option>
+                  <a-select-option value="B">B</a-select-option>
+                </a-select>
+                <template v-else>{{text}}</template>
+              </div>
+              <div v-else :key="col">
+                <a-input
+                  v-if="record.editable"
+                  style="margin: -5px 0"
+                  :value="text"
+                  @change="e => handleChange(e.target.value, record.key, col)"
+                />
+                <template v-else>{{text}}</template>
+              </div>
+            </template>
+            <template slot="operation" slot-scope="text, record">
+              <div class="editable-row-operations">
+                <span v-if="record.editable">
+                  <a @click="() => save(record.key)">Save</a>
+                  <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.key)">
+                    <a>Cancel</a>
+                  </a-popconfirm>
+                </span>
+                <span v-else>
+                  <a @click="() => edit(record.key)">Edit</a>
+                </span>
+              </div>
+            </template>
           </a-table>
         </div>
       </a-layout-content>
@@ -52,8 +86,6 @@
   </a-layout>
 </template>
 <script>
-import { randomBytes } from 'crypto'
-
 const alltudent = [
   {
     title: 'ID',
@@ -78,7 +110,7 @@ for (let i = 0; i < 46; i++) {
   })
 }
 
-const examstudent = [
+const columns = [
   {
     title: 'ID',
     dataIndex: 'id',
@@ -86,38 +118,51 @@ const examstudent = [
   },
   {
     title: 'Name',
-    dataIndex: 'name'
+    dataIndex: 'name',
+    scopedSlots: { customRender: 'name' }
   },
   {
     title: '考试类型',
-    dataIndex: 'type'
+    dataIndex: 'type',
+    scopedSlots: { customRender: 'type' }
   },
   {
     title: '用户名',
-    dataIndex: 'exam_id'
+    dataIndex: 'exam_id',
+    scopedSlots: { customRender: 'exam_id' }
   },
   {
     title: '密码',
-    dataIndex: 'key'
+    dataIndex: 'password',
+    scopedSlots: { customRender: 'password' }
+  },
+  {
+    title: 'operation',
+    dataIndex: 'operation',
+    scopedSlots: { customRender: 'operation' }
   }
 ]
-const examdata = []
+const data = []
 for (let i = 0; i < 46; i++) {
-  examdata.push({
-    id: i * 10,
-    name: i,
+  data.push({
+    id: (i * 10).toString(),
+    name: ' A',
     type: 'A',
     exam_id: i,
-    key: randomBytes
+    password: i
   })
 }
+
+const dataclone = []
 export default {
   data() {
+    this.cacheData = data.map(item => ({ ...item }))
     return {
       visible: false,
-      examdata,
+      dataclone,
+      data,
       alldata,
-      examstudent,
+      columns,
       alltudent,
       selectedRowKeys: [],
       selectedRowKeys_t: []
@@ -131,6 +176,7 @@ export default {
         }
       }
     },
+
     rowSelection_t() {
       return {
         onChange: selectedRowKeys => {
@@ -140,19 +186,55 @@ export default {
     }
   },
   methods: {
+    handleChange(value, key, column) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      if (target) {
+        target[column] = value
+        this.data = newData
+      }
+    },
+    edit(key) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      alert(target)
+      if (target) {
+        target.editable = true
+        this.data = newData
+      }
+    },
+    save(key) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      if (target) {
+        delete target.editable
+        this.data = newData
+        this.cacheData = newData.map(item => ({ ...item }))
+      }
+    },
+    cancel(key) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      if (target) {
+        Object.assign(target, this.cacheData.filter(item => key === item.key)[0])
+        delete target.editable
+        this.data = newData
+      }
+    },
     addstudent() {
       this.visible = true
-      // alert(`selectedRowKeys: ${this.selectedRowKeys[0]}`)
     },
     deletestudent() {
-      if (this.selectedRowKeys[0] == '') {
+      if (this.selectedRowKeys.length != 0) {
+        const newdata = this.data.filter(item => !this.selectedRowKeys.includes(item.id))
+        this.data = newdata
         this.$message.success('删除成功')
       } else {
         this.$message.error('请勾选要删除的学生')
       }
     },
     exportstu() {
-      if (this.selectedRowKeys[0] == '') {
+      if (this.selectedRowKeys.length != 0) {
         this.$message.success('导出成功')
       } else {
         this.$message.error('请勾选要导出的学生')
@@ -160,7 +242,12 @@ export default {
     },
 
     handleOk() {
-      if (this.selectedRowKeys_t[0] == '') {
+      if (this.selectedRowKeys_t.length != 0) {
+        const newdata = this.alldata.filter(item => this.selectedRowKeys_t.includes(item.all_id))
+        for (var i = 0; i < newdata.length; i++) {
+          this.data.push(newdata[i])
+        }
+        this.selectedRowKeys_t = []
         this.$message.success('添加成功')
       } else {
         this.$message.error('请勾选要添加的学生')
@@ -168,7 +255,36 @@ export default {
     },
 
     onSearch(value) {
-      console.log(value)
+      if (value === '') {
+        if (this.dataclone.length > 0) {
+          this.data = this.dataclone
+          this.dataclone = []
+        }
+      } else {
+        var list = /^[0-9]*$/
+        var list1 = /^[\u4e00-\u9fa5]|[a-zA-Z]$/
+        if (list.test(value)) {
+          if (this.dataclone < this.data.length) {
+            this.dataclone = this.data
+          }
+          this.data = []
+          for (var i = 0; i < this.dataclone.length; i++) {
+            if (this.dataclone[i].id === value) {
+              this.data.push(this.dataclone[i])
+            }
+          }
+        } else if (list1.test(value)) {
+          if (this.dataclone < this.data.length) {
+            this.dataclone = this.data
+          }
+          this.data = []
+          for (var j = 0; j < this.dataclone.length; j++) {
+            if (this.dataclone[j].name.indexOf(value) > 0) {
+              this.data.push(this.dataclone[j])
+            }
+          }
+        }
+      }
     },
 
     getallstudent: function() {}
@@ -218,5 +334,8 @@ export default {
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+}
+.editable-row-operations a {
+  margin-right: 8px;
 }
 </style>
