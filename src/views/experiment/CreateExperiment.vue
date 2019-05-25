@@ -28,9 +28,23 @@
 
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
       <a-form-item v-bind="formItemLayout" label="练习题目">
-        <a-button @click="addExercises">
-          点击添加题目
-        </a-button>
+        <a-button class="editable-add-btn" @click="handleAdd">添加</a-button>
+        <a-table bordered :pagination="pagination" :dataSource="selectedDataSource" :columns="columns">
+          <!--在 a-table 中定义的名为 operation 的 slot,  text 表示当前行值，record 表示当前行数据的对象，对象包含列属性的键值对 -->
+          <template slot="operation" slot-scope="text, record">
+            <a-popconfirm
+              v-if="selectedDataSource.length"
+              title="确认删除吗?"
+              @confirm="() => onDelete(record.key)">
+              <a href="javascript:;">Delete</a>
+            </a-popconfirm>
+          </template>
+
+          <span slot="tags" slot-scope="tags">
+            <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
+          </span>
+
+        </a-table>
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label="开始时间：">
         <a-date-picker 
@@ -69,7 +83,50 @@
 </template>
 
 <script>
+import EditableCell from './EditableCell'
+
+const selectedDataSource = [];
+for (let i = 0; i < 5; i++) {
+  selectedDataSource.push({
+    key: i,
+    id: i,
+    name: 'a + b',
+    teacherName: 'Teacher no. ' + i,
+    tags: ['nice', 'developer'],
+  })
+}
+const columns =  [
+  { // 列描述对象， dataIndex 表示列数据在数据项中的 key 值，声明时和 key 取其一即可，
+    title: 'id',
+    dataIndex: 'id',
+  }, 
+  {
+    title: '名称',
+    dataIndex: 'name',
+    width: "25%",
+  }, 
+  {
+    title: '教师',
+    dataIndex: 'teacherName',
+    width: "20%"
+  }, 
+  {
+  title: '标签',
+  key: 'tags',
+  dataIndex: 'tags',
+  scopedSlots: { customRender: 'tags' },
+  width: "30%"
+  },
+  {
+    title: 'operation',
+    dataIndex: 'operation',
+    scopedSlots: { customRender: 'operation' },
+    width: "16%"
+  }];
   export default {
+    components: {
+      EditableCell
+    },
     data: () => ({
       formItemLayout: {
         labelCol: {
@@ -84,6 +141,13 @@
           span: 20,
           offset: 6
         }
+      },
+      // {key: 自增, id: , name: , teacher_name: , tags: []}
+      selectedDataSource,
+      count: 2,
+      columns,
+      pagination: {
+        defaultPageSize: 6
       },
       datePickerConfig: {
         rules: [{
@@ -107,13 +171,41 @@
       confirmLoading: false,
 
     }),
+    
     beforeCreate() {
       this.form = this.$form.createForm(this)
     },
+
     methods: {
       addExercises() {
         this.exerciseAdditionVisible = true
       },
+      onCellChange (key, dataIndex, value) {
+        const selectedDataSource = [...this.selectedDataSource]
+        const target = selectedDataSource.find(item => item.key === key)
+        if (target) {
+          target[dataIndex] = value
+          this.selectedDataSource = selectedDataSource
+        }
+    },
+    onDelete (key) {
+      const selectedDataSource = [...this.selectedDataSource]
+      this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
+    },
+    handleAdd () {
+      const { count, selectedDataSource } = this
+      const newData = {
+        key: count,
+        name: `Edward King ${count}`,
+        age: 32,
+        address: `London, Park Lane no. ${count}`,
+      }
+      this.selectedDataSource = [...selectedDataSource, newData]
+      this.count = count + 1
+    },
+
+
+
       handleCancel() {
         this.cancelSubmitVisible = true
       },
@@ -176,4 +268,47 @@
   .formButton {
     margin-right: 20px;
   }
+
+  .editable-cell {
+  position: relative;
+}
+
+.editable-cell-input-wrapper,
+.editable-cell-text-wrapper {
+  padding-right: 24px;
+}
+
+.editable-cell-text-wrapper {
+  padding: 5px 24px 5px 5px;
+}
+
+.editable-cell-icon,
+.editable-cell-icon-check {
+  position: absolute;
+  right: 0;
+  width: 20px;
+  cursor: pointer;
+}
+
+.editable-cell-icon {
+  line-height: 18px;
+  display: none;
+}
+
+.editable-cell-icon-check {
+  line-height: 28px;
+}
+
+.editable-cell:hover .editable-cell-icon {
+  display: inline-block;
+}
+
+.editable-cell-icon:hover,
+.editable-cell-icon-check:hover {
+  color: #108ee9;
+}
+
+.editable-add-btn {
+  margin-bottom: 8px;
+}
 </style>
