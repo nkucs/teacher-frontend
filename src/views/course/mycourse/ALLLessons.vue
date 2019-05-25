@@ -1,6 +1,6 @@
 <template>
   <a-table :columns="columns" :dataSource="data">
-    <a slot="id" slot-scope="text" href="javascript:;">{{text}}</a>
+    <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
     <span slot="customTitle"> 课程ID</span>
     <span slot="action" slot-scope="text, record">
       <a href="javascript:;">详情</a>
