@@ -1,3 +1,4 @@
+
 <template>
   <div class="editable-cell">
     <div
@@ -52,4 +53,5 @@ export default {
     },
   },
 }
+
 </script>
