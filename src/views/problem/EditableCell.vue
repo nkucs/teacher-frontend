@@ -1,3 +1,4 @@
+
 <template>
   <div class="editable-cell">
     <div
@@ -30,26 +31,27 @@
 <script>
 export default {
   props: {
-    text: String,
+    text: String('Default')
   },
   data () {
     return {
       value: this.text,
-      editable: false
-    };
+      editable: false,
+    }
   },
   methods: {
     handleChange (e) {
-      const value = e.target.value;
+      const value = e.target.value
       this.value = value
     },
     check () {
-      this.editable = false;
+      this.editable = false
       this.$emit('change', this.value)
     },
     edit () {
       this.editable = true
-    }
-  }
-};
+    },
+  },
+}
+
 </script>
