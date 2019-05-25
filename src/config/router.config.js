@@ -13,12 +13,12 @@ export const asyncRouterMap = [
       {
         path: '/course',
         name: '课程管理',
-        component: () => import('@/views/course/CreateCourse'),
+        component: () => import('@/views/course/CreateLecture'),
         meta: { title: '课程管理', icon: 'compass', permission: [ 'dashboard' ] },
         children: [{
           path: '/course/create', // todo
           name: '新建课时',
-          component: () => import('@/views/course/CreateCourse'),
+          component: () => import('@/views/course/CreateLecture'),
           meta: { title: '新建课时', permission: [ 'dashboard' ] }
         }]
       },

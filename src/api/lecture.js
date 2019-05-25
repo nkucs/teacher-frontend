@@ -12,4 +12,4 @@ export function createLecture(parameter) {
       method: 'post',
       params: parameter
     })
-  }
+}
