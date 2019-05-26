@@ -6,6 +6,10 @@ import store from './store/'
 import i18n from './lang'
 import VCharts from 'v-charts'
 
+// vue-codemirror
+import VueCodemirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+
 import { VueAxios } from '@/utils/request'
 
 import Antd from 'ant-design-vue'
@@ -42,6 +46,10 @@ Vue.use(Viser)
 Vue.use(VueClipboard)
 Vue.use(PermissionHelper)
 Vue.use(VCharts)
+Vue.use(VueCodemirror, /* {
+  options: { theme: 'base16-dark', ... },
+  events: ['scroll', ...]
+} */)
 
 new Vue({
   router,
