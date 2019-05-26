@@ -91,20 +91,27 @@ export default {
   name: 'CreateLecture',
   data () {
     return {
+      courseId: 1,
       lectureData: [],
       formLayout: 'horizontal',
       form: this.$form.createForm(this),
       fileList: [{}]
     }
   },
+  mounted () {
+      this.courseId = this.$route.query.courseId
+  },
   methods: {
     handleSubmit (e) {
       const that = this
+      const courseId = this.courseId
+
       e.preventDefault()
       this.form.validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values)
-          const lectureParams = { ...values }
+          const lectureParams = { ...values,'course_id':courseId }
+
           createLecture(lectureParams)
             .then(function (res) {
               console.log(res)
@@ -144,6 +151,7 @@ export default {
       })
 
       this.fileList = fileList
+
     },
     chooseProblem (e) {
       this.handleSubmit(e)

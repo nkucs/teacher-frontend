@@ -6,6 +6,13 @@
         选择题目
       </span>
       <problemList></problemList>
+      <a-button
+        :style="{ marginTop: '8px' }"
+        type="primary"
+        @click="addProblem"
+      >
+        完成创建
+      </a-button>
     </a-tab-pane>
     <a-tab-pane key="2">
       <span slot="tab">
@@ -37,7 +44,6 @@ export default {
   },
   data () {
     return {
-      lectureData: [],
       lectureId: 1,
       problemIds: [{
         'problem_id' : 1
@@ -52,13 +58,11 @@ export default {
   methods: {
     addProblem () {
       console.log(this.lectureId)
-      const that = this
       const problemParams = [{'lecture_id': this.lectureId}, this.problemIds]
 
       addProblem(problemParams)
        .then(function (res) {
           console.log(res)
-          that.lectureData = res.data
         })
         .catch(function (err) {
             console.log(err)
