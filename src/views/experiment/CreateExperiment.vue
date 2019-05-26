@@ -75,6 +75,10 @@
       />
     </a-form-item>
 
+    <a-form-item v-bind="formItemLayout" label="实验附件">
+      <upLoadFile></upLoadFile>
+    </a-form-item>
+
       <a-form-item v-bind="formItemLayout" label="练习题目">
         <a-button class="editable-add-btn" @click="handleAdd">添加</a-button>
         <a-table bordered :pagination="pagination" :dataSource="selectedDataSource" :columns="columns">
@@ -130,6 +134,7 @@
 </template>
 
 <script>
+import upLoadFile from '@/components/upLoadFile'
 const selectedDataSource = []
 const allDataSource = []
 const columnsWithFilter = [
@@ -222,6 +227,10 @@ const radioConfig = {
 }
 
 export default {
+  components: {
+    upLoadFile
+  },
+
   data: () => ({
     // layout related configuration
     formItemLayout,
