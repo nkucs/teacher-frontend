@@ -57,8 +57,9 @@ export default {
   },
   methods: {
     addProblem () {
-      console.log(this.lectureId)
-      const problemParams = [{'lecture_id': this.lectureId}, this.problemIds]
+      const problemIds = this.problemIds
+      const problemParams = {'lecture_id': this.lectureId, problemIds}
+      console.log(problemParams)
 
       addProblem(problemParams)
        .then(function (res) {
