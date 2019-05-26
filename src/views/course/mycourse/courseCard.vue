@@ -10,8 +10,9 @@
           <a slot="extra">{{ item.time }}</a>
           <a>{{ item.content }}</a>         
           <template class="ant-card-actions" slot="actions">
-            <a href="#">编辑</a>                  
-            <a href="#">详情</a>
+            <!-- <a href="#">编辑</a>                   -->
+            <editCourse></editCourse>
+            <router-link to="course/details"><a>详情</a></router-link>
             <a-dropdown>
               <a class="ant-dropdown-link" href="#">更多<a-icon type="down" /></a>
               <a-menu slot="overlay">
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+import editCourse from './editCourseForm'
 const dataSource = [
   {
     title: '算法导论',
@@ -65,6 +67,9 @@ const dataSource = [
       return {
         dataSource
       }
+    },
+    components: {
+      editCourse
     }
   }
 </script>
