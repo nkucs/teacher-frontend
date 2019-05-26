@@ -218,7 +218,7 @@ const buttonSetFormat = {
 const expNameConfig = {
   rules: [
     {
-      type: 'object',
+      required: true,
       message: '实验名称不能为空'
     }
   ]
@@ -227,7 +227,7 @@ const expNameConfig = {
 const expDescriptionConfig = {
   rules: [
     {
-      type: 'object',
+      required: true,
       message: '实验描述不能为空'
     }
   ]
@@ -386,13 +386,6 @@ export default {
 
 .formButton {
   margin-right: 20px;
-}
-
-.custom-filter-dropdown {
-  padding: 8px;
-  border-radius: 4px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
 .highlight {
