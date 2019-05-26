@@ -2,7 +2,6 @@
 import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
 
 export const asyncRouterMap = [
-
   {
     path: '/',
     name: 'index',
@@ -13,8 +12,20 @@ export const asyncRouterMap = [
       {
         path: '/course',
         name: '课程管理',
-        component: () => import('@/views/course/Course'),
-        meta: { title: '课程管理', icon: 'dashboard', permission: [ 'dashboard' ] }
+        component: PageView,
+        meta: { title: '课程管理', icon: 'dashboard', permission: [ 'dashboard' ] },
+        children: [{
+          path: '/course',
+          name: '课程列表',
+          component: () => import('@/views/course/Course'),
+          meta: {title: '课程列表', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/course/details',
+          name: '课程详情',
+          component: () => import('@/views/course/lecture/tab.vue'),
+          meta: {title: '课程详情', permission: [ 'dashboard' ] }
+        }]
       },
       {
         path: '/problem/list',
@@ -61,13 +72,31 @@ export const asyncRouterMap = [
           name: '考试情况',
           component: () => import('@/views/stat/StatExam'),
           meta: { title: '考试情况', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/stat/overview', // todo
+          name: '统计概览',
+          component: () => import('@/views/stat/StatOverview'),
+          meta: { title: '统计概览', permission: [ 'dashboard' ] }
         }]
       },
       {
         path: '/exam/list',
         name: '考试中心',
-        component: () => import('@/views/exam/ExamList'),
-        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] }
+        component: BlankLayout,
+        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] },
+        children: [{
+          path: '/exam/addproblems', // todo
+          name: '添加考试题目',
+          component: () => import('@/views/exam/ExamAddProblems'),
+          meta: { title: '添加考试题目'}
+        },
+        {
+          path: '/exam/addstudent', // todo
+          name: '添加考试学生',
+          component: () => import('@/views/exam/ExamAddStudent'),
+          meta: { title: '添加考试学生'}
+        }]
       },
       {
         path: '/experiment/list',

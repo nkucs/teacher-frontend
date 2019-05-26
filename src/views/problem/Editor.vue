@@ -11,7 +11,7 @@
   import E from 'wangeditor'
 
   export default {
-    name: 'editor',
+    name: 'Editor',
     data() {
       return {
         editorContent: ''
