@@ -2,11 +2,12 @@
   <a-table :columns="columns" :dataSource="data">
     <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
     <span slot="customTitle"> 课程ID</span>
-    <span slot="action" slot-scope="text, record">
+    <span slot="action">
       <!-- <a href="javascript:;">编辑</a> -->
       <edit-course></edit-course>
       <a-divider type="vertical" />
-      <a href="javascript:;">详情</a>
+      <!-- <a href="javascript:;">详情</a> -->
+      <router-link to="course/details"><a>详情</a></router-link>
       <a-divider type="vertical" />
       <a href="javascript:;">复制</a>
       <a-divider type="vertical" />
@@ -57,6 +58,7 @@ const data = [{
   end: '2018-06-01'
 }]
 
+import { deletecourse, copycourse, getmycourse } from '@/api/course'
 export default {
   data() {
     return {
@@ -66,6 +68,65 @@ export default {
   },
   components: {
     editCourse
+  },
+  methods: {
+    copycourse (courseID, teacherID) {
+      const self = this
+      console.log(`复制课程${courseID}`)
+      copycourse({
+        params: {
+          course_id: courseID,  //向后端传参
+          teacher_id: teacherID,
+        }
+      }).then(() => {
+        console.log(`${teacherID} copied course ${courseID} successfully.`)
+        for (var item in self.data) {
+          if (self.data[item].id === courseID) {
+            self.data.splice(item, 1)
+            break
+          }
+        }
+      }).catch((fail) => {
+        alert('复制课程失败！')
+        console.log(fail)
+      })
+    },
+    deletecourse(courseID) {
+      const self = this
+      console.log(`删除课程${courseID}`)
+      deletecourse({
+        params: {
+          course_id: courseID,  //向后端传参
+        }
+      }).then(() => {
+        console.log(`deleted course ${courseID} successfully.`)
+        for (var item in self.data) {
+          if (self.data[item].id === courseID) {
+            self.data.splice(item, 1)
+            break
+          }
+        }
+      }).catch((fail) => {
+        alert('删除课程失败！')
+        console.log(fail)
+      })
+    }
+  },
+  mounted: function (teacherID) {
+    const self = this
+    getmycourse({
+      params: {
+        teacher_id: teacherID,
+      }
+    })
+    .then(response => {
+      console.log(response)
+      self.data = response.course //对应后端数据
+    })
+    .catch(fail => {
+      console.log(fail)
+      alert('获取课程列表失败！')
+    })
   }
 }
 </script>
