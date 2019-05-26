@@ -70,6 +70,11 @@ export const asyncRouterMap = [
             name: '题目预览',
             component: () => import('@/views/problem/ProblemPreview'),
             meta: { title: '题目预览', permission: [ 'dashboard' ] }
+          },{
+            path: '/problem/submit', // todo
+            name: '查看提交',
+            component: () => import('@/views/problem/CheckSubmit'),
+            meta: { title: '查看提交', permission: [ 'dashboard' ] }
           }]
       },
       {
