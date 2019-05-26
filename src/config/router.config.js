@@ -89,6 +89,13 @@ export const asyncRouterMap = [
           meta: { title: '课程统计', permission: [ 'dashboard' ] }
         },
         {
+          path: '/stat/detail', // todo
+          name: '课程详情',
+          hidden:true,
+          component: () => import('@/views/stat/StatCourseDetail'),
+          meta: { title: '课程详情',permission: [ 'dashboard' ] }
+        },
+        {
           path: '/stat/problem', // todo
           name: '题目分析',
           component: () => import('@/views/stat/StatProblem'),
