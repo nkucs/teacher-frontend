@@ -1,20 +1,18 @@
 <template>
-  <div>    
+  <div>
     <a-card :loading="loading" :bordered="false" title="提交次数统计">
-      <a-menu
-        v-model="current"
-        mode="horizontal">
+      <a-menu v-model="current" mode="horizontal">
         <a-menu-item key="day">
-          <a-icon type="calendar" />日
+          <a-icon type="calendar"/>日
         </a-menu-item>
         <a-menu-item key="week">
-          <a-icon type="calendar" />周
+          <a-icon type="calendar"/>周
         </a-menu-item>
         <a-menu-item key="month">
-          <a-icon type="calendar" />月
+          <a-icon type="calendar"/>月
         </a-menu-item>
         <a-menu-item key="year">
-          <a-icon type="calendar" />年
+          <a-icon type="calendar"/>年
         </a-menu-item>
       </a-menu>
       <div>
@@ -72,279 +70,316 @@
 </template>
 
 <script>
-  export default {
-    created() {
-    },
-    data () {
-      this.passTestCaseSettings = {
-        metrics: ['通过数'],
-        dataOrder: {
-          label: '通过数',
-          order: 'desc'
-        }
-        
-      }
-      this.notPassTestCaseSettings = {
-        metrics: ['未通过数'],
-        dataOrder: {
-          label: '未通过数',
-          order: 'desc'
-        }
-      }
-
-      this.chartSettings = {
-        sizeMin: 30,
-        sizeMax: 100,
-        shape: 'diamond'
-      }
-      this.chartExtend = {
-        series: [{
-          type: 'wordCloud'
-        }]
-      }
-
-      return {
-        chartData: {
-          columns: ['word', 'count'],
-          rows: getRows()
-        },
-
-        LineChartData: {
-          columns: ['日期', '访问用户', '下单用户', '下单率'],
-          rows: [
-            { '日期': '1/1', '访问用户': 1393, '下单用户': 1093, '下单率': 0.32 },
-            { '日期': '1/2', '访问用户': 3530, '下单用户': 3230, '下单率': 0.26 },
-            { '日期': '1/3', '访问用户': 2923, '下单用户': 2623, '下单率': 0.76 },
-            { '日期': '1/4', '访问用户': 1723, '下单用户': 1423, '下单率': 0.49 },
-            { '日期': '1/5', '访问用户': 3792, '下单用户': 3492, '下单率': 0.323 },
-            { '日期': '1/6', '访问用户': 4593, '下单用户': 4293, '下单率': 0.78 }
-          ]
-        },
-
-        testCaseData: {
-          columns: ['标签', '通过数', '未通过数'],
-          rows: [
-            { '标签': '测试一类', '通过数': '1000','未通过数': '700' },
-            { '标签': '测试二类', '通过数': '500', '未通过数': '100' },
-            { '标签': '测试三类', '通过数': '300', '未通过数': '1500' },
-            { '标签': '测试四类', '通过数': '500', '未通过数': '1000' },
-            { '标签': '测试五类', '通过数': '150', '未通过数': '100' },
-            { '标签': '测试六类', '通过数': '800', '未通过数': '500' }
-          ]
-        },
-
-        ListData: [{
-                    problem_id: '00001',
-                    problem_name: 'lab1：背包问题',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '79%',
-                    submite_times: '89',
-                    state: 'closed'
-                },
-                {
-                    problem_id: '00002',
-                    problem_name: 'lab2：2',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '79%',
-                    submite_times: '80',
-                    state: 'closed'
-                },
-                {
-                    problem_id: '00003',
-                    problem_name: 'lab3：3',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '79%',
-                    submite_times: '89',
-                    state: 'closed'
-                },
-                {
-                    problem_id: '00004',
-                    problem_name: 'lab4：4',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '79%',
-                    submite_times: '89',
-                    state: 'closed'
-                },
-                {
-                    problem_id: '00005',
-                    problem_name: 'lab5：5',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '79%',
-                    submite_times: '89',
-                    state: 'closed'
-                },
-                {
-                    problem_id: '00006',
-                    problem_name: 'lab5：6',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '82%',
-                    submite_times: '5',
-                    state: 'open'
-                },
-                {
-                    problem_id: '00007',
-                    problem_name: 'lab5：7',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '2%',
-                    submite_times: '1000',
-                    state: 'closed'
-                },
-                                {
-                    problem_id: '00004',
-                    problem_name: 'lab4：4',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '79%',
-                    submite_times: '89',
-                    state: 'closed'
-                },
-                {
-                    problem_id: '00005',
-                    problem_name: 'lab5：5',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '79%',
-                    submite_times: '89',
-                    state: 'closed'
-                },
-                {
-                    problem_id: '00006',
-                    problem_name: 'lab5：6',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '82%',
-                    submite_times: '5',
-                    state: 'open'
-                },
-                {
-                    problem_id: '00007',
-                    problem_name: 'lab5：7',
-                    start_time: '2017-10-31 23:12:00',
-                    update_time: '2017-10-31 23:12:00',
-                    AVrate: '2%',
-                    submite_times: '1000',
-                    state: 'closed'
-                }
-            ]
+export default {
+  created() {},
+  data() {
+    this.passTestCaseSettings = {
+      metrics: ['通过数'],
+      dataOrder: {
+        label: '通过数',
+        order: 'desc'
       }
     }
-  }
+    this.notPassTestCaseSettings = {
+      metrics: ['未通过数'],
+      dataOrder: {
+        label: '未通过数',
+        order: 'desc'
+      }
+    }
 
-  function getRows () {
-    return [{
-      'word': 'visualMap',
-      'count': 22199
-    }, {
-      'word': 'continuous',
-      'count': 10288
-    }, {
-      'word': 'contoller',
-      'count': 620
-    }, {
-      'word': 'series',
-      'count': 274470
-    }, {
-      'word': 'gauge',
-      'count': 12311
-    }, {
-      'word': 'detail',
-      'count': 1206
-    }, {
-      'word': 'piecewise',
-      'count': 4885
-    }, {
-      'word': 'textStyle',
-      'count': 32294
-    }, {
-      'word': 'markPoint',
-      'count': 18574
-    }, {
-      'word': 'pie',
-      'count': 38929
-    }, {
-      'word': 'roseType',
-      'count': 969
-    }, {
-      'word': 'label',
-      'count': 37517
-    }, {
-      'word': 'emphasis',
-      'count': 12053
-    }, {
-      'word': 'yAxis',
-      'count': 57299
-    }, {
-      'word': 'name',
-      'count': 15418
-    }, {
-      'word': 'type',
-      'count': 22905
-    }, {
-      'word': 'gridIndex',
-      'count': 5146
-    }, {
-      'word': 'normal',
-      'count': 49487
-    }, {
-      'word': 'itemStyle',
-      'count': 33837
-    }, {
-      'word': 'min',
-      'count': 4500
-    }, {
-      'word': 'silent',
-      'count': 5744
-    }, {
-      'word': 'animation',
-      'count': 4840
-    }, {
-      'word': 'offsetCenter',
-      'count': 232
-    }, {
-      'word': 'inverse',
-      'count': 3706
-    }, {
-      'word': 'borderColor',
-      'count': 4812
-    }, {
-      'word': 'markLine',
-      'count': 16578
-    }, {
-      'word': 'line',
-      'count': 76970
-    }, {
-      'word': 'radiusAxis',
-      'count': 6704
-    }, {
-      'word': 'radar',
-      'count': 15964
-    }, {
-      'word': 'data',
-      'count': 60679
-    }, {
-      'word': 'dataZoom',
-      'count': 24347
-    }, {
-      'word': 'tooltip',
-      'count': 43420
-    }, {
-      'word': 'toolbox',
-      'count': 25222
-    }, {
-      'word': 'geo',
-      'count': 16904
-    }, {
-      'word': 'parallelAxis',
-      'count': 4029
-    }]
+    this.chartSettings = {
+      sizeMin: 30,
+      sizeMax: 100,
+      shape: 'diamond'
+    }
+    this.chartExtend = {
+      series: [
+        {
+          type: 'wordCloud'
+        }
+      ]
+    }
+
+    return {
+      chartData: {
+        columns: ['word', 'count'],
+        rows: getRows()
+      },
+
+      LineChartData: {
+        columns: ['日期', '访问用户', '下单用户', '下单率'],
+        rows: [
+          { 日期: '1/1', 访问用户: 1393, 下单用户: 1093, 下单率: 0.32 },
+          { 日期: '1/2', 访问用户: 3530, 下单用户: 3230, 下单率: 0.26 },
+          { 日期: '1/3', 访问用户: 2923, 下单用户: 2623, 下单率: 0.76 },
+          { 日期: '1/4', 访问用户: 1723, 下单用户: 1423, 下单率: 0.49 },
+          { 日期: '1/5', 访问用户: 3792, 下单用户: 3492, 下单率: 0.323 },
+          { 日期: '1/6', 访问用户: 4593, 下单用户: 4293, 下单率: 0.78 }
+        ]
+      },
+
+      testCaseData: {
+        columns: ['标签', '通过数', '未通过数'],
+        rows: [
+          { 标签: '测试一类', 通过数: '1000', 未通过数: '700' },
+          { 标签: '测试二类', 通过数: '500', 未通过数: '100' },
+          { 标签: '测试三类', 通过数: '300', 未通过数: '1500' },
+          { 标签: '测试四类', 通过数: '500', 未通过数: '1000' },
+          { 标签: '测试五类', 通过数: '150', 未通过数: '100' },
+          { 标签: '测试六类', 通过数: '800', 未通过数: '500' }
+        ]
+      },
+
+      ListData: [
+        {
+          problem_id: '00001',
+          problem_name: 'lab1：背包问题',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '79%',
+          submite_times: '89',
+          state: 'closed'
+        },
+        {
+          problem_id: '00002',
+          problem_name: 'lab2：2',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '79%',
+          submite_times: '80',
+          state: 'closed'
+        },
+        {
+          problem_id: '00003',
+          problem_name: 'lab3：3',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '79%',
+          submite_times: '89',
+          state: 'closed'
+        },
+        {
+          problem_id: '00004',
+          problem_name: 'lab4：4',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '79%',
+          submite_times: '89',
+          state: 'closed'
+        },
+        {
+          problem_id: '00005',
+          problem_name: 'lab5：5',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '79%',
+          submite_times: '89',
+          state: 'closed'
+        },
+        {
+          problem_id: '00006',
+          problem_name: 'lab5：6',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '82%',
+          submite_times: '5',
+          state: 'open'
+        },
+        {
+          problem_id: '00007',
+          problem_name: 'lab5：7',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '2%',
+          submite_times: '1000',
+          state: 'closed'
+        },
+        {
+          problem_id: '00004',
+          problem_name: 'lab4：4',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '79%',
+          submite_times: '89',
+          state: 'closed'
+        },
+        {
+          problem_id: '00005',
+          problem_name: 'lab5：5',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '79%',
+          submite_times: '89',
+          state: 'closed'
+        },
+        {
+          problem_id: '00006',
+          problem_name: 'lab5：6',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '82%',
+          submite_times: '5',
+          state: 'open'
+        },
+        {
+          problem_id: '00007',
+          problem_name: 'lab5：7',
+          start_time: '2017-10-31 23:12:00',
+          update_time: '2017-10-31 23:12:00',
+          AVrate: '2%',
+          submite_times: '1000',
+          state: 'closed'
+        }
+      ]
+    }
   }
+}
+
+function getRows() {
+  return [
+    {
+      word: 'visualMap',
+      count: 22199
+    },
+    {
+      word: 'continuous',
+      count: 10288
+    },
+    {
+      word: 'contoller',
+      count: 620
+    },
+    {
+      word: 'series',
+      count: 274470
+    },
+    {
+      word: 'gauge',
+      count: 12311
+    },
+    {
+      word: 'detail',
+      count: 1206
+    },
+    {
+      word: 'piecewise',
+      count: 4885
+    },
+    {
+      word: 'textStyle',
+      count: 32294
+    },
+    {
+      word: 'markPoint',
+      count: 18574
+    },
+    {
+      word: 'pie',
+      count: 38929
+    },
+    {
+      word: 'roseType',
+      count: 969
+    },
+    {
+      word: 'label',
+      count: 37517
+    },
+    {
+      word: 'emphasis',
+      count: 12053
+    },
+    {
+      word: 'yAxis',
+      count: 57299
+    },
+    {
+      word: 'name',
+      count: 15418
+    },
+    {
+      word: 'type',
+      count: 22905
+    },
+    {
+      word: 'gridIndex',
+      count: 5146
+    },
+    {
+      word: 'normal',
+      count: 49487
+    },
+    {
+      word: 'itemStyle',
+      count: 33837
+    },
+    {
+      word: 'min',
+      count: 4500
+    },
+    {
+      word: 'silent',
+      count: 5744
+    },
+    {
+      word: 'animation',
+      count: 4840
+    },
+    {
+      word: 'offsetCenter',
+      count: 232
+    },
+    {
+      word: 'inverse',
+      count: 3706
+    },
+    {
+      word: 'borderColor',
+      count: 4812
+    },
+    {
+      word: 'markLine',
+      count: 16578
+    },
+    {
+      word: 'line',
+      count: 76970
+    },
+    {
+      word: 'radiusAxis',
+      count: 6704
+    },
+    {
+      word: 'radar',
+      count: 15964
+    },
+    {
+      word: 'data',
+      count: 60679
+    },
+    {
+      word: 'dataZoom',
+      count: 24347
+    },
+    {
+      word: 'tooltip',
+      count: 43420
+    },
+    {
+      word: 'toolbox',
+      count: 25222
+    },
+    {
+      word: 'geo',
+      count: 16904
+    },
+    {
+      word: 'parallelAxis',
+      count: 4029
+    }
+  ]
+}
 </script>
 
 <style scoped>
