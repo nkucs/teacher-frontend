@@ -219,7 +219,6 @@ const expNameConfig = {
   rules: [
     {
       type: 'object',
-      required: true,
       message: '实验名称不能为空'
     }
   ]
@@ -229,7 +228,6 @@ const expDescriptionConfig = {
   rules: [
     {
       type: 'object',
-      required: true,
       message: '实验描述不能为空'
     }
   ]
