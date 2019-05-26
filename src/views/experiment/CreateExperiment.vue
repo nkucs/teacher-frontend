@@ -125,6 +125,19 @@
           </a-radio>
         </a-radio-group>
       </a-form-item>
+      <a-form-item
+        v-bind="formItemLayout"
+        label="实验报告权重"
+      >
+        <a-input-number
+          v-decorator="['input-number', weightConfig]"
+          :min="1"
+          :max="100"
+        />
+        <span class="ant-form-text">
+          %
+        </span>
+      </a-form-item>
       <a-form-item v-bind="buttonSetFormat">
         <a-button class="formButton" @click="handleCancel">
           取消
@@ -241,6 +254,10 @@ const datePickerConfig = {
   }]
 }
 
+const weightConfig = {
+  initialValue: 100
+}
+
 const radioConfig = {
   rules: [{
     required: true,
@@ -279,6 +296,7 @@ export default {
     expDescriptionConfig,
     datePickerConfig,
     radioConfig,
+    weightConfig,
 
     // tips and modal related configuration
     cancelModalText: '是否放弃新建实验？如果放弃所填数据将会丢失！',

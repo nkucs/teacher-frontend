@@ -135,9 +135,9 @@
           :min="1"
           :max="100"
         />
-          <span class="ant-form-text">
-            %
-          </span>
+        <span class="ant-form-text">
+          %
+        </span>
       </a-form-item>
       <a-form-item v-bind="buttonSetFormat">
         <a-button class="formButton" @click="handleCancel">
@@ -307,7 +307,7 @@ export default {
     }
 
     this.selectedRowKeys = []
-    for (let key in this.selectedDataSource) {
+    for (const key in this.selectedDataSource) {
       if (key in this.allDataSource) {
         this.selectedRowKeys.push(key)
       }
