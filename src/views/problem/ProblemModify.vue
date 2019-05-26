@@ -1,7 +1,7 @@
 <template>
   <div class="ant-layout-has-sider">
     <div class="title">
-      <h1 class="title-text">添加题目</h1>
+      <h1 class="title-text">修改题目</h1>
       <div class="view">
         <a href="./ProblemDetail.vue" disabled="">编辑</a>
         <div class="ant-divider ant-divider-vertical"></div>
@@ -174,7 +174,7 @@
             mode="tags"
             placeholder="Please select"
             style="width: 220px"
-            @change="handleChange1"
+            @change="handleChange"
             allowClear="true"
           >
             <a-select-option value="C">C</a-select-option>
@@ -234,42 +234,42 @@
           title: '输入',
           dataIndex: 'input',
           width: '30%',
-          scopedSlots: { customRender: 'input' }
+          scopedSlots: {customRender: 'input'},
         }, {
           title: '输出',
           dataIndex: 'output',
           width: '30%',
-          scopedSlots: { customRender: 'output' }
+          scopedSlots: {customRender: 'output'},
         }, {
           title: '标签',
           dataIndex: 'span',
           width: '30%',
-          scopedSlots: { customRender: 'span' }
+          scopedSlots: {customRender: 'span'},
         }, {
           title: '操作',
           dataIndex: 'operation',
-          scopedSlots: { customRender: 'operation' }
+          scopedSlots: {customRender: 'operation'},
         }],
         columns2: [{
           title: '输入',
           dataIndex: 'input2',
           width: '30%',
-          scopedSlots: { customRender: 'input2' }
+          scopedSlots: {customRender: 'input2'},
         }, {
           title: '输出',
           dataIndex: 'output2',
           width: '30%',
-          scopedSlots: { customRender: 'output2' }
+          scopedSlots: {customRender: 'output2'},
         }, {
           title: '标签',
           dataIndex: 'span2',
           width: '30%',
-          scopedSlots: { customRender: 'span2' }
+          scopedSlots: {customRender: 'span2'},
         }, {
           title: '操作',
           dataIndex: 'operation2',
-          scopedSlots: { customRender: 'operation2' }
-        }]
+          scopedSlots: {customRender: 'operation2'},
+        }],
       }
     },
     methods: {
@@ -285,7 +285,7 @@
       selectType(value) {
         console.log(`Selcted: ${value}`)
       },
-      handleChange1({ file, fileList }) {
+      handleChange({file, fileList}) {
         if (file.status !== 'uploading') {
           console.log(file, fileList)
         }
@@ -303,12 +303,12 @@
         this.dataSource1 = dataSource1.filter(item => item.key !== key)
       },
       handleAdd1() {
-        const { count1, dataSource1 } = this
+        const {count1, dataSource1} = this
         const newData = {
           key: count1,
           input: this.test_input,
           output: this.test_output,
-          span: this.test_span
+          span: this.test_span,
         }
         this.dataSource1 = [...dataSource1, newData]
         this.count1 = count1 + 1
@@ -326,16 +326,16 @@
         this.dataSource2 = dataSource2.filter(item => item.key !== key)
       },
       handleAdd2() {
-        const { count2, dataSource2 } = this
+        const {count2, dataSource2} = this
         const newData = {
           key: count2,
           input2: this.sample_input,
           output2: this.sample_output,
-          span2: this.sample_span
+          span2: this.sample_span,
         }
         this.dataSource2 = [...dataSource2, newData]
         this.count2 = count2 + 1
-      }
+      },
     }
   }
 </script>

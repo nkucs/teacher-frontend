@@ -63,6 +63,18 @@
     </a-modal>
 
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
+      <a-form-item v-bind="formItemLayout" label="实验名称：">
+      <a-input placeholder='请输入实验名称'
+        v-decorator="['experiment-name',expNameConfig]"
+      />
+    </a-form-item>
+
+    <a-form-item v-bind="formItemLayout" label="实验描述：">
+       <a-input placeholder='请输入实验描述'
+        v-decorator="['experiment-description',expDescriptionConfig]"
+      />
+    </a-form-item>
+
       <a-form-item v-bind="formItemLayout" label="练习题目">
         <a-button class="editable-add-btn" @click="handleAdd">添加</a-button>
         <a-table bordered :pagination="pagination" :dataSource="selectedDataSource" :columns="columns">
@@ -118,7 +130,6 @@
 </template>
 
 <script>
-
 const selectedDataSource = []
 const allDataSource = []
 const columnsWithFilter = [
