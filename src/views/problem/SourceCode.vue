@@ -63,7 +63,7 @@ void print() {
     },
     methods: {
       getoadSourceCode: function() {
-        axios.get('/teacher/submission/get-submission/submission-id=1')
+        axios.get('/teacher/submission/get-submission/?submission-id=1')
           .then(function(response) {
             this.code = response['code']
           })
