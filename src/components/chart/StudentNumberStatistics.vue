@@ -1,6 +1,10 @@
 <template>
   <div>
-    <ve-bar :data="chartData"></ve-bar>
+    <a-card>
+      <div style="width: 90%">
+        <ve-bar :data="chartData"></ve-bar>
+      </div>
+    </a-card>
   </div>  
 </template>
 

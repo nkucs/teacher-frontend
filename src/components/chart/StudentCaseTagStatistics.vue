@@ -1,5 +1,9 @@
 <template>
-  <ve-bar :data="chartData" :settings="chartSettings"></ve-bar>
+  <a-card>
+    <div style="width: 90%">
+      <ve-bar :data="chartData" :settings="chartSettings"></ve-bar>
+    </div>
+  </a-card>
 </template>
 
 <script>
