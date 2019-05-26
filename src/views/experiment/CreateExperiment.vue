@@ -20,13 +20,14 @@
 
     <a-modal 
       title="添加练习题目" 
+      width="80%"
       :visible="exerciseAdditionVisible" 
       @ok="confirmAdd" 
       :confirmLoading="confirmLoading"
       @cancel="cancelAdd">
       <div>
         <div style="margin-bottom: 16px">
-          <span style="margin-left: 8px">
+          <span style="margin-bottom: 16px">
             <template v-if="hasSelected">
               {{`Selected ${selectedRowKeys.length} items`}}
             </template>
@@ -34,6 +35,17 @@
               {{`Selected 0 items`}}
             </template>
           </span>
+          <div class="inlineClass" >
+            <label>题目id: </label>
+            <a-input v-model="searchId" placeholder="输入题目id" />
+            <label>题目名称: </label>
+            <a-input v-model="searchProblemName" placeholder="输入题目名称" />
+            <label>教师姓名: </label>
+            <a-input v-model="searchTeacherName" placeholder="输入教师姓名" />
+            <label>标签名: </label>
+            <a-input v-model="searchTag" placeholder="输入标签名" />
+            <a-button type="primary" @click="handleSearch">搜索</a-button>
+          </div>
         </div>
         <a-table 
           bordered
@@ -113,16 +125,20 @@ const columnsWithFilter = [
   { // 列描述对象， dataIndex 表示列数据在数据项中的 key 值，声明时和 key 取其一即可，
     title: 'id',
     dataIndex: 'id',
+    sorter: (a, b) => (a.id).localeCompare((b.id)),
   }, 
   {
     title: '名称',
     dataIndex: 'name',
-    width: "25%"
+    width: "25%",
+    sorter: true,
+    sorter: (a, b) => (a.name).localeCompare(b.name),
   }, 
   {
     title: '教师',
     dataIndex: 'teacherName',
     width: "20%",
+    sorter: (a, b) => (a.teacherName).localeCompare((b.teacherName)),
   }, 
   {
   title: '标签',
@@ -202,6 +218,11 @@ export default {
     buttonSetFormat,
     confirmLoading: false,
 
+    // search related 
+    searchId: '',
+    searchProblemName: '',
+    searchTeacherName: '',
+    searchTag: '',
     // table related configuration
     selectedDataSource,
     allDataSource,
@@ -223,7 +244,7 @@ export default {
     submitVisible: false,
     exerciseAdditionVisible: false,
 
-      // final form content for submitting
+    // final form content for submitting
     formValues: null,
 
   }),
@@ -246,6 +267,9 @@ export default {
     handleAdd () {
       // 调用获取全部练习题目的 API => this.allDataSource
       this.exerciseAdditionVisible = true
+    },
+    handleSearch() {
+      // 调用根据题目ID, 题目名称, 教师姓名，题目标签搜索题目的 API => this.allDataSource
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -328,4 +352,10 @@ export default {
   background-color: rgb(255, 192, 105);
   padding: 0px;
 }
+
+.inlineClass .ant-input {
+  width: 180px;
+  margin: 0 8px 8px 0;
+}
+
 </style>
