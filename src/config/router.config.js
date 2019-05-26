@@ -65,6 +65,11 @@ export const asyncRouterMap = [
             name: '查看源代码',
             component: () => import('@/views/problem/SourceCode'),
             meta: { title: '查看源代码', permission: [ 'dashboard' ] }
+          },{
+            path: '/problem/preview', // todo
+            name: '题目预览',
+            component: () => import('@/views/problem/ProblemPreview'),
+            meta: { title: '题目预览', permission: [ 'dashboard' ] }
           }]
       },
       {
