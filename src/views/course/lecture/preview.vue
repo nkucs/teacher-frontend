@@ -120,7 +120,7 @@ export default {
         const filelist = file.data.files
         this.files = []
         for (let i = 0; i < filelist.length; i++) {
-          this.problems.push({
+          this.files.push({
             filename: filelist[i].filename
           })
         }
