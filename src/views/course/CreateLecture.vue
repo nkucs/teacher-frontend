@@ -1,78 +1,87 @@
 <template>
-  <a-form
-    :form="form"
-    @submit="handleSubmit"
-  >
-    <a-form-item
-      label="课程名称："
-      :label-col="{ span: 5 }"
-      :wrapper-col="{ span: 12 }"
+  <div>
+    <a-form
+      :form="form"
+      @submit="handleSubmit"
     >
-      <a-input
-        v-decorator="[
-          'name',
-          {rules: [{ required: true, message: '请填写课程名称！' }]}
-        ]"
-        placeholder="输入名称..."
-      />
-    </a-form-item>
-    
-    <a-form-item
-      label="描述："
-      :label-col="{ span: 5 }"
-      :wrapper-col="{ span: 12 }"
-    >
-      <a-textarea 
-        v-decorator="[
-          'description',
-          {rules: [{ required: true, message: '请填写课程描述！' }]}
-        ]"
-        placeholder="课程描述..."
-        :rows="5"
-      />
-    </a-form-item>
-
-    <a-form-item
-      label="附件："
-      :label-col="{ span: 5 }"
-      :wrapper-col="{ span: 12 }"
-    >
-      <a-upload
-        action="/"
-        :multiple="true"
-        :fileList="fileList"
-        @change="fileChange"
+      <a-form-item
+        label="课时名称："
+        :label-col="{ span: 5 }"
+        :wrapper-col="{ span: 12 }"
       >
-        <a-button>
-          <a-icon type="upload" /> Upload
-        </a-button>
-      </a-upload>
-    </a-form-item>
+        <a-input
+          v-decorator="[
+            'name',
+            {rules: [{ required: true, message: '请填写课时名称！' }]}
+          ]"
+          placeholder="输入名称..."
+          maxlength="130"
+        />
+      </a-form-item>
+      
+      <a-form-item
+        label="描述："
+        :label-col="{ span: 5 }"
+        :wrapper-col="{ span: 12 }"
+      >
+        <a-textarea 
+          v-decorator="[
+            'description',
+            {rules: [{ required: true, message: '请填写课时描述！' }]}
+          ]"
+          placeholder="课程描述..."
+          :rows="5"
+        />
+      </a-form-item>
 
-    <a-form-item
-      :wrapper-col="{ span: 12, offset: 5 }"
-    >
-      <a-row>
-        <a-col
-          :span="24"
-          :style="{ textAlign: 'right' }"
+      <a-form-item
+        label="附件："
+        :label-col="{ span: 5 }"
+        :wrapper-col="{ span: 12 }"
+      >
+        <a-upload
+          action="/"
+          :multiple="true"
+          :fileList="fileList"
+          @change="fileChange"
         >
-          <a-button
-            :style="{ marginRight: '8px' }"
-            @click="handleReset"
-          >
-            重填
+          <a-button>
+            <a-icon type="upload" /> Upload
           </a-button>
-          <a-button
-            type="primary"
-            html-type="submit"
+        </a-upload>
+      </a-form-item>
+
+      <a-form-item
+        :wrapper-col="{ span: 12, offset: 5 }"
+      >
+        <a-row>
+          <a-col
+            :span="24"
+            :style="{ textAlign: 'right' }"
           >
-            确认
-          </a-button>
-        </a-col>
-      </a-row>
-    </a-form-item>
-  </a-form>
+            <a-button
+              :style="{ marginRight: '8px' }"
+              @click="handleReset"
+            >
+              重填
+            </a-button>
+            <a-button
+              :style="{ marginRight: '8px' }"
+              html-type="submit"
+            >
+              完成创建
+            </a-button>
+            <a-button
+              type="primary"
+              @click="chooseProblem"
+            >
+              继续选题
+            </a-button>
+          </a-col>
+        </a-row>
+      </a-form-item>
+    </a-form>
+  </div> 
 </template>
 
 <script>
@@ -132,6 +141,16 @@ export default {
       })
 
       this.fileList = fileList
+    },
+    chooseProblem (e) {
+      this.handleSubmit(e)
+      console.log('new problem')
+      this.$router.push({
+        path:'/problem/list',
+        params:{
+          lectureId:'ssss'
+        }
+      })
     }
   },
 }
