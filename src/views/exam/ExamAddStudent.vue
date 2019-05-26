@@ -54,7 +54,7 @@
                   <a-select-option value="A">A</a-select-option>
                   <a-select-option value="B">B</a-select-option>
                 </a-select>
-                <template v-else>{{text}}</template>
+                <template v-else>{{ text }}</template>
               </div>
               <div v-else :key="col">
                 <a-input
@@ -63,7 +63,7 @@
                   :value="text"
                   @change="e => handleChange(e.target.value, record.key, col)"
                 />
-                <template v-else>{{text}}</template>
+                <template v-else>{{ text }}</template>
               </div>
             </template>
             <template slot="operation" slot-scope="text, record">
@@ -86,6 +86,9 @@
   </a-layout>
 </template>
 <script>
+import axios from 'axios'
+const exam = '' //为本次考试id
+
 const alltudent = [
   {
     title: 'ID',
@@ -143,8 +146,9 @@ const columns = [
   }
 ]
 const data = []
-for (let i = 0; i < 46; i++) {
+for (var i = 0; i < 46; i++) {
   data.push({
+    key: i.toString(),
     id: (i * 10).toString(),
     name: ' A',
     type: 'A',
@@ -158,6 +162,8 @@ export default {
   data() {
     this.cacheData = data.map(item => ({ ...item }))
     return {
+      exam, //本次考试的id
+      list: [],
       visible: false,
       dataclone,
       data,
@@ -167,6 +173,9 @@ export default {
       selectedRowKeys: [],
       selectedRowKeys_t: []
     }
+  },
+  mounted() {
+    this.stulist()
   },
   computed: {
     rowSelection() {
@@ -186,6 +195,37 @@ export default {
     }
   },
   methods: {
+    get_url() {
+      return 'localhost:8000/port'
+    },
+    // get_url() {
+    //   axios.get('localhost:8000/port',{params: value}) //2 AllowAccess-Control-Allow-Origin拦截限制
+    //     .then(res=>{
+    //       console.log(res.data)
+    //     })
+    // },
+    stulist: function() {
+      this.$message.success('正在初始化数据，请耐心等候……')
+      axios.post(this.get_url() + 'exam/student/get-examstudent', { exam: this.exam }).then(function(response) {
+        var student_number = eval(response.data.student_number)
+        var name = eval(response.data.name)
+        var typelist = eval(response.data.typelist)
+        var grade = eval(response.data.grade)
+        var password = eval(response.data.password)
+        for (var i = 0; i < student_number; ++i) {
+          this.list.push({
+            id: student_number[i],
+            name: name[i],
+            type: typelist[i],
+            exam_id: grade[i],
+            password: password[i]
+          })
+        }
+        this.$message.success('初始化成功')
+        this.data = this.list
+      })
+      this.list = []
+    },
     handleChange(value, key, column) {
       const newData = [...this.data]
       const target = newData.filter(item => key === item.key)[0]
@@ -194,25 +234,34 @@ export default {
         this.data = newData
       }
     },
-    edit(key) {
+    edit: function(key) {
       const newData = [...this.data]
       const target = newData.filter(item => key === item.key)[0]
-      alert(target)
       if (target) {
         target.editable = true
         this.data = newData
       }
     },
-    save(key) {
+    save: function(key) {
       const newData = [...this.data]
       const target = newData.filter(item => key === item.key)[0]
       if (target) {
         delete target.editable
         this.data = newData
         this.cacheData = newData.map(item => ({ ...item }))
+        //将修改的值传递给后端
+        axios
+          .post(this.get_url() + 'exam/student/fix-examstudent', {
+            exam: this.exam,
+            id: target['id'],
+            type: target['type'],
+            exam_id: target['exam_id'],
+            password: target['password']
+          })
+          .then({})
       }
     },
-    cancel(key) {
+    cancel: function(key) {
       const newData = [...this.data]
       const target = newData.filter(item => key === item.key)[0]
       if (target) {
@@ -221,40 +270,86 @@ export default {
         this.data = newData
       }
     },
-    addstudent() {
+    addstudent: function() {
       this.visible = true
     },
-    deletestudent() {
+    deletestudent: function() {
+      var post = []
       if (this.selectedRowKeys.length != 0) {
-        const newdata = this.data.filter(item => !this.selectedRowKeys.includes(item.id))
-        this.data = newdata
+        const newdata = this.data.filter(item => !this.selectedRowKeys.includes(item.id)) //获取所有需要删除的id
+        for (var i = 0; i < newdata.length; i++) {
+          post.append(newdata[i].id) //设置传参为所有添加的id
+        }
+        axios
+          .post(this.get_url() + 'exam/student/delete-student', { id: post, exam: this.exam }) //传入考试id及所有添加学生的ID
+          .then(function(response) {
+            //返回所参加考试的学生
+            var student_number = eval(response.data.student_number)
+            var name = eval(response.data.name)
+            var typelist = eval(response.data.typelist)
+            var grade = eval(response.data.grade)
+            var password = eval(response.data.password)
+            for (var i = 0; i < student_number; ++i) {
+              this.list.push({
+                id: student_number[i],
+                name: name[i],
+                type: typelist[i],
+                exam_id: grade[i],
+                password: password[i]
+              })
+            }
+            this.data = this.list
+          })
         this.$message.success('删除成功')
+        this.selectedRowKeys_t = []
       } else {
         this.$message.error('请勾选要删除的学生')
       }
     },
-    exportstu() {
+    exportstu: function() {
       if (this.selectedRowKeys.length != 0) {
         this.$message.success('导出成功')
+        this.selectedRowKeys = []
       } else {
         this.$message.error('请勾选要导出的学生')
       }
     },
-
-    handleOk() {
+    handleOk: function() {
+      var post = []
       if (this.selectedRowKeys_t.length != 0) {
         const newdata = this.alldata.filter(item => this.selectedRowKeys_t.includes(item.all_id))
         for (var i = 0; i < newdata.length; i++) {
-          this.data.push(newdata[i])
+          post.append(newdata[i].id) //设置传参为所有添加的id
         }
+        axios
+          .post(this.get_url() + 'exam/student/add-student', { id: post, exam: this.exam }) //传入考试id及所有添加学生的ID
+          .then(function(response) {
+            //返回所参加考试的学生
+            var student_number = eval(response.data.student_number)
+            var name = eval(response.data.name)
+            var typelist = eval(response.data.typelist)
+            var grade = eval(response.data.grade)
+            var password = eval(response.data.password)
+            for (var i = 0; i < student_number; ++i) {
+              this.list.push({
+                id: student_number[i],
+                name: name[i],
+                type: typelist[i],
+                exam_id: grade[i],
+                password: password[i]
+              })
+            }
+            this.$message.success('初始化成功')
+            this.data = this.list
+          })
+        this.list = []
         this.selectedRowKeys_t = []
         this.$message.success('添加成功')
       } else {
         this.$message.error('请勾选要添加的学生')
       }
     },
-
-    onSearch(value) {
+    onSearch: function(value) {
       if (value === '') {
         if (this.dataclone.length > 0) {
           this.data = this.dataclone
@@ -285,8 +380,7 @@ export default {
           }
         }
       }
-    },
-
+    }, //前端从所有参加考试的学生中查找
     getallstudent: function() {}
   }
 }
