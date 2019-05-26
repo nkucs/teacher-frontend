@@ -22,31 +22,6 @@
       </div>
     </a-card>
 
-     <a-card :loading="loading" :bordered="false" title="提交次数列表">
-        <a-table :dataSource="ListData">
-            <a-table-column title="题目编号" dataIndex="problem_id" key="problem_id" />
-            <a-table-column title="名称" dataIndex="problem_name" key="problem_name" />
-            <a-table-column title="开始时间" dataIndex="start_time" key="start_time" />
-            <a-table-column title="AV率" dataIndex="AVrate" key="end_time" />
-            <a-table-column title="提交次数" dataIndex="submite_times" key="action" />
-            <a-table-column title="状态" dataIndex="state" key="action" />
-            <a-table-column title="更新时间" dataIndex="update_time" key="action" </a-table-column> </a-table> </a-card> <a-card :loading="loading" :bordered="false" title="题目词云">
-                <a-row :gutter="12">
-                    <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-                        <a-card :loading="loading" :bordered="false">
-                            <ve-wordcloud :data="chartData" :settings="chartSettings"></ve-wordcloud>
-                            <div class="stext">AC题目标签</div>
-                        </a-card>
-                    </a-col>
-                    <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-                        <a-card :loading="loading" :bordered="false">
-                            <ve-wordcloud :data="chartData" :settings="chartSettings"></ve-wordcloud>
-                            <div class="stext">非AC题目标签</div>
-                        </a-card>
-                    </a-col>
-                </a-row>
-    </a-card>
-
     <a-card :loading="loading" :bordered="false" title="题目词云">
       <a-row :gutter="12">
         <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
@@ -79,6 +54,18 @@
           </a-card>
         </a-col>
       </a-row>
+    </a-card>
+
+    <a-card :loading="loading" :bordered="false" title="提交次数列表">
+      <a-table :dataSource="ListData">
+        <a-table-column title="题目编号" dataIndex="problem_id" key="problem_id" />
+        <a-table-column title="名称" dataIndex="problem_name" key="problem_name" />
+        <a-table-column title="开始时间" dataIndex="start_time" key="start_time" />
+        <a-table-column title="AV率" dataIndex="AVrate" key="end_time" />
+        <a-table-column title="提交次数" dataIndex="submite_times" key="action" />
+        <a-table-column title="状态" dataIndex="state" key="action" />
+        <a-table-column title="更新时间" dataIndex="update_time" key="action" /> 
+      </a-table> 
     </a-card>
     
   </div>
