@@ -25,6 +25,18 @@ export const asyncRouterMap = [
           name: '课程详情',
           component: () => import('@/views/course/lecture/tab.vue'),
           meta: {title: '课程详情', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/course/createlecture',
+          name: '新建课时',
+          component: () => import('@/views/course/lecture/CreateLecture'),
+          meta: { title: '新建课时', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/course/chooseproblem',
+          name: '选择题目',
+          component: () => import('@/views/course/lecture/ChooseProblem'),
+          meta: { title: '选择题目', permission: [ 'dashboard' ] }
         }]
       },
       {
