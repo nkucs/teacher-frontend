@@ -1,14 +1,5 @@
 <template>
   <div class="ant-layout-has-sider">
-    <div class="title">
-      <h1 class="title-text">添加题目</h1>
-      <div class="view">
-        <a href="./ProblemDetail.vue" disabled="">编辑</a>
-        <div class="ant-divider ant-divider-vertical"></div>
-        <a href="">预览</a>
-      </div>
-    </div>
-    <div class="ant-divider ant-divider-horizontal"></div>
     <div class="bg">
       <div class="main">
         <div class="problem-title">
@@ -211,6 +202,7 @@
 <script>
   import Editor from './Editor'
   import EditableCell from './EditableCell'
+  import axios from 'axios'
 
   export default {
     name: 'MultiTextarea',
