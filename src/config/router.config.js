@@ -60,7 +60,12 @@ export const asyncRouterMap = [
           name: '修改题目',
           component: () => import('@/views/problem/ProblemModify'),
           meta: { title: '修改题目', permission: [ 'dashboard' ] }
-        }]
+        },{
+            path: '/problem/sourcecode', // todo
+            name: '查看源代码',
+            component: () => import('@/views/problem/SourceCode'),
+            meta: { title: '查看源代码', permission: [ 'dashboard' ] }
+          }]
       },
       {
         path: '/stat/course',
