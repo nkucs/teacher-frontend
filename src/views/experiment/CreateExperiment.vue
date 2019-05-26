@@ -29,10 +29,10 @@
         <div style="margin-bottom: 16px">
           <span style="margin-bottom: 16px">
             <template v-if="hasSelected">
-              {{`Selected ${selectedRowKeys.length} items`}}
+              {{ `Selected ${selectedRowKeys.length} items` }}
             </template>
             <template v-else>
-              {{`Selected 0 items`}}
+              {{ `Selected 0 items` }}
             </template>
           </span>
           <div class="inlineClass" >
@@ -55,7 +55,7 @@
           :dataSource="allDataSource">
 
           <span slot="tags" slot-scope="tags">
-            <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
+            <a-tag v-for="tag in tags" color="blue" :key="tag">{{ tag }}</a-tag>
           </span>
 
         </a-table>
@@ -76,7 +76,7 @@
           </template>
 
           <span slot="tags" slot-scope="tags">
-            <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
+            <a-tag v-for="tag in tags" color="blue" :key="tag">{{ tag }}</a-tag>
           </span>
 
         </a-table>
@@ -119,8 +119,8 @@
 
 <script>
 
-const selectedDataSource = [];
-const allDataSource = [];
+const selectedDataSource = []
+const allDataSource = []
 const columnsWithFilter = [
   { // 列描述对象， dataIndex 表示列数据在数据项中的 key 值，声明时和 key 取其一即可，
     title: 'id',
@@ -130,21 +130,20 @@ const columnsWithFilter = [
   {
     title: '名称',
     dataIndex: 'name',
-    width: "25%",
-    sorter: true,
+    width: '25%',
     sorter: (a, b) => (a.name).localeCompare(b.name),
   }, 
   {
     title: '教师',
     dataIndex: 'teacherName',
-    width: "20%",
+    width: '20%',
     sorter: (a, b) => (a.teacherName).localeCompare((b.teacherName)),
   }, 
   {
   title: '标签',
   key: 'tags',
   dataIndex: 'tags',
-  width: "30%",
+  width: '30%',
   scopedSlots: {
       customRender: 'tags',
     },
@@ -158,12 +157,12 @@ const columns =  [
   {
     title: '名称',
     dataIndex: 'name',
-    width: "25%",
+    width: '25%',
   }, 
   {
     title: '教师',
     dataIndex: 'teacherName',
-    width: "20%",
+    width: '20%',
     
   }, 
   {
@@ -171,14 +170,14 @@ const columns =  [
   key: 'tags',
   dataIndex: 'tags',
   scopedSlots: { customRender: 'tags' },
-  width: "30%"
+  width: '30%'
   },
   {
     title: 'operation',
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
-    width: "16%"
-  }];
+    width: '16%'
+  }]
   
 const formItemLayout = {
   labelCol: {
@@ -279,9 +278,9 @@ export default {
       setTimeout(() => {
         this.exerciseAdditionVisible = false
         this.confirmLoading = false
-        for (let key in this.selectedRowKeys) {
-          let value = this.selectedRowKeys[key]
-          let records = this.allDataSource.filter(item => item.key === value)
+        for (const key in this.selectedRowKeys) {
+          const value = this.selectedRowKeys[key]
+          const records = this.allDataSource.filter(item => item.key === value)
           this.selectedDataSource.push(records[0])
         }
       }, 500)
