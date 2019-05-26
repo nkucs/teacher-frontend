@@ -8,11 +8,14 @@
         <a-card :hoverable="true">           
           <div slot="title">{{ item.title }}</div>
           <a slot="extra">{{ item.time }}</a>
-          <a>{{ item.content }}</a>         
+          <a>{{ item.content }}</a>
           <template class="ant-card-actions" slot="actions">
             <!-- <a href="#">编辑</a>                   -->
             <editCourse></editCourse>
-            <router-link to="course/details"><a>详情</a></router-link>
+            <router-link
+              :to="{path: 'course/details', query:{courseID:item.id}}">
+              <a>详情</a>
+            </router-link>
             <a-dropdown>
               <a class="ant-dropdown-link" href="#">更多<a-icon type="down" /></a>
               <a-menu slot="overlay">
@@ -36,6 +39,7 @@ import editCourse from './editCourseForm'
 const dataSource = [
   {
     title: '算法导论',
+      id: '1',
       time:'2019年春季学期',
       content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'
   },

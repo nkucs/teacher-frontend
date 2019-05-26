@@ -19,24 +19,6 @@ export const asyncRouterMap = [
           name: '课程列表',
           component: () => import('@/views/course/Course'),
           meta: {title: '课程列表', permission: [ 'dashboard' ] }
-        },
-        {
-          path: '/course/details',
-          name: '课程详情',
-          component: () => import('@/views/course/lecture/tab.vue'),
-          meta: {title: '课程详情', permission: [ 'dashboard' ] }
-        },
-        {
-          path: '/course/createlecture',
-          name: '新建课时',
-          component: () => import('@/views/course/lecture/CreateLecture'),
-          meta: { title: '新建课时', permission: [ 'dashboard' ] }
-        },
-        {
-          path: '/course/chooseproblem',
-          name: '选择题目',
-          component: () => import('@/views/course/lecture/ChooseProblem'),
-          meta: { title: '选择题目', permission: [ 'dashboard' ] }
         }]
       },
       {
@@ -177,7 +159,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
   {
     path: '/test',
     component: BlankLayout,
@@ -190,7 +171,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
@@ -198,6 +178,26 @@ export const constantRouterMap = [
   {
     path: '/createrpage',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/course/lecture/editLecture')
+  },
+  {
+    path: '/course/details',
+    name: '主讲课管理',
+    component: () => import('@/views/course/lecture/tab.vue')
+  },
+  {
+    path: '/course/details/preview',
+    name: '主讲课预览',
+    component: () => import('@/views/course/lecture/preview.vue')
+  },
+  {
+    path: '/course/createlecture',
+    name: '新建课时',
+    component: () => import('@/views/course/lecture/CreateLecture')
+  },
+  {
+    path: '/course/chooseproblem',
+    name: '选择题目',
+    component: () => import('@/views/course/lecture/ChooseProblem')
   }
 
 ]

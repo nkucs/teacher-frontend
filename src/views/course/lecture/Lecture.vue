@@ -1,6 +1,8 @@
 <template>
   <div>
-    <a-button id="addBTN" type=primary>{{ addLecture }}</a-button>
+    <router-link :to="{path: '/course/createlecture', query:{courseID: courseID}}">
+      <a-button id="addBTN" type=primary>{{ addLecture }}</a-button>
+    </router-link>
     <div id="inputBox">
       <span id="inputTitle">{{ inputTitle }}</span>
       <a-input
@@ -23,17 +25,29 @@
       <span slot="operation" slot-scope="record">
         <a @click="() => editLecture(record.lectureID)">{{ editLectureText }}</a>
         <a-divider type="vertical" />
-        <a @click="() => previewLecture(record.lectureID)">{{ previewLectureText }}</a>
+        <router-link :to="{ path: 'preview'}" append>
+          <a @click="() => previewLecture(record.lectureID)">{{ previewLectureText }}</a>
+        </router-link>
         <a-divider type="vertical" />
-        <a @click="() => deleteLecture(record.lectureID)">{{ deleteLectureText }}</a>
+        <a-popconfirm 
+          :title="confirmTitle" 
+          @confirm="confirmDelete(record.lectureID)"
+          @cancel="cancelDelete"
+          :okText="okText"
+          :cancelText="cancelText">
+          <a href="#">{{ deleteLectureText }}</a>
+        </a-popconfirm>
       </span>
     </a-table>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   mounted() {
+    this.courseID = this.$route.query.courseID
+    console.log('courseID:', this.courseID)
     this.getMyLectures()
   },
   data () {
@@ -50,6 +64,9 @@ export default {
       editLectureText: '编辑',
       deleteLectureText: '删除',
       previewLectureText: '预览',
+      confirmTitle: '您确定要删除这个课时吗？',
+      okText: '确定',
+      cancelText: '取消',
       courseID: '',
       columns: [{
         title: '课时ID',
@@ -75,20 +92,9 @@ export default {
       }],
       lectureData: [],
       pagination: {}
-      // lectureData: [{
-      //   lectureID: '1',
-      //   lectureName: '二叉树',
-      //   lastModified: '11/05/19',
-      //   createdAt: '11/05/19'
-      // }]
     }
   },
   methods: {
-    showDetail (type) {
-      if (type === 1) {
-        return
-      }
-    },
     emitEmpty () {
       this.lectureName = ''
       this.$refs.lectureNameInput.focus()
@@ -117,8 +123,8 @@ export default {
     getMyLectures (params = {}) {
       console.log('params:', params)
       var that = this
-      this.$axios({
-        method: 'post',
+      axios({
+        method: 'get',
         url: '/lecture/AllLectures/',
         data: {
           courseID: this.courseID
@@ -128,6 +134,24 @@ export default {
       }).catch(error => {
         console.log(error)
       })
+    },
+    confirmDelete (lectureID) {
+      console.log('delete lecture_id:', lectureID)
+      var that = this
+      axios({
+        method: 'post',
+        url: 'lecture/DeleteLecture',
+        data: {
+          lecture_id: lectureID
+        }
+      }).then(response => {
+        this.getMyLectures()
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    cancelDelete () {
+      console.log('Click on No for delete.')
     }
   }
 }
