@@ -1,13 +1,14 @@
 <template>
-    <div>
-        <input type="file"
+  <div>
+    <input
+      type="file"
       @change="importFile(this)"
       id="imFile"
       accept="zip"/>
-        <el-button class="button" @click="uploadFile()">
-            {{ upload }}
-        </el-button>
-    </div>
+    <el-button class="button" @click="uploadFile()">
+      {{ upload }}
+    </el-button>
+  </div>
 </template>
 
 <script>
@@ -28,7 +29,7 @@
             },
             importFile: function () {
                 this.fullscreenLoading = true
-                let obj = this.imFile
+                const obj = this.imFile
                 if (!obj.files) {
                     this.fullscreenLoading = false
                     return
@@ -37,6 +38,5 @@
         }
     }
 </script>
-<style scoped>
-    display: none;
+<style scoped> 
 </style>

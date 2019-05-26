@@ -1,19 +1,19 @@
 <template>
   <a-layout id="components-layout-demo-custom-trigger"> 
-   <a-breadcrumb>
-    <a-breadcrumb-item>首页</a-breadcrumb-item>
-    <a-breadcrumb-item><a href="">考试中心</a></a-breadcrumb-item>
-    <a-breadcrumb-item>添加学生</a-breadcrumb-item>
-  </a-breadcrumb>
+    <a-breadcrumb>
+      <a-breadcrumb-item>首页</a-breadcrumb-item>
+      <a-breadcrumb-item><a href="">考试中心</a></a-breadcrumb-item>
+      <a-breadcrumb-item>添加学生</a-breadcrumb-item>
+    </a-breadcrumb>
     <a-layout class="page">
       <a-layout-header style="background: #fff; padding: 20">
-        <div class ="btn_list">
+        <div class="btn_list">
           <a-button type="primary" :size="size">添加学生</a-button>
           <a-button type="dashed" :size="size">导出csv</a-button>
           <a-button type="primary" :size="size">删除学生</a-button>
         </div>
-        <div class = "search">
-        <a-input-search placeholder="input search text" @search="onSearch" enterButton="Search" size="large" />
+        <div class="search">
+          <a-input-search placeholder="input search text" @search="onSearch" enterButton="Search" size="large" />
         </div>
       </a-layout-header>
       <a-layout-content :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }">
@@ -30,7 +30,7 @@
             </a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
-                {{`Selected ${selectedRowKeys.length} items`}}
+                {{ `Selected ${selectedRowKeys.length} items` }}
               </template>
             </span>
           </div>
