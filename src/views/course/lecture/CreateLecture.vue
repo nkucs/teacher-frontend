@@ -91,6 +91,7 @@ export default {
   name: 'CreateLecture',
   data () {
     return {
+      lectureData: [],
       formLayout: 'horizontal',
       form: this.$form.createForm(this),
       fileList: [{}]
@@ -98,6 +99,7 @@ export default {
   },
   methods: {
     handleSubmit (e) {
+      const that = this
       e.preventDefault()
       this.form.validateFields((err, values) => {
         if (!err) {
@@ -106,6 +108,7 @@ export default {
           createLecture(lectureParams)
             .then(function (res) {
               console.log(res)
+              that.lectureData = res.data
             })
             .catch(function (err) {
               console.log(err)
@@ -146,9 +149,9 @@ export default {
       this.handleSubmit(e)
       console.log('new problem')
       this.$router.push({
-        path:'/problem/list',
-        params:{
-          lectureId:'ssss'
+        path:'/course/chooseproblem',
+        query:{
+          lectureId: 10//this.lectureData['lecture_id']
         }
       })
     }
