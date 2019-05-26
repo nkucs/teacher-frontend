@@ -61,6 +61,8 @@
         </a-table>
       </div>
     </a-modal>
+    
+    <h2 class="mainTitle">新建实验</h2>
 
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
@@ -191,7 +193,7 @@ const columns =  [
   width: '30%'
   },
   {
-    title: 'operation',
+    title: '操作',
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
     width: '16%'
@@ -211,6 +213,26 @@ const buttonSetFormat = {
     span: 20,
     offset: 6
   }
+}
+
+const expNameConfig = {
+  rules: [
+    {
+      type: 'object',
+      required: true,
+      message: '实验名称不能为空'
+    }
+  ]
+}
+
+const expDescriptionConfig = {
+  rules: [
+    {
+      type: 'object',
+      required: true,
+      message: '实验描述不能为空'
+    }
+  ]
 }
 
 const datePickerConfig = {
@@ -255,6 +277,8 @@ export default {
     selectedRowKeys: [], 
 
     // date picker related configuration
+    expNameConfig,
+    expDescriptionConfig,
     datePickerConfig,
     radioConfig,
 
@@ -328,7 +352,7 @@ export default {
         this.submitVisible = false
         this.confirmLoading = false
         // 调用新建实验的 API
-        // 跳转至实验列表界面
+        this.$router.push({path:'/experiment/list'})
       }, 500)
     },
     cancelSubmit() {
@@ -343,7 +367,7 @@ export default {
       setTimeout(() => {
         this.cancelSubmitVisible = false
         this.confirmLoading = false
-        // 跳转至实验列表页面 
+        this.$router.push({path:'/experiment/list'})
       }, 500)
     },
     abandonCancel() {
@@ -356,6 +380,10 @@ export default {
 #components-form-demo-validate-other .dropbox {
   height: 180px;
   line-height: 1.5;
+}
+
+.mainTitle {
+  margin-left: 10%;
 }
 
 .formButton {

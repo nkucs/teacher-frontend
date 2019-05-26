@@ -91,6 +91,12 @@ export const asyncRouterMap = [
         name: '实验列表',
         component: () => import('@/views/experiment/ExperimentList'),
         meta: { title: '实验列表', icon: 'dashboard', permission: [ 'dashboard' ] }
+      },
+      {
+        path: '/experiment/new',
+        name: '新建实验',
+        component: () => import('@/views/experiment/CreateExperiment'),
+        meta: { title: '新建实验', icon: 'dashboard', permission: [ 'dashboard' ] }
       }
     ]
   },
