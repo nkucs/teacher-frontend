@@ -90,7 +90,16 @@ export const asyncRouterMap = [
           name: '统计概览',
           component: () => import('@/views/stat/StatOverview'),
           meta: { title: '统计概览', permission: [ 'dashboard' ] }
-        }]
+        },
+        // chenbin_modify
+        {
+          path: '/stat/courseanalysis', // todo
+          name: '课程分析',
+          component: () => import('@/views/stat/StatCourseAnalysis'),
+          meta: { title: '课程分析', permission: [ 'dashboard' ] }
+        }
+        // chenbin_modify
+        ]
       },
       {
         path: '/exam/list',
