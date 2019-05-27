@@ -12,8 +12,32 @@ export const asyncRouterMap = [
       {
         path: '/course',
         name: '课程管理',
-        component: () => import('@/views/course/Course'),
+        component: PageView,
         meta: { title: '课程管理', icon: 'dashboard', permission: [ 'dashboard' ] },
+        children: [{
+          path: '/course',
+          name: '课程列表',
+          component: () => import('@/views/course/Course'),
+          meta: {title: '课程列表', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/course/details',
+          name: '课程详情',
+          component: () => import('@/views/course/lecture/tab.vue'),
+          meta: {title: '课程详情', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/course/createlecture',
+          name: '新建课时',
+          component: () => import('@/views/course/lecture/CreateLecture'),
+          meta: { title: '新建课时', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/course/chooseproblem',
+          name: '选择题目',
+          component: () => import('@/views/course/lecture/ChooseProblem'),
+          meta: { title: '选择题目', permission: [ 'dashboard' ] }
+        }]
       },
       {
         path: '/problem/list',
@@ -36,7 +60,22 @@ export const asyncRouterMap = [
           name: '修改题目',
           component: () => import('@/views/problem/ProblemModify'),
           meta: { title: '修改题目', permission: [ 'dashboard' ] }
-        }]
+        },{
+            path: '/problem/sourcecode', // todo
+            name: '查看源代码',
+            component: () => import('@/views/problem/SourceCode'),
+            meta: { title: '查看源代码', permission: [ 'dashboard' ] }
+          },{
+            path: '/problem/preview', // todo
+            name: '题目预览',
+            component: () => import('@/views/problem/ProblemPreview'),
+            meta: { title: '题目预览', permission: [ 'dashboard' ] }
+          },{
+            path: '/problem/submit', // todo
+            name: '查看提交',
+            component: () => import('@/views/problem/CheckSubmit'),
+            meta: { title: '查看提交', permission: [ 'dashboard' ] }
+          }]
       },
       {
         path: '/stat/course',
@@ -50,6 +89,13 @@ export const asyncRouterMap = [
           meta: { title: '课程统计', permission: [ 'dashboard' ] }
         },
         {
+          path: '/stat/detail', // todo
+          name: '课程详情',
+          hidden:true,
+          component: () => import('@/views/stat/StatCourseDetail'),
+          meta: { title: '课程详情',permission: [ 'dashboard' ] }
+        },
+        {
           path: '/stat/problem', // todo
           name: '题目分析',
           component: () => import('@/views/stat/StatProblem'),
@@ -60,7 +106,27 @@ export const asyncRouterMap = [
           name: '考试情况',
           component: () => import('@/views/stat/StatExam'),
           meta: { title: '考试情况', permission: [ 'dashboard' ] }
-        }]
+        },
+        {
+          path: '/stat/overview', // todo
+          name: '统计概览',
+          component: () => import('@/views/stat/StatOverview'),
+          meta: { title: '统计概览', permission: [ 'dashboard' ] }
+        },
+        // chenbin_modify
+        {
+          path: '/stat/courseanalysis', // todo
+          name: '课程分析',
+          component: () => import('@/views/stat/StatCourseAnalysis'),
+          meta: { title: '课程分析', permission: [ 'dashboard' ] }
+        },
+        // chenbin_modify
+        {
+          path: '/stat/statstudentdata',
+          name: '学生统计',
+          component: () => import('@/views/stat/StatStudentData'),
+          meta: { title: '学生统计', permission: [ 'dashboard' ] }
+        }],
       },
       {
         path: '/exam/list',
@@ -72,6 +138,12 @@ export const asyncRouterMap = [
           name: '添加考试题目',
           component: () => import('@/views/exam/ExamAddProblems'),
           meta: { title: '添加考试题目'}
+        },
+        {
+          path: '/exam/addstudent', // todo
+          name: '添加考试学生',
+          component: () => import('@/views/exam/ExamAddStudent'),
+          meta: { title: '添加考试学生'}
         }]
       },
       {
@@ -79,6 +151,18 @@ export const asyncRouterMap = [
         name: '实验列表',
         component: () => import('@/views/experiment/ExperimentList'),
         meta: { title: '实验列表', icon: 'dashboard', permission: [ 'dashboard' ] }
+      },
+      {
+        path: '/experiment/new',
+        name: '新建实验',
+        component: () => import('@/views/experiment/CreateExperiment'),
+        meta: { title: '新建实验', icon: 'dashboard', permission: [ 'dashboard' ] }
+      },
+      {
+        path: '/experiment/edit',
+        name: '编辑实验',
+        component: () => import('@/views/experiment/EditExperiment'),
+        meta: { title: '编辑实验', icon: 'dashboard', permission: [ 'dashboard' ] }
       }
     ]
   },
@@ -133,5 +217,9 @@ export const constantRouterMap = [
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   },
+  {
+    path: '/createrpage',
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/course/lecture/editLecture')
+  }
 
 ]
