@@ -5,10 +5,11 @@ const api = {
   getallcourse: '/teacher/course/getallcourse',
   seekcourse: '/teacher/course/seekcourse',
   deletecourse: '/teacher/course/deletecourse',
-  copycourse: '/teacher/course/copycourse'
+  copycourse: '/teacher/course/copycourse',
+  addcourse: '/teacher/course/addcourse'
 }
 
-export default api
+// export default api
 
 export function deletecourse(parameter) {
   return axios({
@@ -46,6 +47,15 @@ export function seekcourse(parameter) {
   return axios({
     url: api.seekcourse,
     method: 'get',
+    params: parameter
+  })
+}
+
+// 新建课程
+export function addcourse(parameter) {
+  return axios({
+    url: api.addcourse,
+    method: 'post',
     params: parameter
   })
 }
