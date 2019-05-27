@@ -28,6 +28,22 @@
         </div>
       </a-card>
     </a-col>
+
+    <a-col>
+      <a-card
+        class="antd-pro-pages-dashboard-analysis-salesCard"
+        :loading="loading"
+        :bordered="true"
+        title="完成题目所属课程占比"
+        :style="{ marginTop: '24px', minHeight: '50px' }"
+      >
+        <div>
+          <div>
+            <ve-pie :data="ACProblemData"></ve-pie>
+          </div>
+        </div>
+      </a-card>
+    </a-col>
   </div>
 </template>
 
@@ -58,7 +74,36 @@ export default {
       acData: {
         columns: ['是否ac', '次数'],
         rows: [{ 是否ac: 'ac次数', 次数: 1393 }, { 是否ac: '未ac次数', 次数: 3530 }]
+      },
+      ACProblemData: {
+        columns: ['课程名称', '题目数'],
+        rows: [
+          { 课程名称: 'JAVA', 题目数: 4 },
+          { 课程名称: 'C++', 题目数: 5 },
+          { 课程名称: 'Python', 题目数: 9 },
+          { 课程名称: '数据结构', 题目数: 10 },
+          { 课程名称: '算法', 题目数: 3 }
+        ]
       }
+    }
+  },
+  created: function(){
+    //getACProblemInfo()
+  },
+  methods:{
+    getACProblemInfo:function(){
+      const that = this
+      that.$axios({
+        method: 'get',
+        url: '/problem/ac/',
+        data: {
+          userID: localStorage.getItem('userID')
+        }
+      }).then(response => {
+        that.ACProblemData = response.data.ACProblemData
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }
