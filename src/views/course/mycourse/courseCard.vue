@@ -33,7 +33,7 @@
 
 <script>
 import editCourse from './editCourseForm'
-import { deletecourse, copycourse} from '@/api/course'
+import { deletecourse, copycourse,getmycourse} from '@/api/course'
 const dataSource = [
   {
     id:'123',
