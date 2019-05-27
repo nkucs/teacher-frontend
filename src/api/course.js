@@ -5,7 +5,8 @@ const api = {
   getallcourse: '/teacher/course/getallcourse',
   seekcourse: '/teacher/course/seekcourse',
   deletecourse: '/teacher/course/deletecourse',
-  copycourse: '/teacher/course/copycourse'
+  copycourse: '/teacher/course/copycourse',
+  editcourse: '/teacher/course/editcourse'
 }
 
 export default api
@@ -48,4 +49,12 @@ export function seekcourse(parameter) {
     method: 'get',
     params: parameter
   })
+}
+
+export function editcourse(parameter) {
+	return axios({
+	  method: 'post',
+	  url: api.editcourse,
+	  data: parameter
+	});
 }

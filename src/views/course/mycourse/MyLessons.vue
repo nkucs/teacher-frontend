@@ -1,28 +1,50 @@
 <template>
-  <div>
-    <div style="margin-bottom: 5px">
-      <a-input v-model="coursename" style="width: 44%" addonBefore="课程名称" />
-      <a-input v-model="teachername" style="width: 43%" addonBefore="教师姓名" />
-      <a-button type="primary" align="right" @click="seek()">查询</a-button>
-      <a-button align="right" @click="reset()">重置</a-button>
-    </div>
-    <a-table :columns="columns" :dataSource="data">
-      <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
-      <span slot="customTitle"> 课程ID</span>
-      <span slot="action" slot-scope="text, record">
-        <edit-course></edit-course>
-        <a-divider type="vertical" />
-        <router-link to="course/details"><a>详情</a></router-link>
-        <a-divider type="vertical" />
-        <a href="javascript:;" key="copy" @click="copycourse(record.id, record.teacher)">复制</a>
-        <a-divider type="vertical" />
-        <a href="javascript:;" key="delete" @click="deletecourse(record.id)">删除</a>
+	<div>
+		<div style="margin-bottom: 5px">
+		  <a-input v-model="coursename" style="width: 44%" addonBefore="课程名称" />
+		  <a-input v-model="teachername" style="width: 43%" addonBefore="教师姓名" />
+		  <a-button type="primary" align="right" @click="seek()">查询</a-button>
+		  <a-button align="right" @click="reset()">重置</a-button>
+		</div>
+			<a-table :columns="columns" :dataSource="data">
+			  <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
+			  <span slot="customTitle"> 课程ID</span>
+			  <span slot="action" slot-scope="text, record">
+				<a href="JavaScript:void(0)" @click="inflate_edit_menu">编辑</a>
+				<a-modal
+				  v-model="edit_visible"
+				  title="编辑课程"
+				  onOk="edit_handleOk"
+				>
+				  <template slot="footer">
+					<a-button key="back" @click="edit_handleCancel">返回
+					</a-button>
+					<a-button key="submit" @click="edit_handleOk(record.id)">
+					  修改
+                    </a-button>
+                  </template>
+                  <p>课程名称：&nbsp;&nbsp;<a-input style="width: 240px; display: inline-block" 
+                    v-model="edit_course_data.course_name"/></p>
+                  <p>开课教师：&nbsp;&nbsp;<a-input style="width: 240px; display: inline-block"
+                    v-model="edit_course_data.course_teacher"/></p>
+                  <p>开始时间：&nbsp;&nbsp;<a-date-picker style="width: 180px; display: inline-block"
+                    v-model="edit_course_data.course_start_time"/></p>
+                  <p>结束时间：&nbsp;&nbsp;<a-date-picker style="width: 180px; display: inline-block"
+                    v-model="edit_course_data.course_end_time"/></p>
+                  <p style="display: inline-block">课程描述：&nbsp;&nbsp;</p>
+                  <p><a-textarea :rows="4" style="resize:none" v-model="edit_course_data.course_description"/></p>
+                </a-modal>
+                <a-divider type="vertical" />
+                <router-link to="course/details"><a>详情</a></router-link>
+                <a-divider type="vertical" />
+                <a href="javascript:;" key="copy" @click="copycourse(record.id, record.teacher)">复制</a>
+                <a-divider type="vertical" />
+                <a href="javascript:;" key="delete" @click="deletecourse(record.id)">删除</a>
       </span>
     </a-table>
   </div>
 </template>
 <script>
-import editCourse from './editCourseForm'
 const columns = [{
   dataIndex: 'id',
   key: 'id',
@@ -64,18 +86,28 @@ const data = [{
   end: '2018-06-01'
 }]
 
-import { deletecourse, copycourse, getmycourse, seekcourse } from '@/api/course'
+import { deletecourse, copycourse, getmycourse, seekcourse, editcourse } from '@/api/course'
 export default {
   data() {
     return {
       data,
       columns,
       coursename: '在此输入课程名称',
-      teachername: '在此输入教师姓名'
+      teachername: '在此输入教师姓名',
+      
+      //These are edit inflate menu data:
+      edit_visible: false,
+      //course:
+      edit_course_data : {
+          course_name: '',
+          course_teacher: '',
+          course_start_time: new Date(),
+          course_end_time: new Date(),
+          course_description: ''
+      }
     }
   },
   components: {
-    editCourse
   },
   methods: {
     seek () {
@@ -170,8 +202,49 @@ export default {
         alert('删除课程失败！')
         console.log(fail)
       })
-    }
+    },
+	edit_course(courseid) {
+      const send_object = {
+        'course_id' : courseid,
+        'name' : this.edit_course_data.course_name,
+        'teacher' : this.edit_course_data.course_teacher,
+        'start_time' : this.edit_course_data.course_start_time,
+        'end_time' : this.edit_course_data.course_end_time,
+        'description' : this.edit_course_data.course_description
+      }
+      console.log(send_object)
+      editcourse(send_object).then(() => {
+        console.log(`edit course ${courseid} successfully.`)
+        for (const item in self.data) {
+          if (self.data[item].id === courseid) {
+            self.data.splice(item, 1)
+            break
+          }
+        }
+      }).catch((fail) => {
+        alert('编辑课程失败！')
+        console.log(fail)
+      })
+    },
+    inflate_edit_menu() {
+      this.edit_visible = true
+    },
+    
+    edit_handleOk(e) {
+      console.log(e)
+      this.edit_course(e)
+      console.log(this.edit_visible)
+      this.edit_visible = false
+    },
+    edit_handleCancel(e)
+    {
+      console.log(e)
+      this.edit_visible=false
+    },
+    
   },
+  
+    
   mounted: function (teacherID) {
     const self = this
     getmycourse({
