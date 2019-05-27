@@ -1,19 +1,25 @@
 <template>
-  <a-table :columns="columns" :dataSource="data">
-    <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
-    <span slot="customTitle"> 课程ID</span>
-    <span slot="action">
-      <!-- <a href="javascript:;">编辑</a> -->
-      <edit-course></edit-course>
-      <a-divider type="vertical" />
-      <!-- <a href="javascript:;">详情</a> -->
-      <router-link to="course/details"><a>详情</a></router-link>
-      <a-divider type="vertical" />
-      <a href="javascript:;">复制</a>
-      <a-divider type="vertical" />
-      <a href="javascript:;">删除</a>
-    </span>
-  </a-table>
+  <div>
+    <div style="margin-bottom: 5px">
+      <a-input v-model="coursename" style="width: 44%" addonBefore="课程名称" />
+      <a-input v-model="teachername" style="width: 43%" addonBefore="教师姓名" />
+      <a-button type="primary" align="right" @click="seek()">查询</a-button>
+      <a-button align="right" @click="reset()">重置</a-button>
+    </div>
+    <a-table :columns="columns" :dataSource="data">
+      <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
+      <span slot="customTitle"> 课程ID</span>
+      <span slot="action" slot-scope="text, record">
+        <edit-course></edit-course>
+        <a-divider type="vertical" />
+        <router-link to="course/details"><a>详情</a></router-link>
+        <a-divider type="vertical" />
+        <a href="javascript:;" key="copy" @click="copycourse(record.id, record.teacher)">复制</a>
+        <a-divider type="vertical" />
+        <a href="javascript:;" key="delete" @click="deletecourse(record.id)">删除</a>
+      </span>
+    </a-table>
+  </div>
 </template>
 <script>
 import editCourse from './editCourseForm'
@@ -58,18 +64,72 @@ const data = [{
   end: '2018-06-01'
 }]
 
-import { deletecourse, copycourse, getmycourse } from '@/api/course'
+import { deletecourse, copycourse, getmycourse, seekcourse } from '@/api/course'
 export default {
   data() {
     return {
       data,
       columns,
+      coursename: '在此输入课程名称',
+      teachername: '在此输入教师姓名'
     }
   },
   components: {
     editCourse
   },
   methods: {
+    seek () {
+      const self = this
+      if (self.coursename === '在此输入课程名称' && self.teachername === '在此输入教师姓名') {
+        alert(`请输入正确的课程名称或教师名称查询！`)
+      }
+      else if (self.coursename === '在此输入课程名称') {
+        seekcourse({
+          params: {
+            course_name: self.coursename,
+            teacher_name: '',
+          }
+        }).then(response => {
+          console.log(`seek successfully`)
+          self.data = response.course    //对应后端返回的数据
+        }).catch((fail) => {
+          alert('查找失败！请输入正确的教师名！')
+          console.log(fail)
+        })
+      }
+      else if (self.teachername === '在此输入教师姓名') {
+        seekcourse({
+          params: {
+            course_name: '',
+            teacher_name: self.teachername,
+          }
+        }).then(response => {
+          console.log(`seek successfully`)
+          self.data = response.course    //对应后端返回的数据
+        }).catch((fail) => {
+          alert('查找失败！请输入正确的课程名！')
+          console.log(fail)
+        })
+      }
+      else {
+        seekcourse({
+          params: {
+            teacher_name: self.teachername,
+            course_name: self.coursename,
+          }
+        }).then(response => {
+          console.log(`seek successfully`)
+          self.data = response.course    //对应后端返回的数据
+        }).catch((fail) => {
+          alert('查找失败！请输入正确的信息！')
+          console.log(fail)
+        })
+      }
+    },
+    reset () {
+      this.coursename = '在此输入课程名称'
+      this.teachername = '在此输入教师姓名'
+    },
     copycourse (courseID, teacherID) {
       const self = this
       console.log(`复制课程${courseID}`)
