@@ -89,6 +89,13 @@ export const asyncRouterMap = [
           meta: { title: '课程统计', permission: [ 'dashboard' ] }
         },
         {
+          path: '/stat/detail', // todo
+          name: '课程详情',
+          hidden:true,
+          component: () => import('@/views/stat/StatCourseDetail'),
+          meta: { title: '课程详情',permission: [ 'dashboard' ] }
+        },
+        {
           path: '/stat/problem', // todo
           name: '题目分析',
           component: () => import('@/views/stat/StatProblem'),
@@ -112,9 +119,14 @@ export const asyncRouterMap = [
           name: '课程分析',
           component: () => import('@/views/stat/StatCourseAnalysis'),
           meta: { title: '课程分析', permission: [ 'dashboard' ] }
-        }
+        },
         // chenbin_modify
-        ]
+        {
+          path: '/stat/statstudentdata',
+          name: '学生统计',
+          component: () => import('@/views/stat/StatStudentData'),
+          meta: { title: '学生统计', permission: [ 'dashboard' ] }
+        }],
       },
       {
         path: '/exam/list',
