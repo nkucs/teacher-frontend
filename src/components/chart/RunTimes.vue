@@ -1,6 +1,6 @@
 <template>
-  <a-card>
-    <ve-histogram :extend="Extend" width="80%"></ve-histogram>
+  <a-card :loading="loading" :bordered="false" title="执行用时分布图表" :style="{ marginTop: '24px' }">
+    <ve-histogram :extend="Extend"></ve-histogram>
   </a-card>
 </template>
 
