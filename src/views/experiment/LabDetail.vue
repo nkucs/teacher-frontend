@@ -63,6 +63,7 @@
 <script>
 //import upLoadFile from '@/components/upLoadFile'
 import moment from 'moment'
+import {getLabs} from'@/api/experiment'
 const selectedDataSource = []
 for (let i=0; i<10; i++) {
     selectedDataSource.push({
@@ -142,41 +143,10 @@ const buttonSetFormat = {
   }
 }
 
-const expNameConfig = {
-  rules: [
-    {
-      type: 'object',
-      message: '实验名称不能为空'
-    }
-  ]
-}
-
-const expDescriptionConfig = {
-  rules: [
-    {
-      type: 'object',
-      message: '实验描述不能为空'
-    }
-  ]
-}
-
-const datePickerConfig = {
-  rules: [{
-    type: 'object',
-    required: true,
-    message: '请选择时间！'
-  }]
-}
-
-const radioConfig = {
-  rules: [{
-    required: true,
-    message: '请确定是否需要提交实验报告！'
-  }]
-}
 
 export default {
   components: {
+
     //upLoadFile
   },
 
@@ -203,12 +173,6 @@ export default {
       defaultPageSize: 6
     },
     selectedRowKeys: [], 
-
-    // date picker related configuration
-    expNameConfig,
-    expDescriptionConfig,
-    datePickerConfig,
-    radioConfig,
 
     // tips and modal related configuration
     cancelModalText: '是否放弃编辑实验？！',
@@ -244,6 +208,21 @@ export default {
   },
 
   methods: {
+    getdata(){
+      console.log('gw')
+      getLabs({
+        data:{
+          lab_id:2
+        }
+      }).then((Response)=>{
+          console.log('start')
+          console.log(Response)
+          var Labs =Response.data
+          console.log(Labs)
+          console.log('end')
+        })
+    },
+
     onDelete (key) {
       const selectedDataSource = [...this.selectedDataSource]
       this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
@@ -305,7 +284,12 @@ export default {
     abandonCancel() {
       this.cancelSubmitVisible = false
     },
+   
   },
+  mounted(){
+    this.getdata()
+  }
+  
 }
 </script>
 <style scoped>

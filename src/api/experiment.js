@@ -2,7 +2,8 @@ import { axios } from '@/utils/request'
 
 const api = {
   getProblems: '/teacher/lecture/get-problems',
-  deleteLab: '/teacher/lab/delete-lab'
+  deleteLab: '/teacher/lab/delete-lab',
+  getLabs:'/teacher/lab/get-my-labs'
 }
 
 export default api
@@ -20,5 +21,13 @@ export function getProblems(parameter) {
     url: api.role,
     method: 'get',
     params: parameter
+  })
+}
+
+export function getLabs(parameter){
+  return axios({
+    url:api.getLabs,
+    method:'get',
+    params:parameter
   })
 }
