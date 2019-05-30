@@ -1,5 +1,5 @@
 const api = {
-    Login: '/auth/login',
+    Login: 'http://188.131.129.220:8000/administrator/role/teaclogin',
     Logout: '/auth/logout',
     ForgePassword: '/auth/forge-password',
     Register: '/auth/register',

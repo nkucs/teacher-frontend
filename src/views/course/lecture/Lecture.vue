@@ -23,7 +23,9 @@
       :pagination="pagination"
       @change="handlePageChange">
       <span slot="operation" slot-scope="record">
-        <a @click="() => editLecture(record.lectureID)">{{ editLectureText }}</a>
+        <router-link :to="{ path: 'edit'}" append>
+          <a @click="() => editLecture(record.lectureID)">{{ editLectureText }}</a>
+        </router-link>
         <a-divider type="vertical" />
         <router-link :to="{ path: 'preview'}" append>
           <a @click="() => previewLecture(record.lectureID)">{{ previewLectureText }}</a>
@@ -31,7 +33,7 @@
         <a-divider type="vertical" />
         <a-popconfirm 
           :title="confirmTitle" 
-          @confirm="confirmDelete(record.lectureID)"
+          @confirm="handleConfirmDelete(record.lectureID)"
           @cancel="cancelDelete"
           :okText="okText"
           :cancelText="cancelText">
@@ -43,12 +45,18 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { getCookie } from '@/utils/util'
+import { getMyLectures, getLectureByName, deleteLecture } from '@/api/lecture'
+
 export default {
   mounted() {
     this.courseID = this.$route.query.courseID
-    console.log('courseID:', this.courseID)
-    this.getMyLectures()
+    this.pagination.pageSize = 10
+    this.pagination.current = 1
+    this.handleGetLectures({
+        page: this.pagination.current,
+        page_length: this.pagination.pageSize
+    })
   },
   data () {
     return {
@@ -64,7 +72,7 @@ export default {
       editLectureText: '编辑',
       deleteLectureText: '删除',
       previewLectureText: '预览',
-      confirmTitle: '您确定要删除这个课时吗？',
+      confirmTitle: '您确定要columns个课时吗？',
       okText: '确定',
       cancelText: '取消',
       courseID: '',
@@ -99,56 +107,60 @@ export default {
       this.lectureName = ''
       this.$refs.lectureNameInput.focus()
     },
-    editLecture (key) {
-      console.log('edit key=',key)
-    },
-    previewLecture (key) {
-      console.log('preview key=',key)
-    },
-    deleteLecture (key) {
-      console.log('delete key=',key)
-    },
+    // editLecture (key) {
+    //   console.log('edit key=',key)
+    // },
+    // previewLecture (key) {
+    //   console.log('preview key=',key)
+    // },
+    // deleteLecture (key) {
+    //   console.log('delete key=',key)
+    // },
     handlePageChange (pagination) {
-      console.log('pagination', pagination)
+      console.log('pagination1', pagination)
       const pager = { ...this.pagination }
       pager.current = pagination.current
       this.pagination = pager
-      console.log('pagination', pagination)
-      this.getMyLectures({
+      console.log('pagination2', pagination)
+      this.handleGetLectures({
         page: pagination.current,
-        pageLength: pagination.pageSize,
+        page_length: pagination.pageSize,
         courseID: this.courseID
       })
     },
-    getMyLectures (params = {}) {
-      console.log('params:', params)
-      var that = this
-      axios({
-        method: 'get',
-        url: '/lecture/AllLectures/',
-        data: {
-          courseID: this.courseID
-        }
-      }).then(response => {
-        that.lectureData = response.data
-      }).catch(error => {
-        console.log(error)
-      })
+    handleGetLectures (data = {}) {
+      const that = this
+      const sessionID = getCookie('sessionID')
+      const lectureData = {
+        ...data,
+        course_id: this.courseID,
+        session_id: sessionID
+      }
+      getMyLectures(lectureData)
+        .then(response => {
+          that.lectureData = response.data.lectures})
+        .catch(error => {
+          console.log(error)
+        })
     },
-    confirmDelete (lectureID) {
-      console.log('delete lecture_id:', lectureID)
-      var that = this
-      axios({
-        method: 'post',
-        url: 'lecture/DeleteLecture',
-        data: {
-          lecture_id: lectureID
-        }
-      }).then(response => {
-        this.getMyLectures()
-      }).catch(error => {
-        console.log(error)
-      })
+    handleGetLectureByName (name) {
+      const that = this
+      getLectureByName(name)
+        .then(response => {
+          that.lectureData = response.data
+        }).catch(error => {
+          console.log(error)
+        })
+    },
+    handleConfirmDelete (lectureID) {
+      // console.log('delete lecture_id:', lectureID)
+      deleteLecture(lectureID)
+        .then(response => {
+          console.log('del-lectures-response',response)
+          this.HandleGetLectures()
+        }).catch(error => {
+          console.log(error)
+        })
     },
     cancelDelete () {
       console.log('Click on No for delete.')

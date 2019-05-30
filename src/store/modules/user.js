@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { login, getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
-import { welcome } from '@/utils/util'
+import { welcome, setCookie } from '@/utils/util'
 import { loadLanguageAsync } from '@/lang'
 
 const user = {
@@ -43,12 +43,16 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo)
           .then(response => {
-            const result = response.result
-            Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-            commit('SET_TOKEN', result.token)
+            const result = response.data
+            console.log('login result', result)
+            console.log('sessionID:', result.sessionID)
+            setCookie('sessionID', result.sessionID)
+            Vue.ls.set(ACCESS_TOKEN, result.sessionID, 7 * 24 * 60 * 60 * 1000)
+            commit('SET_TOKEN', result.sessionID)
             resolve()
           })
           .catch(error => {
+            console.log('---')
             reject(error)
           })
       })

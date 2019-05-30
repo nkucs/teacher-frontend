@@ -71,7 +71,17 @@
       </a-tabs>
 
       <a-form-item>
-        <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
+        <a-checkbox
+          v-decorator="[
+            'rememberMe',
+            {
+              valuePropName: 'checked',
+              initialValue: false
+            }
+          ]"
+        >
+          自动登录
+        </a-checkbox>
         <router-link
           :to="{ name: 'recover', params: { user: 'aaa'} }"
           class="forge-password"
@@ -115,7 +125,7 @@
 </template>
 
 <script>
-import md5 from 'md5'
+// import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
@@ -178,11 +188,14 @@ export default {
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
+          const checked = this.form.getFieldValue('rememberMe')
+          values['rememberMe'] = checked
           console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
+          // loginParams.password = md5(values.password)
+          loginParams.password = values.password
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
@@ -240,8 +253,8 @@ export default {
       })
     },
     loginSuccess (res) {
-      console.log(res)
-      this.$router.push({ name: 'dashboard' })
+      console.log('login suc', res)
+      this.$router.push({ path: '/course' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
         this.$notification.success({

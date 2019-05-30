@@ -190,12 +190,12 @@ export const constantRouterMap = [
     component: () => import('@/views/course/lecture/preview.vue')
   },
   {
-    path: '/course/createlecture',
+    path: '/course/details/createlecture',
     name: '新建课时',
     component: () => import('@/views/course/lecture/CreateLecture')
   },
   {
-    path: '/course/chooseproblem',
+    path: '/course/details/chooseproblem',
     name: '选择题目',
     component: () => import('@/views/course/lecture/ChooseProblem')
   }
