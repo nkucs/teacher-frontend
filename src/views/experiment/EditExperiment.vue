@@ -67,15 +67,13 @@
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
         <a-input
-          v-model="lab.name"
           placeholder='请输入实验名称'
-          v-decorator="['experiment-name',expNameConfig]"
+          v-decorator="['experiment-name', expNameConfig]"
         />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验描述：">
         <a-input
-          v-model="lab.description"
           placeholder='请输入实验描述'
           v-decorator="['experiment-description',expDescriptionConfig]"
         />
@@ -104,29 +102,42 @@
 
         </a-table>
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="开始时间：" :defaultValue="lab.startTime" :format="dateFormat">
+      <a-form-item v-bind="formItemLayout" label="开始时间：" >
         <a-date-picker 
-          v-decorator="['start-date-time-picker', datePickerConfig]" 
+          v-decorator="['start-date-time-picker', startDatePickerConfig]" 
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
-      <a-form-item v-bind="formItemLayout" label="截止时间：" :defaultValue="lab.endTime" :format="dateFormat">
+      <a-form-item v-bind="formItemLayout" label="截止时间：">
         <a-date-picker 
-          v-decorator="['end-date-time-picker', datePickerConfig]" 
+          v-decorator="['end-date-time-picker', endDatePickerConfig]" 
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="是否提交实验报告：">
         <a-radio-group v-decorator="['radio-group', radioConfig]">
-          <a-radio value="y" :checked="lab.reportRequired">
+          <a-radio value="y">
             是
           </a-radio>
-          <a-radio value="n" :checked="!lab.reportRequired">
+          <a-radio value="n">
             否
           </a-radio>
         </a-radio-group>
+      </a-form-item>
+      <a-form-item
+        v-bind="formItemLayout"
+        label="实验报告权重"
+      >
+        <a-input-number
+          v-decorator="['input-number', weightConfig]"
+          :min="1"
+          :max="100"
+        />
+        <span class="ant-form-text">
+          %
+        </span>
       </a-form-item>
       <a-form-item v-bind="buttonSetFormat">
         <a-button class="formButton" @click="handleCancel">
@@ -143,16 +154,7 @@
 <script>
 import upLoadFile from '@/components/upLoadFile'
 import moment from 'moment'
-const selectedDataSource = []
-for (let i=0; i<10; i++) {
-    selectedDataSource.push({
-        id: i,
-        name: 'problem ' + i,
-        teacherName: 'teacher ' + i,
-        tags: ['sort', 'recursion']
-    })
-}
-const allDataSource = []
+
 const columnsWithFilter = [
   {
     title: 'id',
@@ -227,39 +229,6 @@ const buttonSetFormat = {
   }
 }
 
-const expNameConfig = {
-  rules: [
-    {
-      type: 'object',
-      message: '实验名称不能为空'
-    }
-  ]
-}
-
-const expDescriptionConfig = {
-  rules: [
-    {
-      type: 'object',
-      message: '实验描述不能为空'
-    }
-  ]
-}
-
-const datePickerConfig = {
-  rules: [{
-    type: 'object',
-    required: true,
-    message: '请选择时间！'
-  }]
-}
-
-const radioConfig = {
-  rules: [{
-    required: true,
-    message: '请确定是否需要提交实验报告！'
-  }]
-}
-
 export default {
   components: {
     upLoadFile
@@ -268,7 +237,6 @@ export default {
   data: () => ({
     // lab
     dateFormat: 'YYYY/MM/DD',
-    lab: {},
     // layout related configuration
     formItemLayout,
     buttonSetFormat,
@@ -280,20 +248,11 @@ export default {
     searchTeacherName: '',
     searchTag: '',
     // table related configuration
-    selectedDataSource,
-    allDataSource,
     columns,
     columnsWithFilter,
     pagination: {
       defaultPageSize: 6
     },
-    selectedRowKeys: [], 
-
-    // date picker related configuration
-    expNameConfig,
-    expDescriptionConfig,
-    datePickerConfig,
-    radioConfig,
 
     // tips and modal related configuration
     cancelModalText: '是否放弃编辑实验？！',
@@ -309,17 +268,100 @@ export default {
   
   beforeCreate() {
     this.form = this.$form.createForm(this)
+    // 获取实验详情的 API 和 所有实验题目的 API
+    // => lab {lab.name, lab.description, lab.start_time, lanb.end_time, lab.exercises[], lab.reportRequired,} 
+    // this.selectedDataSource
+    // 获取所有实验题目的 API
+    // => this.allDataSource 
     this.lab = {
         name: 'a + b',
         description: 'calculate a + b',
-        startTime: moment('2015/01/01','YYYY/MM/DD'),
-        endTime: moment('2015/01/01','YYYY/MM/DD'),
-        reportRequired: true
+        attachment_weight: 80,
+        problem_weight: 20,
+        start_time: moment('2015/01/01','YYYY/MM/DD'),
+        end_time: moment('2015/01/01','YYYY/MM/DD'),
+        reportRequired: 'y',
+
     }
-    // 获取实验详情的 API 和 实验题目的 API
-    // => lab {lab.name, lab.description, lab.startTime} 
-    // => this.selectedDataSource
-    // => this.allDataSource 
+    
+    this.selectedDataSource = []
+    for (let i=0; i<10; i++) {
+        this.selectedDataSource.push({
+          key: i, // necessary
+          id: i,
+          name: 'problem ' + i,
+          teacherName: 'teacher ' + i,
+          tags: ['sort', 'recursion']
+        })
+    }
+
+    this.allDataSource = []
+    for (let i=0; i< 20; i+=2) {
+      this.allDataSource.push({
+        key: i, // necessary
+        id: i,
+        name: 'problem ' + i,
+        teacherName: 'teacher ' + i,
+        tags: ['sort', 'recursion']
+      })
+    }
+
+    this.selectedRowKeys = []
+    for (const key in this.selectedDataSource) {
+      if (key in this.allDataSource) {
+        this.selectedRowKeys.push(key)
+      }
+    }
+
+    this.expNameConfig = {
+      initialValue: this.lab.name,
+      rules: [
+        {
+          required: true,
+          message: '实验名称不能为空'
+        }
+      ]  
+    }
+
+    this.expDescriptionConfig = {
+      initialValue: this.lab.description,
+      rules: [
+        {
+          required: true,
+          message: '实验描述不能为空'
+        }
+      ]
+    }
+
+    this.startDatePickerConfig = {
+      initialValue: this.lab.start_time,
+      rules: [{
+        type: 'object',
+        required: true,
+        message: '请选择时间！'
+      }]
+    }
+
+    this.endDatePickerConfig = {
+      initialValue: this.lab.end_time,
+      rules: [{
+        type: 'object',
+        required: true,
+        message: '请选择时间！'
+      }]
+    }
+
+    this.radioConfig = {
+      initialValue: this.lab.reportRequired,
+      rules: [{
+        required: true,
+        message: '请确定是否需要提交实验报告！'
+      }]
+    }
+
+    this.weightConfig = {
+      initialValue: this.lab.attachment_weight
+    }
   },
 
   computed: {
@@ -412,13 +454,6 @@ export default {
 
 .formButton {
   margin-right: 20px;
-}
-
-.custom-filter-dropdown {
-  padding: 8px;
-  border-radius: 4px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
 .highlight {

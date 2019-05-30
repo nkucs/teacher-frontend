@@ -47,6 +47,16 @@ export const asyncRouterMap = [
             name: '查看源代码',
             component: () => import('@/views/problem/SourceCode'),
             meta: { title: '查看源代码', permission: [ 'dashboard' ] }
+          },{
+            path: '/problem/preview', // todo
+            name: '题目预览',
+            component: () => import('@/views/problem/ProblemPreview'),
+            meta: { title: '题目预览', permission: [ 'dashboard' ] }
+          },{
+            path: '/problem/submit', // todo
+            name: '查看提交',
+            component: () => import('@/views/problem/CheckSubmit'),
+            meta: { title: '查看提交', permission: [ 'dashboard' ] }
           }]
       },
       {
@@ -59,6 +69,13 @@ export const asyncRouterMap = [
           name: '课程统计',
           component: () => import('@/views/stat/StatCourse'),
           meta: { title: '课程统计', permission: [ 'dashboard' ] }
+        },
+        {
+          path: '/stat/detail', // todo
+          name: '课程详情',
+          hidden:true,
+          component: () => import('@/views/stat/StatCourseDetail'),
+          meta: { title: '课程详情',permission: [ 'dashboard' ] }
         },
         {
           path: '/stat/problem', // todo
@@ -78,15 +95,18 @@ export const asyncRouterMap = [
           component: () => import('@/views/stat/StatOverview'),
           meta: { title: '统计概览', permission: [ 'dashboard' ] }
         },
-        // chenbin_modify
         {
           path: '/stat/courseanalysis', // todo
           name: '课程分析',
           component: () => import('@/views/stat/StatCourseAnalysis'),
           meta: { title: '课程分析', permission: [ 'dashboard' ] }
-        }
-        // chenbin_modify
-        ]
+        },
+        {
+          path: '/stat/statstudentdata',
+          name: '学生统计',
+          component: () => import('@/views/stat/StatStudentData'),
+          meta: { title: '学生统计', permission: [ 'dashboard' ] }
+        }],
       },
       {
         path: '/exam/list',

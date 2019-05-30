@@ -49,10 +49,11 @@
   </div>
 </template>
 <script>
+import { addcourse } from '@/api/course'
 export default {
   data() {
     return {
-        currentTeacher: '刘明铭',
+      currentTeacher: '刘明铭',
       visible: false,
       confirmLoading: false,
       formLayout: 'horizontal',
@@ -85,11 +86,14 @@ export default {
         }
         console.log('Received values of form: ', values)
         // 数据提交成功
-        setTimeout(() => {
-          this.visible = false
-          this.confirmLoading = false
-        }, 2000)
-        this.$message.success('创建成功！')
+        const that = this
+        addcourse({
+          params: values //新建课程信息传给后端
+        }).then(() => {
+          that.visible = false
+          that.confirmLoading = false
+          that.$message.success('创建成功！')
+        })
       })
     },
     handleCancel() {
