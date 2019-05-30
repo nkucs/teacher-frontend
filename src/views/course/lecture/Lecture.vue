@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import { getCookie } from '@/utils/util'
 import { getMyLectures, getLectureByName, deleteLecture } from '@/api/lecture'
 
 export default {
@@ -107,15 +106,6 @@ export default {
       this.lectureName = ''
       this.$refs.lectureNameInput.focus()
     },
-    // editLecture (key) {
-    //   console.log('edit key=',key)
-    // },
-    // previewLecture (key) {
-    //   console.log('preview key=',key)
-    // },
-    // deleteLecture (key) {
-    //   console.log('delete key=',key)
-    // },
     handlePageChange (pagination) {
       console.log('pagination1', pagination)
       const pager = { ...this.pagination }
@@ -130,11 +120,9 @@ export default {
     },
     handleGetLectures (data = {}) {
       const that = this
-      const sessionID = getCookie('sessionID')
       const lectureData = {
         ...data,
         course_id: this.courseID,
-        session_id: sessionID
       }
       getMyLectures(lectureData)
         .then(response => {

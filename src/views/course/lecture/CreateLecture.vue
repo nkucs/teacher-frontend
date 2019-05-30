@@ -100,7 +100,6 @@ export default {
   },
   mounted () {
       this.courseId = this.$route.query.courseId
-      console.log('create-courseID:', courseId)
   },
   methods: {
     handleSubmit (e) {

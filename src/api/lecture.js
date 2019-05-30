@@ -1,5 +1,4 @@
 import { axios } from '@/utils/request'
-import { getCookie } from '@/utils/util'
 
 const api = {
     createLecture: '/teacher/lecture/create-lecture',
@@ -36,15 +35,11 @@ export function addFile(parameter) {
   })
 }
 
-// sessionID暂时用data来传输, 前端加上代理后用cookie
-export function getMyLectures(lectureData) {
+export function getMyLectures(parameter) {
   return axios({
     url: api.getMyLectures,
     method: 'get',
-    data: lectureData,
-    headers: {
-      Authorization: getCookie('sessionID')
-    }
+    params: parameter,
   })
 }
 
@@ -52,7 +47,7 @@ export function getLectureByName(lectureName) {
   return axios({
     url: api.getLectureByName,
     method: 'get',
-    data: { name: lectureName }
+    params: { name: lectureName }
   })
 }
 
@@ -60,6 +55,6 @@ export function deleteLecture(lectureID) {
   return axios({
     url: api.deleteLecture,
     method: 'post',
-    data: lectureID
+    params: lectureID
   })
 }

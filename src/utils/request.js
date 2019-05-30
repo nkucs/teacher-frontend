@@ -10,6 +10,7 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 const service = axios.create({
   baseURL: '/api', // api base_url
   timeout: 6000, // 请求超时时间
+  withCredentials: true
 })
 
 // service.withCredentials = true
