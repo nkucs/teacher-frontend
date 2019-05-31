@@ -196,11 +196,9 @@ export default {
         if (!err) {
           const checked = this.form.getFieldValue('rememberMe')
           values['rememberMe'] = checked
-          console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          // loginParams.password = md5(values.password)
           loginParams.password = values.password
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
@@ -259,7 +257,7 @@ export default {
       })
     },
     loginSuccess (res) {
-      console.log('login suc', res)
+      console.log(res)
       this.$router.push({ path: '/course' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {

@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import { login, getInfo, logout } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
-import { welcome, setCookie } from '@/utils/util'
+import { ACCESS_SESSION } from '@/store/mutation-types'
+import { welcome } from '@/utils/util'
 import { loadLanguageAsync } from '@/lang'
 
 const user = {
   state: {
-    token: '',
+    session: false,
     name: '',
     welcome: '',
     avatar: '',
@@ -16,8 +16,8 @@ const user = {
   },
 
   mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token
+    SET_SESSION: (state, session) => {
+      state.session = session
     },
     SET_NAME: (state, { name, welcome }) => {
       state.name = name
@@ -42,17 +42,12 @@ const user = {
     Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo)
-          .then(response => {
-            const result = response.data
-            console.log('login result', result)
-            console.log('sessionID:', result.sessionID)
-            setCookie('sessionID', result.sessionID)
-            Vue.ls.set(ACCESS_TOKEN, result.sessionID, 7 * 24 * 60 * 60 * 1000)
-            commit('SET_TOKEN', result.sessionID)
+          .then(() => {
+            Vue.ls.set(ACCESS_SESSION, true)
+            commit('SET_SESSION', true)
             resolve()
           })
           .catch(error => {
-            console.log('---')
             reject(error)
           })
       })
@@ -102,11 +97,11 @@ const user = {
     // 登出
     Logout({ commit, state }) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', '')
+        commit('SET_SESSION', false)
         commit('SET_ROLES', [])
-        Vue.ls.remove(ACCESS_TOKEN)
+        Vue.ls.remove(ACCESS_SESSION)
 
-        logout(state.token)
+        logout(state.session)
           .then(() => {
             resolve()
           })

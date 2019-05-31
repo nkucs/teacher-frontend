@@ -99,7 +99,7 @@ export default {
     }
   },
   mounted () {
-      this.courseId = this.$route.query.courseId
+      this.courseId = this.$route.query.courseID
   },
   methods: {
     handleSubmit (e) {

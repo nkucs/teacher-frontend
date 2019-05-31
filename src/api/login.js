@@ -14,7 +14,7 @@ import { axios } from '@/utils/request'
  */
 export function login(parameter) {
   return axios({
-    url: '/api/auth/login',
+    url: '/auth/login',
     method: 'post',
     data: parameter
   })
@@ -40,7 +40,7 @@ export function getInfo() {
 
 export function logout() {
   return axios({
-    url: '/api/auth/logout',
+    url: '/auth/logout',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'

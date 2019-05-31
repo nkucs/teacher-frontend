@@ -39,7 +39,7 @@ import editCourse from './editCourseForm'
 import { deletecourse, copycourse,getmycourse} from '@/api/course'
 const dataSource = [
   {
-    id:'123',
+    id:'1',
     name: '算法导论',
       time:'2019年春季学期',
       content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'

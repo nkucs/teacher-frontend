@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <router-link :to="{path: '/course/createlecture', query:{courseID: courseID}}">
+  <div class="panel">
+    <router-link :to="{path: '/course/details/createlecture', query:{courseID: courseID}}">
       <a-button id="addBTN" type=primary>{{ addLecture }}</a-button>
     </router-link>
     <div id="inputBox">
@@ -12,28 +12,28 @@
         <a-icon slot="prefix" type="tag" />
         <a-icon id="emptyBTN" v-if="lectureName" slot="suffix" type="close" @click="emitEmpty" />
       </a-input>
-      <a-button id="searchBTN" type=primary>{{ searchBTNText }}</a-button>
-      <a-button>{{ resetBTNText }}</a-button>
+      <a-button id="searchBTN" type=primary @click="handleGetLectureByName">{{ searchBTNText }}</a-button>
+      <a-button @click="handleResetLectures">{{ resetBTNText }}</a-button>
     </div>
-    <a-divider class="divider" orientation="left" v-if="!dividerNode">{{ defaultDividerNote }}</a-divider>
-    <a-divider class="divider" orientation="left" v-if="dividerNode">{{ dividerNote }}</a-divider>
+    <a-divider class="divider" orientation="left" v-if="!dividerNote">{{ defaultDividerNote }}</a-divider>
+    <a-divider class="divider" orientation="left" v-if="dividerNote">{{ dividerNote }}</a-divider>
     <a-table
       :columns="columns"
       :dataSource="lectureData"
       :pagination="pagination"
       @change="handlePageChange">
       <span slot="operation" slot-scope="record">
-        <router-link :to="{ path: 'edit'}" append>
-          <a @click="() => editLecture(record.lectureID)">{{ editLectureText }}</a>
+        <router-link :to="{ path: '/course/details/edit', query:{lecture_id: record.lecture_id}}" append>
+          <a @click="() => editLecture(record.lecture_id)">{{ editLectureText }}</a>
         </router-link>
         <a-divider type="vertical" />
-        <router-link :to="{ path: 'preview'}" append>
-          <a @click="() => previewLecture(record.lectureID)">{{ previewLectureText }}</a>
+        <router-link :to="{ path: '/course/details/preview', query:{lecture_id: record.lecture_id}}" append>
+          <a @click="() => previewLecture(record.lecture_id)">{{ previewLectureText }}</a>
         </router-link>
         <a-divider type="vertical" />
         <a-popconfirm 
           :title="confirmTitle" 
-          @confirm="handleConfirmDelete(record.lectureID)"
+          @confirm="handleConfirmDelete(record.lecture_id)"
           @cancel="cancelDelete"
           :okText="okText"
           :cancelText="cancelText">
@@ -48,14 +48,10 @@
 import { getMyLectures, getLectureByName, deleteLecture } from '@/api/lecture'
 
 export default {
+  inject: ['reload'],
   mounted() {
     this.courseID = this.$route.query.courseID
-    this.pagination.pageSize = 10
-    this.pagination.current = 1
-    this.handleGetLectures({
-        page: this.pagination.current,
-        page_length: this.pagination.pageSize
-    })
+    this.getIndexPage()
   },
   data () {
     return {
@@ -65,23 +61,22 @@ export default {
       lectureName: '',
       searchBTNText: '搜索',
       resetBTNText: '重置',
-      dividerNode: false,
       dividerNote: '',
       defaultDividerNote: '默认显示全部课时',
       editLectureText: '编辑',
       deleteLectureText: '删除',
       previewLectureText: '预览',
-      confirmTitle: '您确定要columns个课时吗？',
+      confirmTitle: '您确定要删除这个课时吗？',
       okText: '确定',
       cancelText: '取消',
       courseID: '',
       columns: [{
         title: '课时ID',
-        dataIndex: 'lectureID',
+        dataIndex: 'lecture_id',
         align: 'center'
       }, {
         title: '课时名称',
-        dataIndex: 'lectureName',
+        dataIndex: 'name',
         align: 'center'
       }, {
         title: '上次更新',
@@ -98,7 +93,17 @@ export default {
         align: 'center'
       }],
       lectureData: [],
-      pagination: {}
+      // lectureData: [
+      //   {
+      //     lecture_id: '1',
+      //     lectureName: 'sdsd',
+      //     lastModified: '111',
+      //     createdAt: '0000'
+      //   }
+      // ],
+      pagination: {
+        total: 0
+      }
     }
   },
   methods: {
@@ -107,51 +112,75 @@ export default {
       this.$refs.lectureNameInput.focus()
     },
     handlePageChange (pagination) {
-      console.log('pagination1', pagination)
       const pager = { ...this.pagination }
       pager.current = pagination.current
       this.pagination = pager
-      console.log('pagination2', pagination)
       this.handleGetLectures({
         page: pagination.current,
-        page_length: pagination.pageSize,
-        courseID: this.courseID
+        page_length: pagination.pageSize
       })
     },
     handleGetLectures (data = {}) {
       const that = this
       const lectureData = {
         ...data,
-        course_id: this.courseID,
+        course_id: this.courseID
       }
       getMyLectures(lectureData)
         .then(response => {
-          that.lectureData = response.data.lectures})
+          that.lectureData = response.data.lectures
+          that.pagination.total = response.data.total_counts})
         .catch(error => {
           console.log(error)
         })
     },
-    handleGetLectureByName (name) {
+    handleGetLectureByName () {
       const that = this
-      getLectureByName(name)
+      const lecname = this.lectureName
+      const info = {
+        name: lecname,
+        course_id: this.courseID,
+        page: this.pagination.current,
+        page_length: this.pagination.pageSize
+      }
+      getLectureByName(info)
         .then(response => {
-          that.lectureData = response.data
+          that.lectureData = response.data.lectures
+          that.pagination.total = response.data.total_counts
+          const template = `显示课时名为"${lecname}"的查询结果`
+          that.dividerNote = template
         }).catch(error => {
           console.log(error)
         })
     },
-    handleConfirmDelete (lectureID) {
-      // console.log('delete lecture_id:', lectureID)
-      deleteLecture(lectureID)
+    handleConfirmDelete (lecture_id) {
+      const that = this
+      const info = {
+        lecture_id: lecture_id
+      }
+      deleteLecture(info)
         .then(response => {
-          console.log('del-lectures-response',response)
-          this.HandleGetLectures()
+          console.log(response)
+          that.reload()
         }).catch(error => {
           console.log(error)
         })
+    },
+    getIndexPage () {
+      this.pagination.pageSize = 10
+      this.pagination.current = 1
+      this.handleGetLectures({
+          page: this.pagination.current,
+          page_length: this.pagination.pageSize
+      })
     },
     cancelDelete () {
       console.log('Click on No for delete.')
+    },
+    handleResetLectures () {
+      this.dividerNote = ''
+      this.lectureName = ''
+      this.getIndexPage()
     }
   }
 }
@@ -162,7 +191,6 @@ export default {
 #addBTN {
   margin-top: 2%;
   margin-bottom: 2%;
-  display: flex;
 }
 #inputTitle {
   width: 22%;
@@ -186,5 +214,8 @@ export default {
   font-size: 14px;
   margin-top: 2%;
   margin-bottom: 2%;
+}
+.panel {
+
 }
 </style>

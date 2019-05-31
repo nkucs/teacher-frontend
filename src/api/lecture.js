@@ -1,12 +1,13 @@
 import { axios } from '@/utils/request'
+import { getCookie } from '@/utils/util'
 
 const api = {
     createLecture: '/teacher/lecture/create-lecture',
     addProblem: '/teacher/lecture/edit-problems',
     addFile: '/teacher/lecture/add-file',
-    getMyLectures: 'http://188.131.129.220:8001/api/get-my-lectures/',
-    getLectureByName: 'http://188.131.129.220:8001/api/get-lecture-by-name/',
-    deleteLecture: 'http://188.131.129.220:8001/api/delete-lectures/'
+    getMyLectures: '/teacher/lecture/get-my-lectures/',
+    getLectureByName: '/teacher/lecture/get-lecture-by-name/',
+    deleteLecture: '/teacher/lecture/delete-lecture/'
   }
   
 export default api
@@ -15,7 +16,10 @@ export function createLecture(parameter) {
     return axios({
       url: api.createLecture,
       method: 'post',
-      params: parameter
+      data: parameter,
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+      }
     })
 }
 
@@ -27,11 +31,11 @@ export function addProblem(parameter) {
   })
 }
 
-export function addFile(parameter) {
+export function addFile(data) {
   return axios({
     url: api.addProblem,
     method: 'post',
-    params: parameter
+    data: data
   })
 }
 
@@ -43,18 +47,21 @@ export function getMyLectures(parameter) {
   })
 }
 
-export function getLectureByName(lectureName) {
+export function getLectureByName(parameter) {
   return axios({
     url: api.getLectureByName,
     method: 'get',
-    params: { name: lectureName }
+    params: parameter
   })
 }
 
-export function deleteLecture(lectureID) {
+export function deleteLecture(data) {
   return axios({
     url: api.deleteLecture,
     method: 'post',
-    params: lectureID
+    data: data,
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken')
+    }
   })
 }

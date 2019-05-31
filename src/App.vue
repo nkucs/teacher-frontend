@@ -1,7 +1,7 @@
 <template>
   <a-locale-provider :locale="locale">
     <div id="app">
-      <router-view/>
+      <router-view v-if="isRouterAlive"></router-view>
     </div>
   </a-locale-provider>
 </template>
@@ -11,9 +11,15 @@
   import { deviceEnquire, DEVICE_TYPE } from '@/utils/device'
 
   export default {
+    provide () {
+      return {
+        reload: this.reload
+      }
+    },    
     data () {
       return {
-        locale: zhCN
+        locale: zhCN,
+        isRouterAlive: true
       }
     },
     mounted () {
@@ -37,6 +43,14 @@
         }
         console.log('deviceType', deviceType)
       })
+    },
+    methods: {
+      reload () {
+        this.isRouterAlive = false
+        this.$nextTick(function () {
+          this.isRouterAlive = true
+        })
+      }
     }
   }
 </script>

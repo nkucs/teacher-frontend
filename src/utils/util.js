@@ -39,7 +39,6 @@ export function removeLoadingAnimate(id = '', timeout = 1500) {
  */
 export function getCookie (name) {
   var arr , reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
-  console.log('match:', document.cookie.match(reg))
   arr = document.cookie.match(reg)
   if (arr[2]) {
     return (arr[2])
@@ -48,26 +47,3 @@ export function getCookie (name) {
   }
 }
 
-/**
- * 设置cookie
- */
-export function setCookie (name, value, expiredays = 1000 * 60 * 60) {
-  console.log('cookiename:', name)
-  const exdate = new Date()
-  console.log('cookievalue:', value)
-  exdate.setDate(exdate.getDate() + expiredays)
-  document.cookie = name + '=' + escape(value) + ';expires=' + exdate.toGMTString() + ';path=/'
-  console.log('setCookie:', document.cookie)
-}
-
-/**
- * 删除cookie
- */
-export function delCookie (name) {
-  const exp = new Date()
-  exp.setTime(exp.getTime() - 1)
-  const val = getCookie(name)
-  if (val != null) {
-    document.cookie = name + '=' + val + ';expires' + exp.toGMTString()
-  }
-}
