@@ -315,7 +315,7 @@
 
         }
       }
-      
+
       &.dark {
         .global-header-wrapper {
 
