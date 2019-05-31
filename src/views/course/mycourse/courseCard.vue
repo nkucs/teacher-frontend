@@ -75,63 +75,51 @@ const dataSource = [
       }
     },
     methods:{
-        copycourse (courseID, teacherID) {
-      const self = this
-      console.log(`复制课程${courseID}`)
+    toDelete (ID) {
+      this.deleteID = ID
+      this.visibleDelete = true
+    },
+    toCopy (ID) {
+      this.copyID = ID
+      this.visibleCopy = true
+    },
+    copycourse () {
       copycourse({
-        params: {
-          course_id: courseID,  //向后端传参
-          teacher_id: teacherID,
-        }
+        'courseCode': this.copyID
       }).then(() => {
-        console.log(`${teacherID} copied course ${courseID} successfully.`)
-        for (var item in self.data) {
-          if (self.data[item].id === courseID) {
-            self.data.splice(item, 1)
-            break
-          }
-        }
+        console.log(`copied course successfully.`)
       }).catch((fail) => {
         alert('复制课程失败！')
         console.log(fail)
       })
     },
-    deletecourse(courseID) {
-      const self = this
-      console.log(`删除课程${courseID}`)
+    deletecourse() {
       deletecourse({
-        params: {
-          course_id: courseID,  //向后端传参
-        }
+        'courseCode': this.deleteID
       }).then(() => {
-        console.log(`deleted course ${courseID} successfully.`)
-        for (var item in self.data) {
-          if (self.data[item].id === courseID) {
-            self.data.splice(item, 1)
-            break
-          }
-        }
+        console.log(`deleted course successfully.`)
       }).catch((fail) => {
         alert('删除课程失败！')
         console.log(fail)
       })
+    },
+    getmycourse() {
+      getmycourse({
+        'page': this.page,
+        'pageLength': 10,
+        'name': this.courseName,
+        'teacher': this.teacherName
+      }).then((response) => {
+        console.log(`get my courses successfully.`)
+        this.dataSource = response.data
+      }).catch((fail) => {
+        alert('获取课程列表失败！')
+        console.log(fail)
+      })
     }
     },
-     mounted: function (teacherID) {
-    const self = this
-    getmycourse({
-      params: {
-        teacher_id: teacherID,
-      }
-    })
-    .then(response => {
-      console.log(response)
-      self.data = response.course //对应后端数据
-    })
-    .catch(fail => {
-      console.log(fail)
-      alert('获取课程列表失败！')
-    })
+     mounted: function () {
+    this.getmycourse()
   },
     components: {
       editCourse
