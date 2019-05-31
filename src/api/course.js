@@ -6,8 +6,8 @@ const api = {
   seekcourse: '/teacher/course/seekcourse',
   deletecourse: '/teacher/course/deletecourse',
   copycourse: '/teacher/course/copycourse',
-  editcourse: '/teacher/course/editcourse',
-  addcourse: '/teacher/course/addcourse'
+  addcourse: '/teacher/course/add-course',
+  editcourse: '/teacher/course/editcourse'
 }
 
 // export default api
@@ -51,16 +51,19 @@ export function seekcourse(parameter) {
     params: parameter
   })
 }
-export function editcourse(parameter) {
-	return axios({
-	  method: 'post',
-	  url: api.editcourse,
-	  data: parameter
-	});
-  
+
+// 新建课程
 export function addcourse(parameter) {
   return axios({
     url: api.addcourse,
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function editcourse(parameter) {
+  return axios({
+    url: api.deletecourse,
     method: 'post',
     params: parameter
   })
