@@ -117,8 +117,8 @@ export default {
       }
       else if (this.coursename === '') {
         seekcourse({
-          'course_name': this.coursename,
-          'teacher_name': this.teachername
+          'name': this.coursename,
+          'teacher': this.teachername
         }).then(response => {
           console.log(`seek successfully`)
           this.data = response.courses
@@ -131,8 +131,8 @@ export default {
       }
       else if (this.teachername === '') {
         seekcourse({
-          'course_name': this.coursename,
-          'teacher_name': this.teachername
+          'name': this.coursename,
+          'teacher': this.teachername
         }).then(response => {
           console.log(`seek successfully`)
           this.data = response.courses
@@ -145,8 +145,8 @@ export default {
       }
       else {
         seekcourse({
-          'teacher_name': this.teachername,
-          'course_name': this.coursename
+          'teacher': this.teachername,
+          'name': this.coursename
         }).then(response => {
           console.log(`seek successfully`)
           this.data = response.courses
@@ -165,7 +165,7 @@ export default {
     },
     copycourse () {
       copycourse({
-        'course_id': this.copyID
+        'courseCode': this.copyID
       }).then(() => {
         console.log(`copied course successfully.`)
       }).catch((fail) => {
@@ -175,7 +175,7 @@ export default {
     },
     deletecourse() {
       deletecourse({
-        'course_id': this.deleteID
+        'courseCode': this.deleteID
       }).then(() => {
         console.log(`deleted course successfully.`)
       }).catch((fail) => {
@@ -186,14 +186,14 @@ export default {
     getmycourse() {
       getmycourse({
         'page': this.page,
-        'page_length': 10,
-        'course_name': this.courseName,
-        'teacher_name': this.teacherName
+        'pageLength': 10,
+        'name': this.courseName,
+        'teacher': this.teacherName
       }).then((response) => {
         console.log(`get my courses successfully.`)
         this.data = response.courses
-        this.page = response.current_page
-        this.total = response.total_pages * 10
+        this.page = response.currentPage
+        this.total = response.totalPages * 10
       }).catch((fail) => {
         alert('获取课程列表失败！')
         console.log(fail)
