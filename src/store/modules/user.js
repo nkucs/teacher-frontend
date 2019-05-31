@@ -7,6 +7,7 @@ import { loadLanguageAsync } from '@/lang'
 const user = {
   state: {
     session: false,
+    id: 0,
     name: '',
     welcome: '',
     avatar: '',
@@ -18,6 +19,9 @@ const user = {
   mutations: {
     SET_SESSION: (state, session) => {
       state.session = session
+    },
+    SET_ID: (state, id) => {
+      state.id = id
     },
     SET_NAME: (state, { name, welcome }) => {
       state.name = name
@@ -42,9 +46,12 @@ const user = {
     Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo)
-          .then(() => {
+          .then((res) => {
+            const data = res.data
+            const user_id = data['user_id']         
             Vue.ls.set(ACCESS_SESSION, true)
             commit('SET_SESSION', true)
+            commit('SET_ID', user_id)
             resolve()
           })
           .catch(error => {
@@ -98,6 +105,7 @@ const user = {
     Logout({ commit, state }) {
       return new Promise(resolve => {
         commit('SET_SESSION', false)
+        commit('SET_ID', 0)
         commit('SET_ROLES', [])
         Vue.ls.remove(ACCESS_SESSION)
 
