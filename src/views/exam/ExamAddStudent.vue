@@ -38,13 +38,47 @@
       >
         <!-- 页面表单部分 -->
         <div>
-          <a-table
-            :rowSelection="rowSelection"
-            :columns="examstudent"
-            :dataSource="examdata"
-            rowKey="id"
-          >
-            <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
+          <a-table :rowSelection="rowSelection" :columns="columns" :dataSource="data" rowKey="id">
+            <template
+              v-for="col in ['type','exam_id','password']"
+              :slot="col"
+              slot-scope="text, record"
+            >
+              <div v-if="(col =='type')" :key="col">
+                <a-select
+                  v-if="record.editable"
+                  :defaultValue="text"
+                  style="width: 120px"
+                  @change="e => handleChange(e, record.key, col)"
+                >
+                  <a-select-option value="A">A</a-select-option>
+                  <a-select-option value="B">B</a-select-option>
+                </a-select>
+                <template v-else>{{ text }}</template>
+              </div>
+              <div v-else :key="col">
+                <a-input
+                  v-if="record.editable"
+                  style="margin: -5px 0"
+                  :value="text"
+                  @change="e => handleChange(e.target.value, record.key, col)"
+                />
+                <template v-else>{{ text }}</template>
+              </div>
+            </template>
+            <template slot="operation" slot-scope="text, record">
+              <div class="editable-row-operations">
+                <span v-if="record.editable">
+                  <a @click="() => save(record.key)">Save</a>
+                  <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.key)">
+                    <a>Cancel</a>
+                  </a-popconfirm>
+                </span>
+                <span v-else>
+                  <a @click="() => edit(record.key)">Edit</a>
+                </span>
+              </div>
+            </template>
           </a-table>
         </div>
       </a-layout-content>
@@ -52,7 +86,8 @@
   </a-layout>
 </template>
 <script>
-import { randomBytes } from 'crypto'
+import axios from 'axios'
+const exam = '' //为本次考试id
 
 const alltudent = [
   {
@@ -78,7 +113,7 @@ for (let i = 0; i < 46; i++) {
   })
 }
 
-const examstudent = [
+const columns = [
   {
     title: 'ID',
     dataIndex: 'id',
@@ -86,42 +121,61 @@ const examstudent = [
   },
   {
     title: 'Name',
-    dataIndex: 'name'
+    dataIndex: 'name',
+    scopedSlots: { customRender: 'name' }
   },
   {
     title: '考试类型',
-    dataIndex: 'type'
+    dataIndex: 'type',
+    scopedSlots: { customRender: 'type' }
   },
   {
     title: '用户名',
-    dataIndex: 'exam_id'
+    dataIndex: 'exam_id',
+    scopedSlots: { customRender: 'exam_id' }
   },
   {
     title: '密码',
-    dataIndex: 'key'
+    dataIndex: 'password',
+    scopedSlots: { customRender: 'password' }
+  },
+  {
+    title: 'operation',
+    dataIndex: 'operation',
+    scopedSlots: { customRender: 'operation' }
   }
 ]
-const examdata = []
-for (let i = 0; i < 46; i++) {
-  examdata.push({
-    id: i * 10,
-    name: i,
+const data = []
+for (var i = 0; i < 46; i++) {
+  data.push({
+    key: i.toString(),
+    id: (i * 10).toString(),
+    name: ' A',
     type: 'A',
     exam_id: i,
-    key: randomBytes
+    password: i
   })
 }
+
+const dataclone = []
 export default {
   data() {
+    this.cacheData = data.map(item => ({ ...item }))
     return {
+      exam, //本次考试的id
+      list: [],
       visible: false,
-      examdata,
+      dataclone,
+      data,
       alldata,
-      examstudent,
+      columns,
       alltudent,
       selectedRowKeys: [],
       selectedRowKeys_t: []
     }
+  },
+  mounted() {
+    this.stulist()
   },
   computed: {
     rowSelection() {
@@ -131,6 +185,7 @@ export default {
         }
       }
     },
+
     rowSelection_t() {
       return {
         onChange: selectedRowKeys => {
@@ -140,37 +195,192 @@ export default {
     }
   },
   methods: {
-    addstudent() {
-      this.visible = true
-      // alert(`selectedRowKeys: ${this.selectedRowKeys[0]}`)
+    get_url() {
+      return 'localhost:8000/port'
     },
-    deletestudent() {
-      if (this.selectedRowKeys[0] == '') {
+    // get_url() {
+    //   axios.get('localhost:8000/port',{params: value}) //2 AllowAccess-Control-Allow-Origin拦截限制
+    //     .then(res=>{
+    //       console.log(res.data)
+    //     })
+    // },
+    stulist: function() {
+      this.$message.success('正在初始化数据，请耐心等候……')
+      axios.post(this.get_url() + 'exam/student/get-examstudent', { exam: this.exam }).then(function(response) {
+        var student_number = eval(response.data.student_number)
+        var name = eval(response.data.name)
+        var typelist = eval(response.data.typelist)
+        var grade = eval(response.data.grade)
+        var password = eval(response.data.password)
+        for (var i = 0; i < student_number; ++i) {
+          this.list.push({
+            id: student_number[i],
+            name: name[i],
+            type: typelist[i],
+            exam_id: grade[i],
+            password: password[i]
+          })
+        }
+        this.$message.success('初始化成功')
+        this.data = this.list
+      })
+      this.list = []
+    },
+    handleChange(value, key, column) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      if (target) {
+        target[column] = value
+        this.data = newData
+      }
+    },
+    edit: function(key) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      if (target) {
+        target.editable = true
+        this.data = newData
+      }
+    },
+    save: function(key) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      if (target) {
+        delete target.editable
+        this.data = newData
+        this.cacheData = newData.map(item => ({ ...item }))
+        //将修改的值传递给后端
+        axios
+          .post(this.get_url() + 'exam/student/fix-examstudent', {
+            exam: this.exam,
+            id: target['id'],
+            type: target['type'],
+            exam_id: target['exam_id'],
+            password: target['password']
+          })
+          .then({})
+      }
+    },
+    cancel: function(key) {
+      const newData = [...this.data]
+      const target = newData.filter(item => key === item.key)[0]
+      if (target) {
+        Object.assign(target, this.cacheData.filter(item => key === item.key)[0])
+        delete target.editable
+        this.data = newData
+      }
+    },
+    addstudent: function() {
+      this.visible = true
+    },
+    deletestudent: function() {
+      var post = []
+      if (this.selectedRowKeys.length != 0) {
+        const newdata = this.data.filter(item => !this.selectedRowKeys.includes(item.id)) //获取所有需要删除的id
+        for (var i = 0; i < newdata.length; i++) {
+          post.append(newdata[i].id) //设置传参为所有添加的id
+        }
+        axios
+          .post(this.get_url() + 'exam/student/delete-student', { id: post, exam: this.exam }) //传入考试id及所有添加学生的ID
+          .then(function(response) {
+            //返回所参加考试的学生
+            var student_number = eval(response.data.student_number)
+            var name = eval(response.data.name)
+            var typelist = eval(response.data.typelist)
+            var grade = eval(response.data.grade)
+            var password = eval(response.data.password)
+            for (var i = 0; i < student_number; ++i) {
+              this.list.push({
+                id: student_number[i],
+                name: name[i],
+                type: typelist[i],
+                exam_id: grade[i],
+                password: password[i]
+              })
+            }
+            this.data = this.list
+          })
         this.$message.success('删除成功')
+        this.selectedRowKeys_t = []
       } else {
         this.$message.error('请勾选要删除的学生')
       }
     },
-    exportstu() {
-      if (this.selectedRowKeys[0] == '') {
+    exportstu: function() {
+      if (this.selectedRowKeys.length != 0) {
         this.$message.success('导出成功')
+        this.selectedRowKeys = []
       } else {
         this.$message.error('请勾选要导出的学生')
       }
     },
-
-    handleOk() {
-      if (this.selectedRowKeys_t[0] == '') {
+    handleOk: function() {
+      var post = []
+      if (this.selectedRowKeys_t.length != 0) {
+        const newdata = this.alldata.filter(item => this.selectedRowKeys_t.includes(item.all_id))
+        for (var i = 0; i < newdata.length; i++) {
+          post.append(newdata[i].id) //设置传参为所有添加的id
+        }
+        axios
+          .post(this.get_url() + 'exam/student/add-student', { id: post, exam: this.exam }) //传入考试id及所有添加学生的ID
+          .then(function(response) {
+            //返回所参加考试的学生
+            var student_number = eval(response.data.student_number)
+            var name = eval(response.data.name)
+            var typelist = eval(response.data.typelist)
+            var grade = eval(response.data.grade)
+            var password = eval(response.data.password)
+            for (var i = 0; i < student_number; ++i) {
+              this.list.push({
+                id: student_number[i],
+                name: name[i],
+                type: typelist[i],
+                exam_id: grade[i],
+                password: password[i]
+              })
+            }
+            this.$message.success('初始化成功')
+            this.data = this.list
+          })
+        this.list = []
+        this.selectedRowKeys_t = []
         this.$message.success('添加成功')
       } else {
         this.$message.error('请勾选要添加的学生')
       }
     },
-
-    onSearch(value) {
-      console.log(value)
-    },
-
+    onSearch: function(value) {
+      if (value === '') {
+        if (this.dataclone.length > 0) {
+          this.data = this.dataclone
+          this.dataclone = []
+        }
+      } else {
+        var list = /^[0-9]*$/
+        var list1 = /^[\u4e00-\u9fa5]|[a-zA-Z]$/
+        if (list.test(value)) {
+          if (this.dataclone < this.data.length) {
+            this.dataclone = this.data
+          }
+          this.data = []
+          for (var i = 0; i < this.dataclone.length; i++) {
+            if (this.dataclone[i].id === value) {
+              this.data.push(this.dataclone[i])
+            }
+          }
+        } else if (list1.test(value)) {
+          if (this.dataclone < this.data.length) {
+            this.dataclone = this.data
+          }
+          this.data = []
+          for (var j = 0; j < this.dataclone.length; j++) {
+            if (this.dataclone[j].name.indexOf(value) > 0) {
+              this.data.push(this.dataclone[j])
+            }
+          }
+        }
+      }
+    }, //前端从所有参加考试的学生中查找
     getallstudent: function() {}
   }
 }
@@ -218,5 +428,8 @@ export default {
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+}
+.editable-row-operations a {
+  margin-right: 8px;
 }
 </style>
