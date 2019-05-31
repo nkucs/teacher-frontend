@@ -14,7 +14,7 @@ import { axios } from '@/utils/request'
  */
 export function login(parameter) {
   return axios({
-    url: '/auth/login',
+    url: '/auth/teaclogin',
     method: 'post',
     data: parameter
   })
