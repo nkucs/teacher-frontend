@@ -41,7 +41,7 @@ export function getInfo() {
 export function logout() {
   return axios({
     url: '/auth/logout',
-    method: 'post',
+    method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
