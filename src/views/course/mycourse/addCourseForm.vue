@@ -13,31 +13,22 @@
         <a-form-item label="课程名称" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
           <a-input
             v-decorator="[
-              'courseTitle',
+              'name',
               {rules: [{ required: true, message: '请输入课程名称' }]}
             ]"
             placeholder="请输入课程名称"
           />
         </a-form-item>
-        <a-form-item label="课程教师" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-          <a-input
-            v-decorator="[
-              'teacher',
-              {rules: [{ required: true, message: '请输入教师姓名' }]}
-            ]"
-            :placeholder="currentTeacher"
-          />
-        </a-form-item>
         <a-form-item label="开始时间" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-          <a-date-picker v-decorator="['date-picker-1', config]" @change="onBeginTimeChange"/>
+          <a-date-picker v-decorator="['startTime', config]" @change="onBeginTimeChange"/>
         </a-form-item>
         <a-form-item label="结束时间" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-          <a-date-picker v-decorator="['date-picker-2', config]" @change="onEndTimeChange"/>
+          <a-date-picker v-decorator="['endTime', config]" @change="onEndTimeChange"/>
         </a-form-item>
         <a-form-item label="课程描述" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
           <a-textarea
             v-decorator="[
-              'courseDescription',
+              'description',
               {rules: [{ required: true, message: '请输入课程描述' }]}
             ]"
             placeholder="请输入课程描述"
@@ -53,7 +44,6 @@ import { addcourse } from '@/api/course'
 export default {
   data() {
     return {
-      currentTeacher: '刘明铭',
       visible: false,
       confirmLoading: false,
       formLayout: 'horizontal',
@@ -81,18 +71,18 @@ export default {
         }
         const values = {
           ...fieldsValue,
-          'date-picker-1': fieldsValue['date-picker-1'].format('YYYY-MM-DD'),
-          'date-picker-2': fieldsValue['date-picker-1'].format('YYYY-MM-DD')
+          'startTime': fieldsValue['startTime'].format('YYYY-MM-DD'),
+          'endTime': fieldsValue['endTime'].format('YYYY-MM-DD')
         }
         console.log('Received values of form: ', values)
         // 数据提交成功
         const that = this
-        addcourse({
-          params: values //新建课程信息传给后端
-        }).then(() => {
+        addcourse(values).then(res => {
           that.visible = false
           that.confirmLoading = false
           that.$message.success('创建成功！')
+          console.log('add-course-ok')
+          console.log(res)
         })
       })
     },

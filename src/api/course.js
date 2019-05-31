@@ -6,7 +6,7 @@ const api = {
   seekcourse: '/teacher/course/seekcourse',
   deletecourse: '/teacher/course/deletecourse',
   copycourse: '/teacher/course/copycourse',
-  addcourse: '/teacher/course/addcourse'
+  addcourse: '/teacher/course/add-course'
 }
 
 // export default api
@@ -56,6 +56,6 @@ export function addcourse(parameter) {
   return axios({
     url: api.addcourse,
     method: 'post',
-    params: parameter
+    data: parameter
   })
 }
