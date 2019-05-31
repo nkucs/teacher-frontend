@@ -118,6 +118,7 @@ export default {
           this.data = response.courses
         }).catch((fail) => {
           alert('查找失败！')
+
           console.log(fail)
         })
       }

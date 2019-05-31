@@ -12,7 +12,7 @@
         <div class="text">附件</div>
         <div class="problem">
           <ul v-for="item in files" :key="item">
-            <div @click="() => downLoadFile(item.filename,item.fileurl)">{{ item.filename }}</div>
+            <div @click="() => downLoad(item.fileName)" style="color:#1296db">{{ item.fileName }}</div>
           </ul>
         </div>
       </div>
@@ -20,7 +20,7 @@
         <div class="text">练习题</div>
         <div class="problem">
           <ul v-for="item in problems" :key="item">
-            <div>{{ item.problemcode }}:{{ item.problemname }}</div>
+            <div>{{ item.problemId }}:{{ item.problemName }}</div>
           </ul>
         </div>
       </div>
@@ -33,30 +33,33 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {getLecture} from '@/api/lecture'
+import {downLoadFile} from '@/api/lecture'
 export default {
   data() {
     return {
       url: '',
-      lectureid: 1,
+      lectureId: 1,
       lectureName: '第一课时：排序和查找',
       lectureDes: '这是一节非常重要的课，希望同学们呢认真掌握',
       problems: [
         {
-          problemcode: '1',
-          problemname: '排序'
+          problemId: 1,
+          problemName: '排序'
         },
         {
-          problemcode: '1',
-          problemname: '排序'
+          problemId: 1,
+          problemName: '排序'
         }
       ],
       files: [
         {
-          filename: '第一个ppt'
+          fileName: '第一个ppt',
+          fileId:1
         },
         {
-          filename: '第一个ppt'
+          fileName: '第一个ppt',
+          fileId:1
         }
       ]
     }
@@ -64,21 +67,34 @@ export default {
   methods: {
     editpage() {},
     sure() {},
-    downLoadFile(name, url) {
-      axios({
-        url: '/teacher/lecture/file',
-        method: 'GET',
-        responseType: 'blob' // important
-      }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]))
+
+
+
+    downLoad(name) {
+      const par=JSON.stringify({'file_name':name})
+
+      /*var a = {
+        file_name: name
+      }
+      const par =(JSON.stringify(a, ['file_name'])) //"{"b":42,"c":"42"}"
+*/
+      downLoadFile(par)
+      .then(response => {
+        console.log(response.data)
+        const url = window.URL.createObjectURL(new Blob([response]))
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', 'file.pdf') //or any other extension
+        link.setAttribute('download', name) //or any other extension
         document.body.appendChild(link)
         link.click()
       })
-    },
-
+      .error(response => {
+        console.log(par)
+        console.log(response)
+      })
+    }
+  },
+/*
     getCourse() {
       return axios.get('/teacher/lecture/get-lecture', {
         params: {
@@ -102,30 +118,32 @@ export default {
         }
       })
     }
-  },
+  },*/
 
   created: function() {
-    axios.all([getCourse(), getCourseProblems(), getCoureseFile()]).then(
-      axios.spread(function(course, problem, file) {
-        this.lectureName = course.data.name
-        this.lectureDes = course.data.desctiption
-        const problemslist = problem.data.problems
-        this.problems = []
-        for (let i = 0; i < problemslist.length; i++) {
-          this.problems.push({
-            problemcode: problemslist[i].probllem_id,
-            problemname: problemslist[i].problem_name
-          })
-        }
-        const filelist = file.data.files
-        this.files = []
-        for (let i = 0; i < filelist.length; i++) {
-          this.files.push({
-            filename: filelist[i].filename
-          })
-        }
-      })
-    )
+    const par = {lecture_id:1}
+    getLecture(par)
+    .then(res =>{
+      console.log(res)
+      this.lectureName = res.data.name
+      this.lectureDes = res.data.description
+      const filelist = res.data.files
+      this.files = []
+      for (let i = 0; i < filelist.length; i++) {
+        this.files.push({
+          fileName: filelist[i].file,
+          fileId:filelist[i].id
+        })
+      }
+      const problemslist = res.data.problems
+      this.problems = []
+      for (let i = 0; i < problemslist.length; i++) {
+        this.problems.push({
+          problemId: problemslist[i].id,
+          problemName: problemslist[i].name
+        })
+      }
+    })
   }
 }
 </script>
