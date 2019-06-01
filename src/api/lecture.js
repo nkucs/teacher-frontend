@@ -7,9 +7,13 @@ const api = {
     addFile: '/teacher/lecture/add-file',
     getMyLectures: '/teacher/lecture/get-my-lectures/',
     getLectureByName: '/teacher/lecture/get-lecture-by-name/',
-    deleteLecture: '/teacher/lecture/delete-lecture/'
+    deleteLecture: '/teacher/lecture/delete-lecture/',
+    getLecture:'/teacher/lecture/get-lecture',
+    downLoadFile:'/teacher/lecture/download-file',
+    delFile:'/teacher/lecture/delete-file',
+    delProblem:'/teacher/lecture/delete-problems'
   }
-  
+
 export default api
 
 export function createLecture(parameter) {
@@ -63,5 +67,38 @@ export function deleteLecture(data) {
     headers: {
       'X-CSRFToken': getCookie('csrftoken')
     }
+  })
+}
+
+export function getLecture(parameter) {
+  return axios({
+    url: api.getLecture,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function downLoadFile(parameter) {
+  return axios({
+    url: api.downLoadFile,
+    method: 'post',
+    data: parameter,
+    dataType: 'json',
+    responseType: 'blob'
+  })
+}
+
+export function delFile(parameter){
+  return axios({
+    url: api.delFile,
+    method: 'get',
+    params: parameter
+  })
+}
+export function delProblem(parameter){
+  return axios({
+    url: api.delProblem,
+    method: 'get',
+    params: parameter
   })
 }
