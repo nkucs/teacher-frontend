@@ -1,8 +1,8 @@
 <template>
   <div>
-    <stattimedistribution student_id='0'></stattimedistribution>
+    <stattimedistribution :studentId='0'></stattimedistribution>
     <studentnumberstatistics></studentnumberstatistics>
-    <runtimes></runtimes>
+    <runtimes :problemId='1'></runtimes>
     <studentcasetagstatistics></studentcasetagstatistics>
   </div>
 </template>
