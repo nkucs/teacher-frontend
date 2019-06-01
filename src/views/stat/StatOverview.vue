@@ -48,6 +48,8 @@
 </template>
 
 <script>
+import { axios } from '@/utils/request'
+
 export default {
   data() {
     return {
@@ -88,19 +90,22 @@ export default {
     }
   },
   created: function(){
-    //getACProblemInfo()
+    this.getACProblemInfo()
   },
   methods:{
     getACProblemInfo:function(){
-      const that = this
-      that.$axios({
+      axios({
         method: 'get',
-        url: '/problem/ac/',
-        data: {
-          userID: localStorage.getItem('userID')
-        }
+        url: '/teacher/course/stat/problem-data'
       }).then(response => {
-        that.ACProblemData = response.data.ACProblemData
+        var num = Object.keys(response.data).length
+        var problemKey = Object.keys(response.data)
+        var problemValue = Object.values(response.data)
+        this.problemData.rows = []
+        for (let index = 0; index < num; index++) {
+          this.problemData.rows.push({'课程名称': problemKey[index],
+            '题目总数': problemValue[index]})
+        }
       }).catch(error => {
         console.log(error)
       })
