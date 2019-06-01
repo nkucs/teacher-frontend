@@ -45,33 +45,33 @@ export const asyncRouterMap = [
         component: PageView,
         meta: { title: '题目管理', icon: 'dashboard', permission: [ 'dashboard' ] },
         children: [{
-          path: '/problem/list', // todo
+          path: '/problem/list',
           name: '题目列表',
           component: () => import('@/views/problem/ProblemList'),
           meta: { title: '题目列表', permission: [ 'dashboard' ] }
         },
         {
-          path: '/problem/add', // todo
+          path: '/problem/add',
           name: '添加题目',
           component: () => import('@/views/problem/ProblemDetail'),
           meta: { title: '添加题目', permission: [ 'dashboard' ] }
         },{
-          path: '/problem/modify', // todo
+          path: '/problem/modify/:problem_id',
           name: '修改题目',
           component: () => import('@/views/problem/ProblemModify'),
           meta: { title: '修改题目', permission: [ 'dashboard' ] }
         },{
-            path: '/problem/sourcecode', // todo
+            path: '/problem/sourcecode/:submission_id',
             name: '查看源代码',
             component: () => import('@/views/problem/SourceCode'),
             meta: { title: '查看源代码', permission: [ 'dashboard' ] }
           },{
-            path: '/problem/preview', // todo
+            path: '/problem/preview/:problem_id',
             name: '题目预览',
             component: () => import('@/views/problem/ProblemPreview'),
             meta: { title: '题目预览', permission: [ 'dashboard' ] }
           },{
-            path: '/problem/submit', // todo
+            path: '/problem/submit/:problem_id',
             name: '查看提交',
             component: () => import('@/views/problem/CheckSubmit'),
             meta: { title: '查看提交', permission: [ 'dashboard' ] }
