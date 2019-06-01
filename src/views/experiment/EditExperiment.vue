@@ -67,7 +67,6 @@
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
         <a-input
-          placeholder='请输入实验名称'
           v-decorator="['experiment-name', expNameConfig]"
         />
       </a-form-item>

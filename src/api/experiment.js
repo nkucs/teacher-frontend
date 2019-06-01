@@ -3,7 +3,7 @@ import { axios } from '@/utils/request'
 const api = {
   getProblems: '/teacher/lecture/get-problems',
   deleteLab: '/teacher/lab/delete-lab',
-  getLabs:'/teacher/lab/get-my-labs'
+  getLabs:'/teacher/lab/get-lab'
 }
 
 export default api

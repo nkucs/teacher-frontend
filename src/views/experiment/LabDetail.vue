@@ -4,8 +4,9 @@
 
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
-        <textview
-          v-model="lab.name"
+        <a-input
+          placeholder='请输入实验名称'
+          v-decorator="['experiment-name', expNameConfig]"
         />
       </a-form-item>
 
@@ -65,6 +66,7 @@
 import moment from 'moment'
 import {getLabs} from'@/api/experiment'
 const selectedDataSource = []
+var Labs=[]
 for (let i=0; i<10; i++) {
     selectedDataSource.push({
         id: i,
@@ -153,7 +155,9 @@ export default {
   data: () => ({
     // lab
     dateFormat: 'YYYY/MM/DD',
-    lab: {},
+    lab: {
+      name:''
+    },
     // layout related configuration
     formItemLayout,
     buttonSetFormat,
@@ -199,6 +203,15 @@ export default {
     // => lab {lab.name, lab.description, lab.startTime} 
     // => this.selectedDataSource
     // => this.allDataSource 
+    this.expNameConfig = {
+      initialValue: this.lab.name,
+      rules: [
+        {
+          required: true,
+          message: '实验名称不能为空'
+        }
+      ]  
+    }
   },
 
   computed: {
@@ -211,18 +224,23 @@ export default {
     getdata(){
       console.log('gw')
       getLabs({
-        data:{
-          lab_id:2
+        data:{   
+            lab_id:'1'
         }
       }).then((Response)=>{
           console.log('start')
-          console.log(Response)
-          var Labs =Response.data
+          //console.log(Response)
+          Labs=Response.data
           console.log(Labs)
           console.log('end')
         })
     },
 
+    getLabname(){
+        this.lab.name=Labs[0].name
+        console.log(Labs[0].name)
+        console.log(this.lab.name)
+    },
     onDelete (key) {
       const selectedDataSource = [...this.selectedDataSource]
       this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
@@ -255,36 +273,7 @@ export default {
           this.formValues = values
         }
       })
-    },
-    confirmSubmit() {
-      // upload and create a new lab with : this.formValues, this.selectedDataSource
-      this.confirmLoading = true
-      setTimeout(() => {
-        this.submitVisible = false
-        this.confirmLoading = false
-        // 调用编辑实验的 API 并回到实验列表页面
-        this.$router.push({path:'/experiment/list'})
-      }, 500)
-    },
-    cancelSubmit() {
-      this.submitVisible = false
-    },
-
-    handleCancel() {
-      this.cancelSubmitVisible = true
-    },
-    confirmCancel() {
-      this.confirmLoading = true
-      setTimeout(() => {
-        this.cancelSubmitVisible = false
-        this.confirmLoading = false
-        this.$router.push({path:'/experiment/list'})
-      }, 500)
-    },
-    abandonCancel() {
-      this.cancelSubmitVisible = false
-    },
-   
+    },   
   },
   mounted(){
     this.getdata()
