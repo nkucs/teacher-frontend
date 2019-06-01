@@ -109,6 +109,38 @@ export default {
       }).catch(error => {
         console.log(error)
       })
+    },
+    getStuData:function(){
+      const that = this
+      axios({
+        method: 'get',
+        url: '/teacher/student/stat/get_student_num_by_year'
+      }).then(response => {
+        var num = Object.keys(response.data).length
+        var stuKey = Object.keys(response.data)
+        var stuValue = Object.values(response.data)
+        that.stuData.rows = []
+        for (let index = 0; index < num; index++) {
+          this.problemData.rows.push({'年级': stuKey[index]+'级',
+            '人数': stuValue[index]})
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    getACData:function(){
+      const that = this
+      axios({
+        method: 'get',
+        url: '/teacher/submission/stat/get_submission_stat'
+      }).then(response => {
+        var acValue = Object.values(response.data)
+        that.acData.rows = []
+        that.acData.rows.push({'是否ac': 'AC次数','题目总数': acValue[0]})
+        that.acData.rows.push({'是否ac': '非AC次数','题目总数': acValue[1]})
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }
