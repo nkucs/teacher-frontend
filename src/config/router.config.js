@@ -157,6 +157,12 @@ export const asyncRouterMap = [
         component: () => import('@/views/course/lecture/preview.vue')
       },
       {
+        path: '/course/details/editLecture',
+        name: '主讲课预览',
+        hidden: true,
+        component: () => import('@/views/course/lecture/editLecture.vue')
+      },
+      {
         path: '/course/details/createlecture',
         name: '新建课时',
         hidden: true,

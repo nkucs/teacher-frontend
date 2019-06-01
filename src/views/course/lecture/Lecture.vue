@@ -23,7 +23,7 @@
       :pagination="pagination"
       @change="handlePageChange">
       <span slot="operation" slot-scope="record">
-        <router-link :to="{ path: '/course/details/edit', query:{lecture_id: record.lecture_id}}" append>
+        <router-link :to="{ path: '/course/details/editLecture', query:{lecture_id: record.lecture_id}}" append>
           <a @click="() => editLecture(record.lecture_id)">{{ editLectureText }}</a>
         </router-link>
         <a-divider type="vertical" />
