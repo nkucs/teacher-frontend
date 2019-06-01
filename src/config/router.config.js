@@ -132,9 +132,9 @@ export const asyncRouterMap = [
         component: BlankLayout,
         meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] },
         children: [{
-          path: '/exam/addproblems', // todo
+          path: '/exam/addproblems',
           name: '添加考试题目',
-          component: () => import('@/views/exam/ExamAddProblems'),
+          component: () => import('@/views/exam/AddProblems'),
           meta: { title: '添加考试题目'}
         },
         {
