@@ -1,6 +1,6 @@
 <template>
   <div>
-    <stattimedistribution></stattimedistribution>
+    <stattimedistribution student_id='0'></stattimedistribution>
     <studentnumberstatistics></studentnumberstatistics>
     <runtimes></runtimes>
     <studentcasetagstatistics></studentcasetagstatistics>
