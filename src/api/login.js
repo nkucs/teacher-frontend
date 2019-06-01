@@ -14,7 +14,7 @@ import { axios } from '@/utils/request'
  */
 export function login(parameter) {
   return axios({
-    url: '/api/auth/login',
+    url: '/auth/teaclogin',
     method: 'post',
     data: parameter
   })
@@ -40,8 +40,8 @@ export function getInfo() {
 
 export function logout() {
   return axios({
-    url: '/api/auth/logout',
-    method: 'post',
+    url: '/auth/logout',
+    method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
