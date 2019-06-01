@@ -69,154 +69,195 @@
       :columns="columns"
       :dataSource="data"
     >
-      <span slot="problem_state" slot-scope="problem_state">
-        <a-tag color="green" :key="problem_state">{{ problem_state }}</a-tag>
-      </span>
       <span slot="action" slot-scope="text, record">
-        <a href="javascript:;" @change="editProblem(record.id)">修改</a>
+        <a-button @click="editProblem(record.problem_id)">修改问题</a-button>
+        <!--        <a href="javascript:;" @change="editProblem(record.id)">修改</a>-->
         <a-divider type="vertical"/>
-        <a href="javascript:;" @change="previewProblem(record.id)">预览</a>
+        <!-- <a href="javascript:;" @change="previewProblem(record.problem_id)">预览</a> -->
+        <a-button @click="previewProblem(record.problem_id)">预览问题</a-button>
         <a-divider type="vertical"/>
-        <a href="javascript:;" @change="deleteProblem(record.id)">删除</a>
+        <!-- <a href="javascript:;" @change="deleteProblem(record.problem_id)">删除</a> -->
+        <a-button @click="deleteProblem(record.problem_id)">删除问题</a-button>
+        <a-divider type="vertical"/>
+        <a-button @click="checkSubmit(record.problem_id)">查看提交</a-button>
       </span>
     </a-table>
   </div>
 </template>
 
 <script>
-const columns = [
-  {
-    title: 'id',
-    dataIndex: 'id'
-  },
-  {
-    title: '题目名称',
-    dataIndex: 'problem_name'
-  },
-  {
-    title: '提交数',
-    dataIndex: 'submit_times'
-  },
-  {
-    title: '通过数',
-    dataIndex: 'ac_times'
-  },
-  {
-    title: '通过率',
-    dataIndex: 'ac_ratio'
-  },
-  {
-    title: '创建人',
-    dataIndex: 'setup_instructor'
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'setup_time'
-  },
-  {
-    title: '难度',
-    dataIndex: 'problem_difficulty'
-  },
-  {
-    title: '题目状态',
-    key: 'problem_state',
-    dataIndex: 'problem_state',
-    scopedSlots: { customRender: 'problem_state' }
-  },
-  {
-    title: '操作',
-    key: 'action',
-    dataIndex: 'action',
-    scopedSlots: { customRender: 'action' }
-  }
-]
+  import { getAllProblems, deleteProblem } from '@/api/problem'
 
-const data = []
-for (let i = 0; i < 46; i++) {
-  data.push({
-    key: i,
-    id: `${i}`,
-    problem_name: `问题${i}`,
-    submit_times: 50,
-    ac_times: 30,
-    ac_ratio: `60%`,
-    setup_instructor: `刘铭明`,
-    setup_time: `2018-02-13 13:41:32`,
-    problem_difficulty: `Middle`,
-    problem_state: `√已公开`
-  })
-}
+  const columns = [
+    {
+      title: 'id',
+      dataIndex: 'problem_id'
+    },
+    {
+      title: '题目名称',
+      dataIndex: 'problem_name'
+    },
+    {
+      title: '提交数',
+      dataIndex: 'submit_count'
+    },
+    {
+      title: '通过数',
+      dataIndex: 'accepted_count'
+    },
+    {
+      title: '通过率',
+      dataIndex: 'ac_ratio'
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'created_time'
+    },
+    {
+      title: '操作',
+      key: 'action',
+      dataIndex: 'action',
+      scopedSlots: { customRender: 'action' }
+    }
+  ]
 
-export default {
-  data() {
-    return {
-      data,
-      columns,
-      selectedRowKeys: [], // Check here to configure the default column
-      loading: false
-    }
-  },
-  computed: {
-    hasSelected() {
-      return this.selectedRowKeys.length > 0
-    }
-  },
-  methods: {
-    start() {
-      this.loading = true
-      // ajax request after empty completing
-      setTimeout(() => {
-        this.loading = false
-        this.selectedRowKeys = []
-      }, 1000)
+
+  export default {
+    data() {
+      return {
+        data: [],
+        columns,
+        selectedRowKeys: [], // Check here to configure the default column
+        loading: false
+      }
     },
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
+    computed: {
+      hasSelected() {
+        return this.selectedRowKeys.length > 0
+      }
     },
-    handleChange(value) {
-      console.log(`selected ${value}`)
+    methods: {
+      start() {
+        this.loading = true
+        // ajax request after empty completing
+        setTimeout(() => {
+          this.loading = false
+          this.selectedRowKeys = []
+        }, 1000)
+      },
+      onSelectChange(selectedRowKeys) {
+        console.log('selectedRowKeys changed: ', selectedRowKeys)
+        this.selectedRowKeys = selectedRowKeys
+      },
+      handleChange(value) {
+        console.log(`selected ${value}`)
+      },
+      selectLecture(value) {
+        console.log(`selected ${value}`)
+      },
+      selectTypeOfProblem(value) {
+        console.log(`selected ${value}`)
+      },
+      selectInstructor(value) {
+        console.log(`selected ${value}`)
+      },
+      selectLevelOfProblem(value) {
+        console.log(`selected ${value}`)
+      },
+
+      dataRender(resData) {
+        console.log('data rendering')
+        console.log(resData)
+        for (var i = 0; i < resData.length; i++) {
+          console.log('in a for loop')
+          this.data.push({
+            key: i,
+            problem_id: resData[i].id,
+            problem_name: resData[i].name,
+            submit_count: resData[i].submit_count,
+            accepted_count: resData[i].accepted_count,
+            ac_ratio: (resData[i].submit_count == 0) ? 0 : resData[i].accepted_count / resData[i].submit_count,
+            created_time: resData[i].created_at
+            // problem_difficulty: `Middle`,
+            // problem_state: `√已公开`
+          })
+        }
+        console.log('data rendered')
+        console.log(this.data)
+      },
+
+      loadAllProblems() {
+        getAllProblems({
+          page: 1
+        }).then(response => {
+          console.log('下面是resonse')
+          console.log(response)
+          this.dataRender(response.data.problems)
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+
+      editProblem(problem_id) {
+        console.log(problem_id)
+        this.$router.push({
+          path: `/problem/modify/${problem_id}`
+        })
+        // console.log('edit problem')
+      },
+      previewProblem(problem_id) {
+        this.$router.push({
+          path: `/problem/preview/${problem_id}`
+        })
+      },
+
+      deleteProblem(problem_id) {
+        deleteProblem({
+          problem_id: problem_id
+        }).then(function(res) {
+          console.log(res)
+          alert('删除成功')
+          location.reload()
+        })
+          .catch(function(err) {
+            console.log(err)
+          })
+      },
+      checkSubmit(problem_id) {
+        this.$router.push({
+          path: `/problem/submit/${problem_id}`
+        })
+      }
     },
-    selectLecture(value) {
-      console.log(`selected ${value}`)
-    },
-    selectTypeOfProblem(value) {
-      console.log(`selected ${value}`)
-    },
-    selectInstructor(value) {
-      console.log(`selected ${value}`)
-    },
-    selectLevelOfProblem(value) {
-      console.log(`selected ${value}`)
-    }
-    // editProblem(problem_id) {
-    //
-    // },
     // previewProblem(problem_id){
     //
     // },
-    // deleteProblem(problem_id){
-    //
-    // }
+
+
+    mounted() {
+      this.loadAllProblems()
+    }
   }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #3f70f5;
-}
+  h1,
+  h2 {
+    font-weight: normal;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    display: inline-block;
+    margin: 0 10px;
+  }
+
+  a {
+    color: #3f70f5;
+  }
 </style>
