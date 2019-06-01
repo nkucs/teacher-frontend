@@ -142,6 +142,12 @@ export const asyncRouterMap = [
           name: '添加考试学生',
           component: () => import('@/views/exam/ExamAddStudent'),
           meta: { title: '添加考试学生'}
+        },
+        {
+          path: '/exam/examdetial', // todo
+          name: '考试详情',
+          component: () => import('@/views/exam/ExamDetial'),
+          meta: { title: '考试详情'}
         }]
       },
       {
