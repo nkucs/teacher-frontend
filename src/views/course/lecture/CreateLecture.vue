@@ -40,7 +40,7 @@
         :wrapper-col="{ span: 12 }"
       >
         <a-upload
-          action="/"
+          action="http://188.131.129.220:8000"
           :multiple="true"
           :fileList="fileList"
           @change="fileChange"
@@ -127,12 +127,12 @@ export default {
       this.form.resetFields()
     },
     fileChange(info) {
-      let fileList = info.fileList
+      this.fileList = info.fileList
 
       // 1. Limit the number of uploaded files
       //    Only to show two recent uploaded files, and old ones will be replaced by the new
-      fileList = fileList.slice(-2)
-
+      //this.fileList = this.fileList.slice(-2)
+      console.log(info)
       // 2. read from response and show file link
       fileList = fileList.map((file) => {
         if (file.response) {

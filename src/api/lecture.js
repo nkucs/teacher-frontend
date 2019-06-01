@@ -30,9 +30,9 @@ export function addProblem(parameter) {
 
 export function addFile(parameter) {
   return axios({
-    url: api.addProblem,
+    url: api.addFile,
     method: 'post',
-    params: parameter
+    data: parameter
   })
 }
 
