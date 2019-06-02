@@ -1,24 +1,23 @@
 <template>
-  <div>    
-    <h2 class="mainTitle">实验详情</h2>
+  <div>
 
-    <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
+    <h2 class="mainTitle">编辑实验</h2>
+
+    <a-form id="components-form-demo-validate-other" :form="form">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
-        <a-input
-          placeholder='请输入实验名称'
-          v-decorator="['experiment-name', expNameConfig]"
-        />
+        {{ lab.name }}
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验描述：">
-        <textview
-          v-model="lab.description"
-        />
+        {{ lab.description }}
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验附件">
-        <!--all attachments-->
-        <upLoadFile></upLoadFile>
+        <ul>
+          <li v-for="(item, index) in lab.files" :key="index">
+            <a href="javascript:void(0);" @click="download(index)">{{ item.name }}</a>
+          </li>
+        </ul>
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="练习题目">
@@ -26,63 +25,51 @@
           <span slot="tags" slot-scope="tags">
             <a-tag v-for="tag in tags" color="blue" :key="tag">{{ tag }}</a-tag>
           </span>
-
         </a-table>
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="开始时间：" :defaultValue="lab.startTime" :format="dateFormat">
-        <a-date-picker 
-          v-decorator="['start-date-time-picker', datePickerConfig]" 
-          show-time
-          format="YYYY-MM-DD HH:mm:ss"
-          disabled="false" />
+      <a-form-item v-bind="formItemLayout" label="开始时间：" >
+        {{ lab.startTime }}
       </a-form-item>
 
-      <a-form-item v-bind="formItemLayout" label="截止时间：" :defaultValue="lab.endTime" :format="dateFormat">
-        <a-date-picker 
-          v-decorator="['end-date-time-picker', datePickerConfig]" 
-          show-time
-          format="YYYY-MM-DD HH:mm:ss" 
-          disabled="false"/>
+      <a-form-item v-bind="formItemLayout" label="截止时间：">
+        {{ lab.endTime }}
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="是否提交实验报告：">
-        <a-radio-group
-          v-decorator="['radio-group', radioConfig]"
-          disabled="false">
-          <a-radio value="y" :checked="lab.reportRequired">
-            是
-          </a-radio>
-          <a-radio value="n" :checked="!lab.reportRequired">
-            否
-          </a-radio>
-        </a-radio-group>
+        {{ lab.reportRequired==="y"?"是":"否" }}
+      </a-form-item>
+      <a-form-item
+        v-bind="formItemLayout"
+        label="实验报告权重"
+      >
+        {{ lab.attachmentWeight }} %
       </a-form-item>
     </a-form>
   </div>
 </template>
 
 <script>
-//import upLoadFile from '@/components/upLoadFile'
 import moment from 'moment'
+import { getLab, getSubmissionFile } from '@/api/experiment'
 
 const columnsWithFilter = [
   {
     title: 'id',
     dataIndex: 'id',
     sorter: (a, b) => (a.id).localeCompare((b.id)),
-  }, 
+  },
   {
     title: '名称',
     dataIndex: 'name',
     width: '25%',
     sorter: (a, b) => (a.name).localeCompare(b.name),
-  }, 
+  },
   {
     title: '教师',
     dataIndex: 'teacherName',
     width: '20%',
     sorter: (a, b) => (a.teacherName).localeCompare((b.teacherName)),
-  }, 
+  },
   {
   title: '标签',
   key: 'tags',
@@ -94,21 +81,21 @@ const columnsWithFilter = [
   }]
 
 const columns =  [
-  { 
+  {
     title: 'id',
     dataIndex: 'id',
-  }, 
+  },
   {
     title: '名称',
     dataIndex: 'name',
     width: '25%',
-  }, 
+  },
   {
     title: '教师',
     dataIndex: 'teacherName',
     width: '20%',
-    
-  }, 
+
+  },
   {
   title: '标签',
   key: 'tags',
@@ -116,8 +103,13 @@ const columns =  [
   scopedSlots: { customRender: 'tags' },
   width: '30%'
   },
-]
-  
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    scopedSlots: { customRender: 'operation' },
+    width: '16%'
+  }]
+
 const formItemLayout = {
   labelCol: {
     span: 6
@@ -134,51 +126,23 @@ const buttonSetFormat = {
   }
 }
 
-
 export default {
-  components: {
-
-    //upLoadFile
-  },
-
   data: () => ({
     // lab
-    dateFormat: 'YYYY/MM/DD',
-    lab: {
-      name:''
-    },
+    id: '',
+    lab: '',
     // layout related configuration
     formItemLayout,
     buttonSetFormat,
-    confirmLoading: false,
-
-    // search related 
-    searchId: '',
-    searchProblemName: '',
-    searchTeacherName: '',
-    searchTag: '',
     // table related configuration
-    selectedDataSource,
-    allDataSource,
+    selectedDataSource: '',
     columns,
     columnsWithFilter,
     pagination: {
       defaultPageSize: 6
     },
-    selectedRowKeys: [], 
-
-    // tips and modal related configuration
-    cancelModalText: '是否放弃编辑实验？！',
-    submitModalText: '确认当前修改？', 
-    cancelSubmitVisible: false,
-    submitVisible: false,
-    exerciseAdditionVisible: false,
-
-    // final form content for submitting
-    formValues: null,
-
   }),
-  
+
   beforeCreate() {
     console.log('before create')
     console.log(this.$route.params.id)
@@ -207,26 +171,25 @@ export default {
         endTime: moment(res.data.end_time).format('YYYY-MM-DD HH:mm:ss'),
         files: res.data.files,
         reportRequired: res.data.report_required?'y':'n',
-        attachmentWeight: 20,
-    }
+        attachmentWeight: res.data.attachment_weight,
+      }
     })
   },
 
   methods: {
-    getdata(){
-      console.log('gw')
-      getLabs({
-        data:{   
-            lab_id:'1'
-        }
-      }).then((Response)=>{
-          console.log('start')
-          //console.log(Response)
-          Labs=Response.data
-          console.log(Labs)
-          console.log('end')
-        })
-        }
+    download(key){
+      getSubmissionFile({
+        attachment_id: this.lab.files[key].id
+      }).then((response) => {
+        console.log(response)
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', this.lab.files[key].name) //or any other extension
+        document.body.appendChild(link)
+        link.click()
+      })
+    }
   },
 }
 </script>
