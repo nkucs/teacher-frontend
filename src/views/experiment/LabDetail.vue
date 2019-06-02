@@ -150,6 +150,7 @@ export default {
   },
 
   created(){
+    this.id=this.$route.params.id
     this.selectedDataSource = []
     for (let i=0; i<10; i++) {
       this.selectedDataSource.push({
@@ -161,7 +162,7 @@ export default {
       })
     }
     getLab({
-      lab_id: this.$route.params.id
+      lab_id: this.id
     }).then(res => {
       console.log(res)
       this.lab = {
