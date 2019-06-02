@@ -2,26 +2,24 @@ import { axios } from '@/utils/request'
 // import Qs from 'qs'
 
 const api = {
-  getProblems: '/teacher/lecture/get-problems',
+  getProblems: '/teacher/lab/get-my-labs',
   deleteLab: '/teacher/lab/delete-lab',
   createLab: '/teacher/lab/create-lab',
   editLab: '/teacher/lab/edit-lab',
   getLab: '/teacher/lab/get-lab/'
 }
 
-export default api
-
 export function deleteLab(parameter) {
   return axios({
-    url: api.user,
+    url: '/teacher/lab/delete-lab',
     method: 'get',
     params: parameter
   })
 }
 
-export function getProblems(parameter) {
+export function getLabs(parameter) {
   return axios({
-    url: api.role,
+    url: '/teacher/lab/get-my-labs',
     method: 'get',
     params: parameter
   })
