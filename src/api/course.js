@@ -6,10 +6,18 @@ const api = {
   seekcourse: '/teacher/course/get-all-course',
   deletecourse: '/teacher/course/delete-course',
   copycourse: '/teacher/course/duplicate-course',
-  addcourse: '/teacher/course/add-course'
+  addcourse: '/teacher/course/add-course',
+  getnowcourse:'/teacher/course/get-now-course'
 }
 
 // export default api
+export function getnowcourse(parameter) {
+  return axios({
+    url: api.getnowcourse,
+    method: 'post',
+    data: parameter
+  })
+}
 
 export function deletecourse(parameter) {
   return axios({

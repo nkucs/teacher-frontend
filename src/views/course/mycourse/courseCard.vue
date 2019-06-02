@@ -36,7 +36,7 @@
 
 <script>
 import editCourse from './editCourseForm'
-import { deletecourse, copycourse,getmycourse} from '@/api/course'
+import { deletecourse, copycourse,getnowcourse} from '@/api/course'
 const dataSource = [
   {
     id:'1',
@@ -106,15 +106,12 @@ const dataSource = [
         console.log(fail)
       })
     },
-    getmycourse() {
-      getmycourse({
-        'page': this.page,
-        'pageLength': 10,
-        'name': this.courseName,
-        'teacher': this.teacherName
+    getnowcourse() {
+      getnowcourse({
+        teacherId:this.teacher_id
       }).then((response) => {
         console.log(`get my courses successfully.`)
-        this.dataSource = response.data
+        this.dataSource = response.courseList
       }).catch((fail) => {
         alert('获取课程列表失败！')
         console.log(fail)
