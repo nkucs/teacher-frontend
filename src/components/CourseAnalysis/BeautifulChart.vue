@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import {get_submission_tags} from '../../api/courseAnalysis.js'
 export default {
   data() {
     this.passTestCaseSettings = {
@@ -35,20 +36,26 @@ export default {
         order: 'desc'
       }
     }
-
     return {
       testCaseData: {
         columns: ['标签', '通过数', '未通过数'],
-        rows: [
-          { 标签: '测试一类', 通过数: '1000', 未通过数: '700' },
-          { 标签: '测试二类', 通过数: '500', 未通过数: '100' },
-          { 标签: '测试三类', 通过数: '300', 未通过数: '1500' },
-          { 标签: '测试四类', 通过数: '500', 未通过数: '1000' },
-          { 标签: '测试五类', 通过数: '150', 未通过数: '100' },
-          { 标签: '测试六类', 通过数: '800', 未通过数: '500' }
-        ]
+        rows: []
       }
     }
+  },
+  created: function() {
+    const that = this
+    // 这里添加course_id
+    let course_id = 1
+    get_submission_tags(course_id).then(
+      (response) => {
+        const data = response.ans
+        for (let i = 0; i < data.length; i++) {
+          console.log(data[i])
+          that.testCaseData.rows.push(data[i])
+        }
+      }
+    )
   }
 }
 </script>

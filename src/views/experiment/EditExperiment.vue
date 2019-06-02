@@ -1,9 +1,9 @@
 <template>
   <div>
-    <a-modal 
-      title="确认取消" 
-      :visible="cancelSubmitVisible" 
-      @ok="confirmCancel" 
+    <a-modal
+      title="确认取消"
+      :visible="cancelSubmitVisible"
+      @ok="confirmCancel"
       :confirmLoading="confirmLoading"
       @cancel="abandonCancel">
       <p>{{ cancelModalText }}</p>
@@ -11,18 +11,18 @@
 
     <a-modal
       title="确认修改"
-      :visible="submitVisible" 
-      @ok="confirmSubmit" 
+      :visible="submitVisible"
+      @ok="confirmSubmit"
       :confirmLoading="confirmLoading"
       @cancel="cancelSubmit">
       <p>{{ submitModalText }}</p>
     </a-modal>
 
-    <a-modal 
-      title="添加练习题目" 
+    <a-modal
+      title="添加练习题目"
       width="80%"
-      :visible="exerciseAdditionVisible" 
-      @ok="confirmAdd" 
+      :visible="exerciseAdditionVisible"
+      @ok="confirmAdd"
       :confirmLoading="confirmLoading"
       @cancel="cancelAdd">
       <div>
@@ -47,10 +47,10 @@
             <a-button type="primary" @click="handleSearch">搜索</a-button>
           </div>
         </div>
-        <a-table 
+        <a-table
           bordered
           :pagination="pagination"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}" 
+          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
           :columns="columnsWithFilter"
           :dataSource="allDataSource">
 
@@ -61,7 +61,7 @@
         </a-table>
       </div>
     </a-modal>
-    
+
     <h2 class="mainTitle">编辑实验</h2>
 
     <a-form id="components-form-demo-validate-other" :form="form" @submit="handleSubmit">
@@ -102,15 +102,15 @@
         </a-table>
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label="开始时间：" >
-        <a-date-picker 
-          v-decorator="['start-date-time-picker', startDatePickerConfig]" 
+        <a-date-picker
+          v-decorator="['start-date-time-picker', startDatePickerConfig]"
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="截止时间：">
-        <a-date-picker 
-          v-decorator="['end-date-time-picker', endDatePickerConfig]" 
+        <a-date-picker
+          v-decorator="['end-date-time-picker', endDatePickerConfig]"
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
@@ -159,19 +159,19 @@ const columnsWithFilter = [
     title: 'id',
     dataIndex: 'id',
     sorter: (a, b) => (a.id).localeCompare((b.id)),
-  }, 
+  },
   {
     title: '名称',
     dataIndex: 'name',
     width: '25%',
     sorter: (a, b) => (a.name).localeCompare(b.name),
-  }, 
+  },
   {
     title: '教师',
     dataIndex: 'teacherName',
     width: '20%',
     sorter: (a, b) => (a.teacherName).localeCompare((b.teacherName)),
-  }, 
+  },
   {
   title: '标签',
   key: 'tags',
@@ -183,21 +183,21 @@ const columnsWithFilter = [
   }]
 
 const columns =  [
-  { 
+  {
     title: 'id',
     dataIndex: 'id',
-  }, 
+  },
   {
     title: '名称',
     dataIndex: 'name',
     width: '25%',
-  }, 
+  },
   {
     title: '教师',
     dataIndex: 'teacherName',
     width: '20%',
-    
-  }, 
+
+  },
   {
   title: '标签',
   key: 'tags',
@@ -211,7 +211,7 @@ const columns =  [
     scopedSlots: { customRender: 'operation' },
     width: '16%'
   }]
-  
+
 const formItemLayout = {
   labelCol: {
     span: 6
@@ -241,7 +241,7 @@ export default {
     buttonSetFormat,
     confirmLoading: false,
 
-    // search related 
+    // search related
     searchId: '',
     searchProblemName: '',
     searchTeacherName: '',
@@ -255,7 +255,7 @@ export default {
 
     // tips and modal related configuration
     cancelModalText: '是否放弃编辑实验？！',
-    submitModalText: '确认当前修改？', 
+    submitModalText: '确认当前修改？',
     cancelSubmitVisible: false,
     submitVisible: false,
     exerciseAdditionVisible: false,
@@ -264,14 +264,14 @@ export default {
     formValues: null,
 
   }),
-  
+
   beforeCreate() {
     this.form = this.$form.createForm(this)
     // 获取实验详情的 API 和 所有实验题目的 API
-    // => lab {lab.name, lab.description, lab.start_time, lanb.end_time, lab.exercises[], lab.reportRequired,} 
+    // => lab {lab.name, lab.description, lab.start_time, lanb.end_time, lab.exercises[], lab.reportRequired,}
     // this.selectedDataSource
     // 获取所有实验题目的 API
-    // => this.allDataSource 
+    // => this.allDataSource
     this.lab = {
         name: 'a + b',
         description: 'calculate a + b',
@@ -282,7 +282,7 @@ export default {
         reportRequired: 'y',
 
     }
-    
+
     this.selectedDataSource = []
     for (let i=0; i<10; i++) {
         this.selectedDataSource.push({
@@ -319,7 +319,7 @@ export default {
           required: true,
           message: '实验名称不能为空'
         }
-      ]  
+      ]
     }
 
     this.expDescriptionConfig = {
@@ -399,7 +399,7 @@ export default {
     cancelAdd() {
       this.exerciseAdditionVisible = false
     },
-    
+
     handleSubmit(e) {
       e.preventDefault()
       this.form.validateFields((err, values) => {

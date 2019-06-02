@@ -1,9 +1,12 @@
 import { axios } from '@/utils/request'
+// import Qs from 'qs'
 
 const api = {
   getProblems: '/teacher/lecture/get-problems',
   deleteLab: '/teacher/lab/delete-lab',
-  getLabs:'/teacher/lab/get-lab'
+  createLab: '/teacher/lab/create-lab',
+  editLab: '/teacher/lab/edit-lab',
+  getLab: '/teacher/lab/get-lab/'
 }
 
 export default api
@@ -24,10 +27,29 @@ export function getProblems(parameter) {
   })
 }
 
-export function getLabs(parameter){
+
+export function getLab(parameter) {
   return axios({
-    url:api.getLabs,
-    method:'get',
-    params:parameter
+
+    url: api.getLab,
+    method: 'get',
+    params: parameter
+  })
+}
+
+
+export function createLab(parameter) {
+  return axios({
+    url: api.createLab,
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function editLab(parameter) {
+  return axios({
+    url: api.editLab,
+    method: 'post',
+    data: parameter
   })
 }

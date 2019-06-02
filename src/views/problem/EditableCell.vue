@@ -1,4 +1,3 @@
-
 <template>
   <div class="editable-cell">
     <div
@@ -9,7 +8,8 @@
         :value="value"
         @change="handleChange"
         @pressEnter="check"
-      /><a-icon
+      />
+      <a-icon
         type="check"
         class="editable-cell-icon-check"
         @click="check"
@@ -29,29 +29,29 @@
   </div>
 </template>
 <script>
-export default {
-  props: {
-    text: String('Default')
-  },
-  data () {
-    return {
-      value: this.text,
-      editable: false,
+  export default {
+    props: {
+      text: String()
+    },
+    data() {
+      return {
+        value: this.text,
+        editable: false
+      }
+    },
+    methods: {
+      handleChange(e) {
+        const value = e.target.value
+        this.value = value
+      },
+      check() {
+        this.editable = false
+        this.$emit('change', this.value)
+      },
+      edit() {
+        this.editable = true
+      }
     }
-  },
-  methods: {
-    handleChange (e) {
-      const value = e.target.value
-      this.value = value
-    },
-    check () {
-      this.editable = false
-      this.$emit('change', this.value)
-    },
-    edit () {
-      this.editable = true
-    },
-  },
-}
+  }
 
 </script>

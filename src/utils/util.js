@@ -33,3 +33,17 @@ export function removeLoadingAnimate(id = '', timeout = 1500) {
     document.body.removeChild(document.getElementById(id))
   }, timeout)
 }
+
+/**
+ * 获取cookie
+ */
+export function getCookie (name) {
+  var arr , reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
+  arr = document.cookie.match(reg)
+  if (arr[2]) {
+    return (arr[2])
+  } else {
+    return null
+  }
+}
+

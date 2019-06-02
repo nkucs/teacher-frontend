@@ -8,11 +8,14 @@
         <a-card :hoverable="true">           
           <div slot="title">{{ item.name }}</div>
           <a slot="extra">{{ item.time }}</a>
-          <a>{{ item.content }}</a>         
+          <a>{{ item.content }}</a>
           <template class="ant-card-actions" slot="actions">
             <!-- <a href="#">编辑</a>                   -->
             <editCourse></editCourse>
-            <router-link to="course/details"><a>详情</a></router-link>
+            <router-link
+              :to="{path: 'course/details', query:{courseID:item.id}}">
+              <a>详情</a>
+            </router-link>
             <a-dropdown>
               <a class="ant-dropdown-link" href="#">更多<a-icon type="down" /></a>
               <a-menu slot="overlay">
@@ -36,7 +39,7 @@ import editCourse from './editCourseForm'
 import { deletecourse, copycourse,getmycourse} from '@/api/course'
 const dataSource = [
   {
-    id:'123',
+    id:'1',
     name: '算法导论',
       time:'2019年春季学期',
       content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'
@@ -75,63 +78,51 @@ const dataSource = [
       }
     },
     methods:{
-        copycourse (courseID, teacherID) {
-      const self = this
-      console.log(`复制课程${courseID}`)
+    toDelete (ID) {
+      this.deleteID = ID
+      this.visibleDelete = true
+    },
+    toCopy (ID) {
+      this.copyID = ID
+      this.visibleCopy = true
+    },
+    copycourse () {
       copycourse({
-        params: {
-          course_id: courseID,  //向后端传参
-          teacher_id: teacherID,
-        }
+        'courseCode': this.copyID
       }).then(() => {
-        console.log(`${teacherID} copied course ${courseID} successfully.`)
-        for (var item in self.data) {
-          if (self.data[item].id === courseID) {
-            self.data.splice(item, 1)
-            break
-          }
-        }
+        console.log(`copied course successfully.`)
       }).catch((fail) => {
         alert('复制课程失败！')
         console.log(fail)
       })
     },
-    deletecourse(courseID) {
-      const self = this
-      console.log(`删除课程${courseID}`)
+    deletecourse() {
       deletecourse({
-        params: {
-          course_id: courseID,  //向后端传参
-        }
+        'courseCode': this.deleteID
       }).then(() => {
-        console.log(`deleted course ${courseID} successfully.`)
-        for (var item in self.data) {
-          if (self.data[item].id === courseID) {
-            self.data.splice(item, 1)
-            break
-          }
-        }
+        console.log(`deleted course successfully.`)
       }).catch((fail) => {
         alert('删除课程失败！')
         console.log(fail)
       })
+    },
+    getmycourse() {
+      getmycourse({
+        'page': this.page,
+        'pageLength': 10,
+        'name': this.courseName,
+        'teacher': this.teacherName
+      }).then((response) => {
+        console.log(`get my courses successfully.`)
+        this.dataSource = response.data
+      }).catch((fail) => {
+        alert('获取课程列表失败！')
+        console.log(fail)
+      })
     }
     },
-     mounted: function (teacherID) {
-    const self = this
-    getmycourse({
-      params: {
-        teacher_id: teacherID,
-      }
-    })
-    .then(response => {
-      console.log(response)
-      self.data = response.course //对应后端数据
-    })
-    .catch(fail => {
-      console.log(fail)
-      alert('获取课程列表失败！')
-    })
+     mounted: function () {
+    this.getmycourse()
   },
     components: {
       editCourse
