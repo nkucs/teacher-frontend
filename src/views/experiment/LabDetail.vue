@@ -64,18 +64,7 @@
 <script>
 //import upLoadFile from '@/components/upLoadFile'
 import moment from 'moment'
-import {getLabs} from'@/api/experiment'
-const selectedDataSource = []
-var Labs=[]
-for (let i=0; i<10; i++) {
-    selectedDataSource.push({
-        id: i,
-        name: 'problem ' + i,
-        teacherName: 'teacher ' + i,
-        tags: ['sort', 'recursion']
-    })
-}
-const allDataSource = []
+
 const columnsWithFilter = [
   {
     title: 'id',
@@ -191,33 +180,36 @@ export default {
   }),
   
   beforeCreate() {
+    console.log('before create')
+    console.log(this.$route.params.id)
     this.form = this.$form.createForm(this)
-    this.lab = {
-        name: 'a + b',
-        description: 'calculate a + b',
-        startTime: moment('2015/01/01','YYYY/MM/DD'),
-        endTime: moment('2015/01/01','YYYY/MM/DD'),
-        reportRequired: true
-    }
-    // 获取实验详情的 API 和 实验题目的 API
-    // => lab {lab.name, lab.description, lab.startTime} 
-    // => this.selectedDataSource
-    // => this.allDataSource 
-    this.expNameConfig = {
-      initialValue: this.lab.name,
-      rules: [
-        {
-          required: true,
-          message: '实验名称不能为空'
-        }
-      ]  
-    }
   },
 
-  computed: {
-    hasSelected() {
-      return this.selectedRowKeys.length > 0
+  created(){
+    this.selectedDataSource = []
+    for (let i=0; i<10; i++) {
+      this.selectedDataSource.push({
+        key: i, // necessary
+        id: i,
+        name: 'problem ' + i,
+        teacherName: 'teacher ' + i,
+        tags: ['sort', 'recursion']
+      })
     }
+    getLab({
+      lab_id: this.$route.params.id
+    }).then(res => {
+      console.log(res)
+      this.lab = {
+        name: res.data.name,
+        description: res.data.description,
+        startTime: moment(res.data.start_time).format('YYYY-MM-DD HH:mm:ss'),
+        endTime: moment(res.data.end_time).format('YYYY-MM-DD HH:mm:ss'),
+        files: res.data.files,
+        reportRequired: res.data.report_required?'y':'n',
+        attachmentWeight: 20,
+    }
+    })
   },
 
   methods: {
@@ -234,51 +226,8 @@ export default {
           console.log(Labs)
           console.log('end')
         })
-    },
-
-    getLabname(){
-        this.lab.name=Labs[0].name
-        console.log(Labs[0].name)
-        console.log(this.lab.name)
-    },
-    onDelete (key) {
-      const selectedDataSource = [...this.selectedDataSource]
-      this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
-    },
-    onSelectChange (selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys
-    },
-    confirmAdd() {
-      this.confirmLoading = true
-      setTimeout(() => {
-        this.exerciseAdditionVisible = false
-        this.confirmLoading = false
-        for (const key in this.selectedRowKeys) {
-          const value = this.selectedRowKeys[key]
-          const records = this.allDataSource.filter(item => item.key === value)
-          this.selectedDataSource.push(records[0])
         }
-      }, 500)
-    },
-    cancelAdd() {
-      this.exerciseAdditionVisible = false
-    },
-    
-    handleSubmit(e) {
-      e.preventDefault()
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          // get values from form
-          this.submitVisible = true
-          this.formValues = values
-        }
-      })
-    },   
   },
-  mounted(){
-    this.getdata()
-  }
-  
 }
 </script>
 <style scoped>
@@ -293,13 +242,6 @@ export default {
 
 .formButton {
   margin-right: 20px;
-}
-
-.custom-filter-dropdown {
-  padding: 8px;
-  border-radius: 4px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
 .highlight {
