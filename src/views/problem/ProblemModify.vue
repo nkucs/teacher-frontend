@@ -5,23 +5,23 @@
         <div class="problem-title">
           <a-icon class="title-icon" type="caret-right"/>
           <h3>题目标题</h3>
-          <input type="text" class="ant-input">
+          <input type="text" class="ant-input" v-model="problem_title">
         </div>
-        <div class="problem-block">
+        <!-- <div class="problem-block">
           <a-icon class="title-icon" type="caret-right"/>
           <h3>题目类型</h3>
           <a-radio-group @change="selectType">
-            <a-radio-button value="practice" class="red-btn">练习题</a-radio-button>
-            <a-radio-button value="exam" class="yellow-btn">考试题</a-radio-button>
-            <a-radio-button value="homework" class="blue-btn">作业题</a-radio-button>
+            <a-radio-button value="practice" class="red-btn" v-model="problem_type">练习题</a-radio-button>
+            <a-radio-button value="exam" class="yellow-btn" v-model="problem_type">考试题</a-radio-button>
+            <a-radio-button value="homework" class="blue-btn" v-model="problem_type">作业题</a-radio-button>
           </a-radio-group>
-        </div>
+        </div> -->
         <div class="problem-block" id="multi-textarea">
           <a-icon class="title-icon" type="caret-right"/>
           <h3>题目描述</h3>
-          <editor></editor>
+          <editor @transferMsg="getMessage"></editor>
         </div>
-        <div class="problem-block">
+        <!-- <div class="problem-block">
           <a-icon class="title-icon" type="caret-right"/>
           <h3>附件</h3>
           <a-upload action="//jsonplaceholder.typicode.com/posts/" :defaultFileList="defaultFileList">
@@ -30,19 +30,19 @@
               上传附件
             </a-button>
           </a-upload>
-        </div>
+        </div> -->
         <div class="problem-block" id="limit">
           <div class="problem-limit">
             <a-icon class="title-icon" type="caret-right"/>
             <h3>内存限制(MB)</h3>
-            <input type="text" class="ant-input limit-input" name="memory_limit">
+            <input type="text" class="ant-input limit-input" name="memory_limit" v-model="memory_limit">
           </div>
           <div class="problem-limit">
             <a-icon class="title-icon" type="caret-right"/>
             <h3>时间限制(MS)</h3>
-            <input type="text" class="ant-input limit-input" name="time_limit">
+            <input type="text" class="ant-input limit-input" name="time_limit" v-model="runtime_limit">
           </div>
-          <div class="problem-limit">
+          <!-- <div class="problem-limit">
             <a-icon class="title-icon" type="caret-right"/>
             <h3>输入限制(行)</h3>
             <input type="text" class="ant-input limit-input" name="input_limit">
@@ -51,7 +51,7 @@
             <a-icon class="title-icon" type="caret-right"/>
             <h3>输出限制(行)</h3>
             <input type="text" class="ant-input limit-input" name="output_limit">
-          </div>
+          </div> -->
         </div>
         <div class="problem-block">
           <a-icon class="title-icon" type="caret-right"/>
@@ -165,8 +165,9 @@
             mode="tags"
             placeholder="Please select"
             style="width: 220px"
-            @change="handleChange"
             allowClear="true"
+            v-model="tags"
+            :defaultValue="['a1', 'b2']"
           >
             <a-select-option value="C">C</a-select-option>
             <a-select-option value="C++">C++</a-select-option>
@@ -176,7 +177,7 @@
             <a-select-option value="data strutrue">数据结构</a-select-option>
           </a-select>
         </div>
-        <div class="problem-block">
+        <!-- <div class="problem-block">
           <a-icon class="title-icon" type="caret-right"/>
           <h3>状态</h3>
           <a-radio-group @change="selectStatus">
@@ -188,9 +189,9 @@
             <a-radio-button value="medium" class="yellow-btn">Medium</a-radio-button>
             <a-radio-button value="low" class="blue-btn">Low</a-radio-button>
           </a-radio-group>
-        </div>
+        </div> -->
         <div class="btn-block">
-          <button type="button" class="ant-btn ant-btn-primary">
+          <button type="button" class="ant-btn ant-btn-primary" @click="editProblem">
             <span>保存</span>
           </button>
         </div>
@@ -202,6 +203,7 @@
 <script>
   import Editor from './Editor'
   import EditableCell from './EditableCell'
+  import { editProblem, getProblemDetail } from '@/api/problem'
 
   export default {
     name: 'MultiTextarea',
@@ -211,12 +213,21 @@
     },
     data() {
       return {
+        problem_id: '',
+        problem_title: '',
+        problem_type: '',
+        description: '',
+        create_teacher_id: '',
         test_span: '',
         test_input: '',
         test_output: '',
         sample_span: '',
         sample_input: '',
         sample_output: '',
+        runtime_limit: '',
+        memory_limit: '',
+        tags: [],
+        cases: [],
         dataSource1: [],
         dataSource2: [],
         count1: 0,
@@ -225,42 +236,42 @@
           title: '输入',
           dataIndex: 'input',
           width: '30%',
-          scopedSlots: {customRender: 'input'},
+          scopedSlots: { customRender: 'input' }
         }, {
           title: '输出',
           dataIndex: 'output',
           width: '30%',
-          scopedSlots: {customRender: 'output'},
+          scopedSlots: { customRender: 'output' }
         }, {
           title: '标签',
           dataIndex: 'span',
           width: '30%',
-          scopedSlots: {customRender: 'span'},
+          scopedSlots: { customRender: 'span' }
         }, {
           title: '操作',
           dataIndex: 'operation',
-          scopedSlots: {customRender: 'operation'},
+          scopedSlots: { customRender: 'operation' }
         }],
         columns2: [{
           title: '输入',
           dataIndex: 'input2',
           width: '30%',
-          scopedSlots: {customRender: 'input2'},
+          scopedSlots: { customRender: 'input2' }
         }, {
           title: '输出',
           dataIndex: 'output2',
           width: '30%',
-          scopedSlots: {customRender: 'output2'},
+          scopedSlots: { customRender: 'output2' }
         }, {
           title: '标签',
           dataIndex: 'span2',
           width: '30%',
-          scopedSlots: {customRender: 'span2'},
+          scopedSlots: { customRender: 'span2' }
         }, {
           title: '操作',
           dataIndex: 'operation2',
-          scopedSlots: {customRender: 'operation2'},
-        }],
+          scopedSlots: { customRender: 'operation2' }
+        }]
       }
     },
     methods: {
@@ -276,11 +287,6 @@
       selectType(value) {
         console.log(`Selcted: ${value}`)
       },
-      handleChange({file, fileList}) {
-        if (file.status !== 'uploading') {
-          console.log(file, fileList)
-        }
-      },
       onCellChange1(key, dataIndex, value) {
         const dataSource1 = [...this.dataSource1]
         const target = dataSource1.find(item => item.key === key)
@@ -294,13 +300,21 @@
         this.dataSource1 = dataSource1.filter(item => item.key !== key)
       },
       handleAdd1() {
-        const {count1, dataSource1} = this
+        const { count1, dataSource1 } = this
         const newData = {
           key: count1,
           input: this.test_input,
           output: this.test_output,
-          span: this.test_span,
+          span: this.test_span
         }
+        const newCase = {
+          input: this.test_input,
+          output: this.test_output,
+          type: '0',
+          weight: '5',
+          tags: []
+        }
+        this.cases = [...this.cases, newCase]
         this.dataSource1 = [...dataSource1, newData]
         this.count1 = count1 + 1
       },
@@ -317,32 +331,85 @@
         this.dataSource2 = dataSource2.filter(item => item.key !== key)
       },
       handleAdd2() {
-        const {count2, dataSource2} = this
+        const { count2, dataSource2 } = this
         const newData = {
           key: count2,
           input2: this.sample_input,
           output2: this.sample_output,
-          span2: this.sample_span,
+          span2: this.sample_span
         }
+        const newCase = {
+          input: this.sample_input,
+          output: this.sample_output,
+          type: '1',
+          weight: '5',
+          tags: []
+        }
+        this.cases = [...this.cases, newCase]
         this.dataSource2 = [...dataSource2, newData]
         this.count2 = count2 + 1
       },
+      getMessage(msg) {
+        this.description = msg
+      },
+      editProblem() {
+        // const problemParams = {
+        //   problem_id: this.problem_id,
+        //   problem_name: this.problem_title,
+        //   description: this.description,
+        //   created_teacher_id: 1,
+        //   runtime_limit: this.runtime_limit,
+        //   memory_limit: this.memory_limit,
+        //   tags: this.tags,
+        //   cases: this.cases
+        // }
+        // console.log(problemParams)
+
+        editProblem({
+          problem_id: this.problem_id,
+          problem_name: this.problem_title,
+          description: this.description,
+          created_teacher_id: 1,
+          runtime_limit: this.runtime_limit,
+          memory_limit: this.memory_limit,
+          tags: this.tags,
+          cases: this.cases
+        })
+          .then(res => {
+            alert('修改成功')
+            console.log(res)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    },
+    mounted: function() {
+      this.problem_id = this.$route.params.problem_id
+      getProblemDetail({
+        problem_id: this.$route.params.problem_id
+      })
+        .then(res => {
+          console.log(res)
+          this.problem_title = res.name
+          this.description = res.description
+          this.create_teacher_id = res.teacher
+          this.runtime_limit = res.runtime_limit
+          this.memory_limit = res.memory_limit
+          var tags_num = res.tags.size
+          for (var i = 0; i < tags_num; i++) {
+            this.tags = [...this.tags, res.tags[i].tag_name]
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .title {
-    width: 100%;
-    height: 3%;
-  }
-
-  .title-text {
-    font-size: 20px;
-    float: left;
-  }
-
   .view {
     float: right;
   }

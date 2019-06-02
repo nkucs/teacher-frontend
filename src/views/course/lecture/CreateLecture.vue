@@ -91,7 +91,7 @@ export default {
   name: 'CreateLecture',
   data () {
     return {
-      courseId: 1,
+      courseId: '',
       lectureData: [],
       formLayout: 'horizontal',
       form: this.$form.createForm(this),
@@ -99,7 +99,7 @@ export default {
     }
   },
   mounted () {
-      this.courseId = this.$route.query.courseId
+      this.courseId = this.$route.query.courseID
   },
   methods: {
     handleSubmit (e) {

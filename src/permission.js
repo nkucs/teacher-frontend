@@ -5,7 +5,7 @@ import store from './store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import notification from 'ant-design-vue/es/notification'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { ACCESS_SESSION } from '@/store/mutation-types'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -14,7 +14,7 @@ const whiteList = ['login', 'register', 'registerResult'] // no redirect whiteli
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
 
-  if (Vue.ls.get(ACCESS_TOKEN)) {
+  if (Vue.ls.get(ACCESS_SESSION)) {
     /* has token */
     if (to.path === '/user/login') {
       next({ path: '/dashboard/workplace' })

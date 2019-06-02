@@ -19,7 +19,15 @@
 </template>
 
 <script>
+import { distribution } from '@/api/distribution'
+
 export default {
+  props: {
+    studentId: {
+      type: Number,
+      default: 1
+      },
+  },
   data () {
     this.extend = {
       legend: { show: false }
@@ -46,24 +54,67 @@ export default {
           { '时间段': '20:00-22:00', '提交数': 0, 'AC数': 0 },
           { '时间段': '22:00-24:00', '提交数': 0, 'AC数': 0 }
         ]
-      }
+      },
+      start_date: this.formatDate(new Date()),
+      end_date: this.formatDate(new Date())
     }
+  },
+  created: function () {
+    this.sendRequest()
   },
   methods: {
     changeDistribution: function(message) {
+      this.end_date = this.formatDate(new Date())
+      var d
       switch (message) {
         case '日':
+          d = this.minusDay(new Date(), 1)
+          this.start_date = this.formatDate(d)
           break
         case '周':
+          d = this.minusDay(new Date(), 7)
+          this.start_date = this.formatDate(d)
           break
         case '月':
+          d = this.minusDay(new Date(), 30)
+          this.start_date = this.formatDate(d)
           break
         case '学期':
+          d = this.minusDay(new Date(), 126)
+          this.start_date = this.formatDate(d)
           break
         case '年':
+          d = this.minusDay(new Date(), 365)
+          this.start_date = this.formatDate(d)
           break
       }
+      this.sendRequest()
     },
+
+    sendRequest: function() {
+      var that = this
+      console.log(that)
+      distribution({
+        student_id: that.studentId,
+        start_date: that.start_date,
+        end_date: that.end_date
+      }).then(function(res) {
+        that.chartData.rows = res.ans
+      })
+    },
+
+    minusDay: function(t, delta) {
+      var t_s = t.getTime()
+      t.setTime(t_s - 1000 * 60 * 60 * 24 * delta)
+      return t
+    },
+
+    formatDate: function(date) {
+      var month = date.getMonth() + 1
+      var day = date.getDate()
+      var d = date.getFullYear() + '-' + month + '-' + day
+      return d
+    }
   },
 }
 </script>
