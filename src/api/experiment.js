@@ -6,7 +6,8 @@ const api = {
   deleteLab: '/teacher/lab/delete-lab',
   createLab: '/teacher/lab/create-lab',
   editLab: '/teacher/lab/edit-lab',
-  getLab: '/teacher/lab/get-lab/'
+  getLab: '/teacher/lab/get-lab/',
+  getSubmissionFile: '/teacher/lab/get-submission-file'
 }
 
 export default api
@@ -30,7 +31,6 @@ export function getProblems(parameter) {
 
 export function getLab(parameter) {
   return axios({
-
     url: api.getLab,
     method: 'get',
     params: parameter
@@ -51,5 +51,14 @@ export function editLab(parameter) {
     url: api.editLab,
     method: 'post',
     data: parameter
+  })
+}
+
+export function getSubmissionFile(parameter) {
+  return axios({
+    url: api.getSubmissionFile,
+    method: 'get',
+    params: parameter,
+    responseType: 'blob'
   })
 }
