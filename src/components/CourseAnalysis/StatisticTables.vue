@@ -15,8 +15,7 @@ import { problemTables } from '@/api/courseAnalysis'
 
 export default {
   created() {
-    problemTables('1').then(response => {
-      console.log(response)
+    problemTables('1').then((response) => {
       if (response.length != 0) {
         for (const element in response) {
           this.ListData.push(element)
