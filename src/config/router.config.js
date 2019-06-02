@@ -133,7 +133,7 @@ export const asyncRouterMap = [
         }]
       },
       {
-        path: '/experiment/list',
+        path: '/experiment/list/:id',
         name: '实验列表',
         component: () => import('@/views/experiment/ExperimentList'),
         meta: { title: '实验列表', icon: 'dashboard', permission: [ 'dashboard' ] }
