@@ -80,7 +80,7 @@
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验附件">
-        <!--<upLoadFile></upLoadFile>-->
+        <!-- <upLoadFile></upLoadFile> -->
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="练习题目">
@@ -336,7 +336,9 @@ export default {
   methods: {
     onDelete (key) {
       const selectedDataSource = [...this.selectedDataSource]
+      const selectedRowKeys = [...this.selectedRowKeys]
       this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
+      this.selectedRowKeys = selectedRowKeys.filter(item => item !== key)
     },
     handleAdd () {
       // 获取全部练习题的 API 
@@ -355,7 +357,8 @@ export default {
       setTimeout(() => {
         this.exerciseAdditionVisible = false
         this.confirmLoading = false
-        for (let key in this.selectedRowKeys) {
+        this.selectedDataSource = []
+        for (const key in this.selectedRowKeys) {
           const value = this.selectedRowKeys[key]
           const records = this.allDataSource.filter(item => item.key === value)
           this.selectedDataSource.push(records[0])
@@ -378,14 +381,14 @@ export default {
       })
     },
     confirmSubmit() {
-      console.log("Received values of lab form: ", this.formValues)
+      console.log('Received values of lab form: ', this.formValues)
 
       // 调用新建实验的 API
-      this.formValues.start_time = this.formValues.start_time.format('YYYY-MM-DD HH:mm:ss');
-      this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss');
+      this.formValues.start_time = this.formValues.start_time.format('YYYY-MM-DD HH:mm:ss')
+      this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss')
       this.formValues.course_id = 1
       this.formValues.problems = this.selectedDataSource
-      console.log("front end: ", this.formValues)
+      console.log('front end: ', this.formValues)
 
       const labParams = {...this.formValues}
       createLab(labParams).then(function (res) {

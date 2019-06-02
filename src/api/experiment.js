@@ -30,7 +30,6 @@ export function getProblems(parameter) {
 
 export function getLab(parameter) {
   return axios({
-
     url: api.getLab,
     method: 'get',
     params: parameter
