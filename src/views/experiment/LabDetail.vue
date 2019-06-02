@@ -71,13 +71,13 @@ const columnsWithFilter = [
     sorter: (a, b) => (a.teacherName).localeCompare((b.teacherName)),
   },
   {
-  title: '标签',
-  key: 'tags',
-  dataIndex: 'tags',
-  width: '30%',
-  scopedSlots: {
-      customRender: 'tags',
-    },
+    title: '标签',
+    key: 'tags',
+    dataIndex: 'tags',
+    width: '30%',
+    scopedSlots: {
+        customRender: 'tags',
+      },
   }]
 
 const columns =  [
@@ -119,22 +119,12 @@ const formItemLayout = {
   },
 }
 
-const buttonSetFormat = {
-  wrapperCol: {
-    span: 20,
-    offset: 6
-  }
-}
-
 export default {
   data: () => ({
     // lab
     id: '',
     lab: '',
-    // layout related configuration
     formItemLayout,
-    buttonSetFormat,
-    // table related configuration
     selectedDataSource: '',
     columns,
     columnsWithFilter,
@@ -144,8 +134,6 @@ export default {
   }),
 
   beforeCreate() {
-    console.log('before create')
-    console.log(this.$route.params.id)
     this.form = this.$form.createForm(this)
   },
 
@@ -164,7 +152,6 @@ export default {
     getLab({
       lab_id: this.id
     }).then(res => {
-      console.log(res)
       this.lab = {
         name: res.data.name,
         description: res.data.description,
@@ -182,11 +169,10 @@ export default {
       getSubmissionFile({
         attachment_id: this.lab.files[key].id
       }).then((response) => {
-        console.log(response)
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', this.lab.files[key].name) //or any other extension
+        link.setAttribute('download', this.lab.files[key].name)
         document.body.appendChild(link)
         link.click()
       })
