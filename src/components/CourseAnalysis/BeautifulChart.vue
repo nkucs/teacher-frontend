@@ -46,7 +46,7 @@ export default {
   created: function() {
     const that = this
     // 这里添加course_id
-    let course_id = 1
+    const course_id = 1
     get_submission_tags(course_id).then(
       (response) => {
         const data = response.ans

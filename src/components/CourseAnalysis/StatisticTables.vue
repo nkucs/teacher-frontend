@@ -17,9 +17,7 @@ export default {
   created() {
     problemTables('1').then((response) => {
       if (response.length != 0) {
-        for (const element in response) {
-          this.ListData.push(element)
-        }
+        this.ListData = response
       }
     })
     for (let i = 0; i < 10; i += 1) {
