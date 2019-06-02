@@ -3,7 +3,6 @@
     <a-col>
       <a-card
         class="antd-pro-pages-dashboard-analysis-salesCard"
-        :loading="loading"
         :bordered="true"
         title="选课学生"
         :style="{ marginTop: '24px', minHeight: '50px' }"
@@ -29,10 +28,9 @@
       </a-card>
     </a-col>
 
-    <a-col>
+    <!-- <a-col>
       <a-card
         class="antd-pro-pages-dashboard-analysis-salesCard"
-        :loading="loading"
         :bordered="true"
         title="完成题目所属课程占比"
         :style="{ marginTop: '24px', minHeight: '50px' }"
@@ -43,7 +41,7 @@
           </div>
         </div>
       </a-card>
-    </a-col>
+    </a-col> -->
   </div>
 </template>
 
@@ -91,6 +89,8 @@ export default {
   },
   created: function(){
     this.getACProblemInfo()
+    this.getStuData()
+    this.getACData()
   },
   methods:{
     getACProblemInfo:function(){
@@ -121,7 +121,7 @@ export default {
         var stuValue = Object.values(response.data)
         that.stuData.rows = []
         for (let index = 0; index < num; index++) {
-          this.problemData.rows.push({'年级': stuKey[index]+'级',
+          this.stuData.rows.push({'年份': stuKey[index]+'级',
             '人数': stuValue[index]})
         }
       }).catch(error => {
@@ -136,8 +136,8 @@ export default {
       }).then(response => {
         var acValue = Object.values(response.data)
         that.acData.rows = []
-        that.acData.rows.push({'是否ac': 'AC次数','题目总数': acValue[0]})
-        that.acData.rows.push({'是否ac': '非AC次数','题目总数': acValue[1]})
+        that.acData.rows.push({'是否ac': 'AC次数','次数': acValue[0]})
+        that.acData.rows.push({'是否ac': '非AC次数','次数': acValue[1]})
       }).catch(error => {
         console.log(error)
       })
