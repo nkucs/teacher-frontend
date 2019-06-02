@@ -23,7 +23,7 @@ import { wordcloud } from '@/api/courseAnalysis'
 export default {
   created() {
     let dict = {}
-    wordcloud('1').then(response => {
+    wordcloud('1').then((response) => {
       if (response[0].length != 0) {
         for (let i = 0; i < response[0].length; i++) {
           dict['word'] = response[0][i]['word']
