@@ -8,9 +8,11 @@
           <a-button type="primary" align="right" @click="seekstudent()">查询</a-button>
           <a-button align="right" @click="resetstudent()">重置</a-button>
         </div>
-        <a-table :columns="columns1" :dataSource="data1"
-        :pagination="studentPagination"
-        @change="updatestudent">
+        <a-table 
+          :columns="columns1" 
+          :dataSource="data1"
+          :pagination="studentPagination"
+          @change="updatestudent">
         </a-table>
       </a-tab-pane>
       <a-tab-pane tab="题目" key="2">
@@ -19,9 +21,11 @@
           <a-button type="primary" align="right" @click="seekproblem()">查询</a-button>
           <a-button align="right" @click="resetproblem()">重置</a-button>
         </div>
-        <a-table :columns="columns2" :dataSource="data2"
-        :pagination="problemPagination"
-        @change="updateproblem">
+        <a-table 
+          :columns="columns2" 
+          :dataSource="data2"
+          :pagination="problemPagination"
+          @change="updateproblem">
         </a-table>
       </a-tab-pane>
     </a-tabs>
@@ -69,10 +73,10 @@ export default {
         total:0,
         current: 1
       },
-      studentnumber: "",
-      studentname: "",
-      problemname: "",
-      courseid: "",
+      studentnumber: '',
+      studentname: '',
+      problemname: '',
+      courseid: '',
     }
   },
   methods: {
@@ -91,6 +95,7 @@ export default {
             this.studentPagination = pagination
         })
     },
+    // eslint-disable-next-line
     updatestudent: function(page, pagesize){
         this._updatestudent(page.current)
     },
@@ -98,8 +103,8 @@ export default {
         this._updatestudent(1)
     },
     resetstudent: function(){
-        this.studentnumber = ""
-        this.studentname = ""
+        this.studentnumber = ''
+        this.studentname = ''
     },
     
     _updateproblem: function(pageindex){
@@ -116,6 +121,7 @@ export default {
             this.problemPagination = pagination
         })
     },
+    // eslint-disable-next-line
     updateproblem: function(page, pagesize){
         this._updateproblem(page.current)
     },
@@ -123,11 +129,11 @@ export default {
         this._updateproblem(1)
     },
     resetproblem: function(){
-        this.problemname = ""
+        this.problemname = ''
     },
     
     callback: function(key){
-        if (key == "1"){
+        if (key == '1'){
             this.seekstudent()
         }
         else {
@@ -138,6 +144,7 @@ export default {
   
   mounted: function(){
     this.courseid = parseInt(this.$route.query.id)
+    console.log(this.courseid)
     this.seekstudent()
   }
 }
