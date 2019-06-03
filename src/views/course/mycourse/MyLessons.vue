@@ -1,12 +1,12 @@
 <template>
   <div>
     <div style="margin-bottom: 5px">
-      <a-input v-model="coursename" style="width: 44%" addonBefore="课程名称" />
-      <a-input v-model="teachername" style="width: 43%" addonBefore="教师姓名" />
+      <a-input v-model="coursename" style="width: 40%" addonBefore="课程名称" />
+      <a-input v-model="teachername" style="width: 40%" addonBefore="教师姓名" />
       <a-button type="primary" align="right" @click="seek()">查询</a-button>
       <a-button align="right" @click="reset()">重置</a-button>
     </div>
-    <a-table :columns="columns" :dataSource="data">
+    <a-table :columns="columns" :dataSource="data" :pagination="false">
       <a slot="id" slot-scope="text" href="javascript:;">{{ text }}</a>
       <span slot="customTitle"> 课程ID</span>
       <span slot="action" slot-scope="text, record">
@@ -14,11 +14,30 @@
         <a-divider type="vertical" />
         <router-link to="course/details"><a>详情</a></router-link>
         <a-divider type="vertical" />
-        <a href="javascript:;" key="copy" @click="copycourse(record.id, record.teacher)">复制</a>
+        <a href="javascript:;" key="copy" @click="toCopy(record.id)">复制</a>
         <a-divider type="vertical" />
-        <a href="javascript:;" key="delete" @click="deletecourse(record.id)">删除</a>
+        <a href="javascript:;" key="delete" @click="toDelete(record.id)">删除</a>
       </span>
     </a-table>
+    <div style="margin-top: 16px">
+      <a-pagination style="float:right" :current="page" :total="total" @change="pageChange" />
+    </div>
+    <a-modal
+      title="确认框"
+      v-model="visibleDelete"
+      okText="删除"
+      @ok="deletecourse"
+    >
+      <p> {{ `确认删除该课程？` }}</p>
+    </a-modal>
+    <a-modal
+      title="确认框"
+      v-model="visibleCopy"
+      okText="复制"
+      @ok="copycourse"
+    >
+      <p> {{ `确认复制该课程？` }}</p>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -70,123 +89,124 @@ export default {
     return {
       data,
       columns,
-      coursename: '在此输入课程名称',
-      teachername: '在此输入教师姓名'
+      coursename: '',
+      teachername: '',
+      page: 1,
+      total: 10,
+      visibleDelete: false,
+      visibleCopy: false,
+      deleteID: 0,
+      copyID: 0
     }
   },
   components: {
     editCourse
   },
   methods: {
+    toDelete (ID) {
+      this.deleteID = ID
+      this.visibleDelete = true
+    },
+    toCopy (ID) {
+      this.copyID = ID
+      this.visibleCopy = true
+    },
     seek () {
-      const self = this
-      if (self.coursename === '在此输入课程名称' && self.teachername === '在此输入教师姓名') {
-        alert(`请输入正确的课程名称或教师名称查询！`)
+      if (this.coursename === '' && this.teachername === '') {
+        alert(`请输入课程名称或教师名称查询！`)
       }
-      else if (self.coursename === '在此输入课程名称') {
+      else if (this.coursename === '') {
         seekcourse({
-          params: {
-            course_name: self.coursename,
-            teacher_name: '',
-          }
+          'name': this.coursename,
+          'teacher': this.teachername
         }).then(response => {
           console.log(`seek successfully`)
-          self.data = response.course    //对应后端返回的数据
+          this.data = response.courses
+          this.page = response.current_page
+          this.total = response.total_pages * 10
         }).catch((fail) => {
-          alert('查找失败！请输入正确的教师名！')
+          alert('查找失败！')
           console.log(fail)
         })
       }
-      else if (self.teachername === '在此输入教师姓名') {
+      else if (this.teachername === '') {
         seekcourse({
-          params: {
-            course_name: '',
-            teacher_name: self.teachername,
-          }
+          'name': this.coursename,
+          'teacher': this.teachername
         }).then(response => {
           console.log(`seek successfully`)
-          self.data = response.course    //对应后端返回的数据
+          this.data = response.courses
+          this.page = response.current_page
+          this.total = response.total_pages * 10
         }).catch((fail) => {
-          alert('查找失败！请输入正确的课程名！')
+          alert('查找失败！')
           console.log(fail)
         })
       }
       else {
         seekcourse({
-          params: {
-            teacher_name: self.teachername,
-            course_name: self.coursename,
-          }
+          'teacher': this.teachername,
+          'name': this.coursename
         }).then(response => {
           console.log(`seek successfully`)
-          self.data = response.course    //对应后端返回的数据
+          this.data = response.courses
+          this.page = response.current_page
+          this.total = response.total_pages * 10
         }).catch((fail) => {
-          alert('查找失败！请输入正确的信息！')
+          alert('查找失败！')
           console.log(fail)
         })
       }
     },
     reset () {
-      this.coursename = '在此输入课程名称'
-      this.teachername = '在此输入教师姓名'
+      this.coursename = ''
+      this.teachername = ''
+      this.getmycourse
     },
-    copycourse (courseID, teacherID) {
-      const self = this
-      console.log(`复制课程${courseID}`)
+    copycourse () {
       copycourse({
-        params: {
-          course_id: courseID,  //向后端传参
-          teacher_id: teacherID,
-        }
+        'courseCode': this.copyID
       }).then(() => {
-        console.log(`${teacherID} copied course ${courseID} successfully.`)
-        for (var item in self.data) {
-          if (self.data[item].id === courseID) {
-            self.data.splice(item, 1)
-            break
-          }
-        }
+        console.log(`copied course successfully.`)
       }).catch((fail) => {
         alert('复制课程失败！')
         console.log(fail)
       })
     },
-    deletecourse(courseID) {
-      const self = this
-      console.log(`删除课程${courseID}`)
+    deletecourse() {
       deletecourse({
-        params: {
-          course_id: courseID,  //向后端传参
-        }
+        'courseCode': this.deleteID
       }).then(() => {
-        console.log(`deleted course ${courseID} successfully.`)
-        for (var item in self.data) {
-          if (self.data[item].id === courseID) {
-            self.data.splice(item, 1)
-            break
-          }
-        }
+        console.log(`deleted course successfully.`)
       }).catch((fail) => {
         alert('删除课程失败！')
         console.log(fail)
       })
+    },
+    getmycourse() {
+      getmycourse({
+        'page': this.page,
+        'pageLength': 10,
+        'name': this.courseName,
+        'teacher': this.teacherName
+      }).then((response) => {
+        console.log(`get my courses successfully.`)
+        this.data = response.courses
+        this.page = response.currentPage
+        this.total = response.totalPages * 10
+      }).catch((fail) => {
+        alert('获取课程列表失败！')
+        console.log(fail)
+      })
+    },
+    pageChange (page) {
+      console.log(page)
+      this.page = page
+      this.getmycourse()
     }
   },
-  mounted: function (teacherID) {
-    const self = this
-    getmycourse({
-      params: {
-        teacher_id: teacherID,
-      }
-    })
-    .then(response => {
-      console.log(response)
-      self.data = response.course //对应后端数据
-    })
-    .catch(fail => {
-      console.log(fail)
-      alert('获取课程列表失败！')
-    })
+  mounted: function () {
+    this.getmycourse()
   }
 }
 </script>

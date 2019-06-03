@@ -1,122 +1,81 @@
 <template>
   <a-card :loading="loading" :bordered="false" title="提交次数列表">
-    <a-table :dataSource="ListData">
-      <a-table-column title="题目编号" data-index="problem_id" key="problem_id"/>
-      <a-table-column title="名称" data-index="problem_name" key="problem_name"/>
-      <a-table-column title="开始时间" data-index="start_time" key="start_time"/>
-      <a-table-column title="AV率" data-index="AVrate" key="end_time"/>
-      <a-table-column title="提交次数" data-index="submite_times" key="action"/>
-      <a-table-column title="状态" data-index="state" key="action"/>
-      <a-table-column title="更新时间" data-index="update_time" key="action"/>
+    <a-table :columns="columns" :dataSource="ListData">
+      <a slot="name" slot-scope="text, record" href="javascript:;" @click="transferToProblem(record)">{{ text }}</a>
+      <span slot="customTitle">名称</span>
+      <span slot="tags" slot-scope="tags">
+        <a-tag v-for="tag in tags" color="blue" :key="tag">{{ tag }}</a-tag>
+      </span>
     </a-table>
   </a-card>
 </template>
 
 <script>
+import { problemTables } from '@/api/courseAnalysis'
+
 export default {
+  created() {
+    problemTables('1').then((response) => {
+      if (response.length != 0) {
+        this.ListData = response
+      }
+    })
+    for (let i = 0; i < 10; i += 1) {
+      this.ListData.push({
+        problem_id: i.toString().padStart(5, '0'),
+        problem_name: 'lab1：背包问题',
+        start_time: '2017-10-31 23:12:00',
+        update_time: '2017-10-31 23:12:00',
+        ACrate: '79%',
+        submit_times: '89'
+      })
+    }
+  },
   data() {
     return {
-      ListData: [
+      columns: [
         {
-          problem_id: '00001',
-          problem_name: 'lab1：背包问题',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '79%',
-          submite_times: '89',
-          state: 'closed'
+          title: '题目编号',
+          dataIndex: 'problem_id'
         },
         {
-          problem_id: '00002',
-          problem_name: 'lab2：2',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '79%',
-          submite_times: '80',
-          state: 'closed'
+          dataIndex: 'problem_name',
+          key: 'name',
+          slots: {
+            title: 'customTitle'
+          },
+          scopedSlots: {
+            customRender: 'name'
+          }
         },
         {
-          problem_id: '00003',
-          problem_name: 'lab3：3',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '79%',
-          submite_times: '89',
-          state: 'closed'
+          title: '开始时间',
+          dataIndex: 'start_time'
         },
         {
-          problem_id: '00004',
-          problem_name: 'lab4：4',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '79%',
-          submite_times: '89',
-          state: 'closed'
+          title: 'AC率',
+          dataIndex: 'ACrate'
         },
         {
-          problem_id: '00005',
-          problem_name: 'lab5：5',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '79%',
-          submite_times: '89',
-          state: 'closed'
+          title: '提交次数',
+          dataIndex: 'submit_times'
         },
         {
-          problem_id: '00006',
-          problem_name: 'lab5：6',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '82%',
-          submite_times: '5',
-          state: 'open'
-        },
-        {
-          problem_id: '00007',
-          problem_name: 'lab5：7',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '2%',
-          submite_times: '1000',
-          state: 'closed'
-        },
-        {
-          problem_id: '00004',
-          problem_name: 'lab4：4',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '79%',
-          submite_times: '89',
-          state: 'closed'
-        },
-        {
-          problem_id: '00005',
-          problem_name: 'lab5：5',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '79%',
-          submite_times: '89',
-          state: 'closed'
-        },
-        {
-          problem_id: '00006',
-          problem_name: 'lab5：6',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '82%',
-          submite_times: '5',
-          state: 'open'
-        },
-        {
-          problem_id: '00007',
-          problem_name: 'lab5：7',
-          start_time: '2017-10-31 23:12:00',
-          update_time: '2017-10-31 23:12:00',
-          AVrate: '2%',
-          submite_times: '1000',
-          state: 'closed'
+          title: '更新时间',
+          dataIndex: 'update_time'
         }
-      ]
+      ],
+      ListData: []
+    }
+  },
+  methods: {
+    transferToProblem: function (record) {
+      this.$router.push({
+        name: '题目分析',
+        params: {
+          problem_id: record['problem_id']
+        }
+      })
     }
   }
 }

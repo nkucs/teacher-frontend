@@ -1,15 +1,15 @@
 import { axios } from '@/utils/request'
 
 const api = {
-  getmycourse: '/teacher/course/getmycourse',
-  getallcourse: '/teacher/course/getallcourse',
-  seekcourse: '/teacher/course/seekcourse',
-  deletecourse: '/teacher/course/deletecourse',
-  copycourse: '/teacher/course/copycourse',
-  addcourse: '/teacher/course/addcourse',
-  
+  getmycourse: '/teacher/course/get-my-course',
+  getallcourse: '/teacher/course/get-all-course',
+  seekcourse: '/teacher/course/get-all-course',
+  deletecourse: '/teacher/course/delete-course',
+  copycourse: '/teacher/course/duplicate-course',
+  addcourse: '/teacher/course/add-course',
   getmystudents: '/statistic/course/get-my-students',
   getmyproblems: '/statistic/course/get-my-problems'
+
 }
 
 // export default api
@@ -17,16 +17,16 @@ const api = {
 export function deletecourse(parameter) {
   return axios({
     url: api.deletecourse,
-    method: 'get',
-    params: parameter
+    method: 'post',
+    data: parameter
   })
 }
 
 export function copycourse(parameter) {
   return axios({
     url: api.copycourse,
-    method: 'get',
-    params: parameter
+    method: 'post',
+    data: parameter
   })
 }
 
@@ -59,7 +59,7 @@ export function addcourse(parameter) {
   return axios({
     url: api.addcourse,
     method: 'post',
-    params: parameter
+    data: parameter
   })
 }
 
@@ -78,3 +78,4 @@ export function getmyproblems(parameter) {
         params: parameter
     })
 }
+

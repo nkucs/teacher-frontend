@@ -2,19 +2,19 @@
   <div>
     <Runtimes></Runtimes>
     <ProblemCaseStatus></ProblemCaseStatus>
-    <ProblemSubmission></ProblemSubmission>
+    <ProblemSubmissionCount></ProblemSubmissionCount>
   </div>
 </template>
 
 <script>
-  import Runtimes from '../../components/chart/RunTimes'
-  import ProblemCaseStatus from '@/components/linechart/ProblemCaseStatus'
-  import ProblemSubmission from '@/components/linechart/ProblemSubmission'
+  import Runtimes from '@/components/chart/RunTimes'
+  import ProblemCaseStatus from '@/components/ProblemAnalysis/ProblemCaseStatus'
+  import ProblemSubmissionCount from '@/components/ProblemAnalysis/ProblemSubmissionCount'
   export default {
   components: {
     Runtimes,
     ProblemCaseStatus,
-    ProblemSubmission
+    ProblemSubmissionCount
   }
 }
 </script>

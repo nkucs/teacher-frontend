@@ -1,16 +1,16 @@
 <template>
   <a-card :loading="loading" :bordered="false" title="提交次数统计">
     <a-menu v-model="current" mode="horizontal">
-      <a-menu-item @click="sendSubmissionCountMsg(1, 'day')" key="day">
+      <a-menu-item @click="sendSubmissionCountMsg(this.$route.params.problem_id, 'day')" key="day">
         <a-icon type="calendar"/>日
       </a-menu-item>
-      <a-menu-item @click="sendSubmissionCountMsg(1, 'week')" key="week">
+      <a-menu-item @click="sendSubmissionCountMsg(this.$route.params.problem_id, 'week')" key="week">
         <a-icon type="calendar"/>周
       </a-menu-item>
-      <a-menu-item @click="sendSubmissionCountMsg(1, 'month')" key="month">
+      <a-menu-item @click="sendSubmissionCountMsg(this.$route.params.problem_id, 'month')" key="month">
         <a-icon type="calendar"/>月
       </a-menu-item>
-      <a-menu-item @click="sendSubmissionCountMsg(1, 'year')" key="year">
+      <a-menu-item @click="sendSubmissionCountMsg(this.$route.params.problem_id, 'year')" key="year">
         <a-icon type="calendar"/>年
       </a-menu-item>
     </a-menu>
@@ -21,12 +21,14 @@
 </template>
 
 <script>
-import { getSubmissionCount } from '@/api/courseAnalysis'
+import { getProblemSubmissionCount } from '@/api/problemAnalysis'
 
 export default {
 
   created() {
-    getSubmissionCount(1, 'day').then((response) => {
+    const that = this
+    const problem_id = that.$route.params.problem_id
+    getProblemSubmissionCount(problem_id, 'day').then((response) => {
       console.log(response)
       if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
@@ -112,9 +114,9 @@ export default {
   },
 
   methods: {
-    sendSubmissionCountMsg: function(course_id, date_range) {
+    sendSubmissionCountMsg: function(problem_id, date_range) {
       if (date_range == 'day') {
-        getSubmissionCount(1, 'day').then((response) => {
+        getProblemSubmissionCount(problem_id, 'day').then((response) => {
         console.log('enter day')
         if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
@@ -128,7 +130,7 @@ export default {
       }
 
       else if (date_range == 'week') {
-        getSubmissionCount(1, 'week').then((response) => {
+        getProblemSubmissionCount(problem_id, 'week').then((response) => {
         if (response['data'].length != 0) {
           let i = 0
           for (const date in response['data']['total']) {
@@ -144,7 +146,7 @@ export default {
       }
 
       else if (date_range == 'month') {
-        getSubmissionCount(1, 'month').then((response) => {
+        getProblemSubmissionCount(problem_id, 'month').then((response) => {
         console.log('enter month')
         if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
@@ -158,7 +160,7 @@ export default {
       }
 
       else if (date_range == 'year') {
-        getSubmissionCount(1, 'year').then((response) => {
+        getProblemSubmissionCount(problem_id, 'year').then((response) => {
         if (response['data'].length != 0) {
           let i = 0
           for (const date in response['data']['total']) {

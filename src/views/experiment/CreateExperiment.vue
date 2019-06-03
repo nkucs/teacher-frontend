@@ -68,19 +68,19 @@
       <a-form-item v-bind="formItemLayout" label="实验名称：">
         <a-input
           placeholder='请输入实验名称'
-          v-decorator="['experiment-name',expNameConfig]"
+          v-decorator="['name',expNameConfig]"
         />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验描述：">
         <a-input
           placeholder='请输入实验描述'
-          v-decorator="['experiment-description',expDescriptionConfig]"
+          v-decorator="['description',expDescriptionConfig]"
         />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验附件">
-        <upLoadFile></upLoadFile>
+        <!-- <upLoadFile></upLoadFile> -->
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="练习题目">
@@ -103,20 +103,20 @@
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label="开始时间：">
         <a-date-picker 
-          v-decorator="['start-date-time-picker', datePickerConfig]" 
+          v-decorator="['start_time', datePickerConfig]" 
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="截止时间：">
         <a-date-picker 
-          v-decorator="['end-date-time-picker', datePickerConfig]" 
+          v-decorator="['end_time', datePickerConfig]" 
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="是否提交实验报告：">
-        <a-radio-group v-decorator="['radio-group', radioConfig]">
+        <a-radio-group v-decorator="['report_required', radioConfig]">
           <a-radio value="y">
             是
           </a-radio>
@@ -130,7 +130,7 @@
         label="实验报告权重"
       >
         <a-input-number
-          v-decorator="['input-number', weightConfig]"
+          v-decorator="['attachment_weight', weightConfig]"
           :min="1"
           :max="100"
         />
@@ -151,9 +151,22 @@
 </template>
 
 <script>
+import { createLab } from '@/api/experiment'
 import upLoadFile from '@/components/upLoadFile'
+
 const selectedDataSource = []
 const allDataSource = []
+
+for (let i=0; i<30; i++) {
+  allDataSource.push({
+    key: i,
+    id: i,
+    name: 'problem' + i,
+    teacherName: '刘明铭',
+    tags: ['sort', 'tree']
+  })
+}
+
 const columnsWithFilter = [
   { // 列描述对象， dataIndex 表示列数据在数据项中的 key 值，声明时和 key 取其一即可，
     title: 'id',
@@ -323,14 +336,18 @@ export default {
   methods: {
     onDelete (key) {
       const selectedDataSource = [...this.selectedDataSource]
+      const selectedRowKeys = [...this.selectedRowKeys]
       this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
+      this.selectedRowKeys = selectedRowKeys.filter(item => item !== key)
     },
     handleAdd () {
-      // 调用获取全部练习题目的 API => this.allDataSource
+      // 获取全部练习题的 API 
       this.exerciseAdditionVisible = true
     },
     handleSearch() {
-      // 调用根据题目ID, 题目名称, 教师姓名，题目标签搜索题目的 API => this.allDataSource
+      // 调用根据题目ID, 题目名称, 教师姓名，题目标签搜索题目的 API => this.allDataSource 
+      // 输入为空的时候表示默认显示全部的题目
+      // 前端实现
     },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
@@ -340,11 +357,13 @@ export default {
       setTimeout(() => {
         this.exerciseAdditionVisible = false
         this.confirmLoading = false
+        this.selectedDataSource = []
         for (const key in this.selectedRowKeys) {
           const value = this.selectedRowKeys[key]
           const records = this.allDataSource.filter(item => item.key === value)
           this.selectedDataSource.push(records[0])
         }
+        console.log(this.selectedDataSource)
       }, 500)
     },
     cancelAdd() {
@@ -362,12 +381,26 @@ export default {
       })
     },
     confirmSubmit() {
-      // upload and create a new lab with : this.formValues, this.selectedDataSource
+      console.log('Received values of lab form: ', this.formValues)
+
+      // 调用新建实验的 API
+      this.formValues.start_time = this.formValues.start_time.format('YYYY-MM-DD HH:mm:ss')
+      this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss')
+      this.formValues.course_id = 1
+      this.formValues.problems = this.selectedDataSource
+      console.log('front end: ', this.formValues)
+
+      const labParams = {...this.formValues}
+      createLab(labParams).then(function (res) {
+        console.log('successfully create a new lab: ', res)
+      }).catch(function (err) {
+        console.log('fail to create a new lab: ', err)
+      })
+
       this.confirmLoading = true
       setTimeout(() => {
         this.submitVisible = false
         this.confirmLoading = false
-        // 调用新建实验的 API
         this.$router.push({path:'/experiment/list'})
       }, 500)
     },
