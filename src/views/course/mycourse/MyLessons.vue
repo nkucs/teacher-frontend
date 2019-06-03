@@ -2,6 +2,7 @@
   <div>
     <div style="margin-bottom: 5px">
       <a-input v-model="coursename" style="width: 40%" addonBefore="课程名称" />
+      <a-input v-model="teachername" style="width: 40%" addonBefore="教师姓名" />
       <a-button type="primary" align="right" @click="seek()">查询</a-button>
       <a-button align="right" @click="reset()">重置</a-button>
     </div>
@@ -89,6 +90,7 @@ export default {
       data,
       columns,
       coursename: '',
+      teachername: '',
       page: 1,
       total: 10,
       visibleDelete: false,
