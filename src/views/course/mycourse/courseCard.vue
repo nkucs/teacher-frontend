@@ -74,7 +74,8 @@ const dataSource = [
     name:'CardList',
     data () {
       return {
-        dataSource
+        dataSource,
+        teacher_id: ''
       }
     },
     methods:{

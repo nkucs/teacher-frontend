@@ -14,8 +14,8 @@ const api = {
 export function getnowcourse(parameter) {
   return axios({
     url: api.getnowcourse,
-    method: 'post',
-    data: parameter
+    method: 'get',
+    params: parameter
   })
 }
 

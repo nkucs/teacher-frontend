@@ -2,7 +2,6 @@
   <div>
     <div style="margin-bottom: 5px">
       <a-input v-model="coursename" style="width: 40%" addonBefore="课程名称" />
-      <a-input v-model="teachername" style="width: 40%" addonBefore="教师姓名" />
       <a-button type="primary" align="right" @click="seek()">查询</a-button>
       <a-button align="right" @click="reset()">重置</a-button>
     </div>
@@ -90,13 +89,13 @@ export default {
       data,
       columns,
       coursename: '',
-      teachername: '',
       page: 1,
       total: 10,
       visibleDelete: false,
       visibleCopy: false,
       deleteID: 0,
-      copyID: 0
+      copyID: 0,
+      teacher_id: ''
     }
   },
   components: {
@@ -112,46 +111,20 @@ export default {
       this.visibleCopy = true
     },
     seek () {
-      if (this.coursename === '' && this.teachername === '') {
-        alert(`请输入课程名称或教师名称查询！`)
-      }
-      else if (this.coursename === '') {
-        seekcourse({
-          'name': this.coursename,
-          'teacher': this.teachername
-        }).then(response => {
-          console.log(`seek successfully`)
-          this.data = response.courses
-          this.page = response.current_page
-          this.total = response.total_pages * 10
-        }).catch((fail) => {
-          alert('查找失败！')
-          console.log(fail)
-        })
-      }
-      else if (this.teachername === '') {
-        seekcourse({
-          'name': this.coursename,
-          'teacher': this.teachername
-        }).then(response => {
-          console.log(`seek successfully`)
-          this.data = response.courses
-          this.page = response.current_page
-          this.total = response.total_pages * 10
-        }).catch((fail) => {
-          alert('查找失败！')
-          console.log(fail)
-        })
+      if (this.coursename === '') {
+        alert(`请输入课程名称查询！`)
       }
       else {
         seekcourse({
-          'teacher': this.teachername,
-          'name': this.coursename
+          'page': this.page,
+          'pageLength': 10,
+          'name': this.coursename,
+          'teacher': this.teachername
         }).then(response => {
           console.log(`seek successfully`)
           this.data = response.courses
-          this.page = response.current_page
-          this.total = response.total_pages * 10
+          this.page = response.currentPage
+          this.total = response.totalPages * 10
         }).catch((fail) => {
           alert('查找失败！')
           console.log(fail)
@@ -160,8 +133,7 @@ export default {
     },
     reset () {
       this.coursename = ''
-      this.teachername = ''
-      this.getmycourse
+      this.getmycourse()
     },
     copycourse () {
       copycourse({
@@ -187,8 +159,7 @@ export default {
       getmycourse({
         'page': this.page,
         'pageLength': 10,
-        'name': this.courseName,
-        'teacher': this.teacherName
+        'teacherNumber': this.teacher_id
       }).then((response) => {
         console.log(`get my courses successfully.`)
         this.data = response.courses
