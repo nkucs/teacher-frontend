@@ -135,6 +135,7 @@ export default {
     },
     reset () {
       this.coursename = ''
+      this.teachername = ''
       this.getmycourse()
     },
     copycourse () {
