@@ -58,87 +58,32 @@
       </a-table-column>
     </a-table>
 
+    <a-modal
+      title="删除实验"
+      :visible="visible"
+      @ok="confirmDelete(curID)"
+      :confirmLoading="confirmLoading"
+      @cancel="cancelDelete"
+    >
+      <p> 是否确认删除实验{{ curID }}：{{ curName }}？ </p>
+    </a-modal>
+
   </div>
 </template>
 
 <script>
-var listData = 
-[
-  {
-    lab_id: '00001',
-    name: 'lab1：二叉搜索树',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00002',
-    name: 'lab2：2',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00003',
-    name: 'lab3：3',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00004',
-    name: 'lab4：4',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00005',
-    name: 'lab5：5',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00006',
-    name: 'lab6：6',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00007',
-    name: 'lab7：7',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00008',
-    name: 'lab8：8',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00009',
-    name: 'lab9：9',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00010',
-    name: 'lab10：10',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  },
-  {
-    lab_id: '00011',
-    name: 'lab11：11',
-    start_time: '2017-10-31 23:12:00',
-    end_time: '2017-10-31 23:12:00',
-  }
-]
 
 import { deleteLab, getLabs } from '@/api/experiment'
 export default {
   data () {
     return {
       msg: '实验列表',
-      listData,
-      courseID:0
+      listData: [],
+      courseID:0,
+      visible: false,
+      confirmLoading: false,
+      curID: '',
+      curName: '',
     }
   },
 
@@ -146,6 +91,38 @@ export default {
     newLab() {
       console.log(`进入新建实验页面`)
       this.$router.push({ path: `/experiment/new?course_id=${this.courseID}`})
+    },
+
+    showModal() {
+      this.visible = true
+    },
+
+    confirmDelete(labId) {
+      this.confirmLoading = true
+      deleteLab({
+        lab_id: labId,
+      }).then(() => {
+        console.log(`delete lab ${labId} successfully`)
+        for (var item in this.listData) {
+          if (this.listData[item].lab_id === labId) {
+            console.log('find!!')
+            this.listData.splice(item, 1)
+            break
+          }
+        }
+        this.visible = false
+        this.confirmLoading = false
+      }).catch((fail) => {
+        alert('删除实验失败')
+        console.log(fail)
+        this.visible = false
+        this.confirmLoading = false
+      })
+    },
+
+    cancelDelete() {
+      console.log('Clicked cancel button')
+      this.visible = false
     },
 
     editLab(labId) {
@@ -166,20 +143,14 @@ export default {
     deleteLab(labId) {
       const self = this
       console.log(`删除实验${labId}`)
-      deleteLab({
-        lab_id: labId,
-      }).then(() => {
-        console.log(`delete lab ${labId} successfully`)
-        for (var item in self.listData) {
-          if (self.listData[item].lab_id === labId) {
-            self.listData.splice(item, 1)
-            break
-          }
+      self.curID = labId
+      for (var item in self.listData) {
+        if (self.listData[item].lab_id === labId) {
+          self.curName = self.listData[item].name
+          break
         }
-      }).catch((fail) => {
-        alert('删除实验失败')
-        console.log(fail)
-      })
+      }
+      self.showModal()
     }
   },
 
