@@ -9,7 +9,6 @@
 
     <a-button
       @click="newLab"
-      href="/experiment/new"
     >
       新建实验
     </a-button>
@@ -19,14 +18,20 @@
     <a-table :dataSource="listData">
       <a-table-column
         title="实验ID"
-        dataIndex="problem_id"
-        key="problem_id"
+        dataIndex="lab_id"
+        key="lab_id"
       />
       <a-table-column
         title="实验名称"
-        dataIndex="problem_name"
-        key="problem_name"
-      />
+        dataIndex="name"
+        key="name"
+      >
+        <template slot-scope="text, record">
+          <span>
+            <a href="javascript:;" target="_blank" @click="toLab(record.problem_id)"> {{ record.name }} </a>
+          </span>
+        </template>
+      </a-table-column>
       <a-table-column
         title="开始时间"
         dataIndex="start_time"
@@ -43,9 +48,9 @@
       >
         <template slot-scope="text, record">
           <span>
-            <a href="/experiment/edit" target="_blank" @click="editLab(record.problem_id)">编辑</a>
+            <a href="javascript:;" target="_blank" @click="editLab(record.problem_id)">编辑</a>
             <a-divider type="vertical" />
-            <a href="/stat/problem" target="_blank" @click="performance(record.problem_id)">完成情况</a>
+            <a href="javascript:;" target="_blank" @click="performance(record.problem_id)">完成情况</a>
             <a-divider type="vertical" />
             <a href="javascript:;" target="_blank" @click="deleteLab(record.problem_id)">删除</a>
           </span>
@@ -60,74 +65,74 @@
 var listData = 
 [
   {
-    problem_id: '00001',
-    problem_name: 'lab1：二叉搜索树',
+    lab_id: '00001',
+    name: 'lab1：二叉搜索树',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00002',
-    problem_name: 'lab2：2',
+    lab_id: '00002',
+    name: 'lab2：2',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00003',
-    problem_name: 'lab3：3',
+    lab_id: '00003',
+    name: 'lab3：3',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00004',
-    problem_name: 'lab4：4',
+    lab_id: '00004',
+    name: 'lab4：4',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00005',
-    problem_name: 'lab5：5',
+    lab_id: '00005',
+    name: 'lab5：5',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00006',
-    problem_name: 'lab6：6',
+    lab_id: '00006',
+    name: 'lab6：6',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00007',
-    problem_name: 'lab7：7',
+    lab_id: '00007',
+    name: 'lab7：7',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00008',
-    problem_name: 'lab8：8',
+    lab_id: '00008',
+    name: 'lab8：8',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00009',
-    problem_name: 'lab9：9',
+    lab_id: '00009',
+    name: 'lab9：9',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00010',
-    problem_name: 'lab10：10',
+    lab_id: '00010',
+    name: 'lab10：10',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   },
   {
-    problem_id: '00011',
-    problem_name: 'lab11：11',
+    lab_id: '00011',
+    name: 'lab11：11',
     start_time: '2017-10-31 23:12:00',
     end_time: '2017-10-31 23:12:00',
   }
 ]
 
-import { deleteLab, getProblems } from '@/api/experiment'
+import { deleteLab, getLabs } from '@/api/experiment'
 export default {
   data () {
     return {
@@ -138,18 +143,23 @@ export default {
 
   methods: {
     newLab() {
-      console.log('进入添加新实验的页面')
-      alert('进入添加新实验的页面')
+      console.log(`进入新建实验页面`)
+      this.$router.push({ path: '/experiment/new'})
     },
 
     editLab(labId) {
       console.log(`进入实验${labId}的编辑页面`)
-      alert(`进入实验${labId}的编辑页面`)
+      this.$router.push({ path: `/experiment/edit/${labId}`})
     },
 
     performance(labId) {
       console.log(`进入实验${labId}的完成情况页面`)
-      alert(`进入实验${labId}的完成情况页面`)
+      this.$router.push({ path: `/stat/problem/${labId}`})
+    },
+
+    toLab(labId) {
+      console.log(`进入实验${labId}的详情页面`)
+      this.$router.push({ path: `/experiment/detail/${labId}`})
     },
 
     deleteLab(labId) {
@@ -176,14 +186,44 @@ export default {
 
   mounted() {
     const self = this
-    getProblems()
+    let id, pages
+    if (this.$route.params.id) {
+      id = this.$route.params.id
+    }
+
+    getLabs({
+      params: {
+        course_id: id,
+        page: 1
+      }
+    })
     .then(response => {
       console.log(response)
-      self.listData = response.problems
+      self.listData = response.labs
+      pages = response.total_pages
+      for (let i = 2; i <= pages; i++) {
+        getLabs({
+          params: {
+            course_id: id,
+            page: i
+          }
+        })
+        .then(response => {
+          console.log(response)
+          self.listData = response.labs.reduce( function (coll, item) {
+            coll.push(item)
+            return coll
+          }, self.listData)
+        })
+        .catch(fail => {
+          console.log(fail)
+          console.log('获取实验列表错误')
+        })
+      }
     })
     .catch(fail => {
       console.log(fail)
-      alert('无法获取实验列表')
+      console.log('无法获取实验列表')
     })
   }
 }

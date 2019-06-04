@@ -1,15 +1,62 @@
 import { axios } from '@/utils/request'
+// import Qs from 'qs'
 
 const api = {
-  getProblems: '/teacher/lecture/get-problems',
-  deleteLab: '/teacher/lab/delete-lab'
+  getLabs: '/teacher/lab/get-my-labs',
+  deleteLab: '/teacher/lab/delete-lab',
+  createLab: '/teacher/lab/create-lab',
+  editLab: '/teacher/lab/edit-lab',
+  getLab: '/teacher/lab/get-lab/',
+  filterProblems: '/teacher/lab/filter-problems',
+  getProblems: '/teacher/lab/get-problems'
 }
-
-export default api
 
 export function deleteLab(parameter) {
   return axios({
-    url: api.user,
+    url: '/teacher/lab/delete-lab',
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getLabs(parameter) {
+  return axios({
+    url: '/teacher/lab/get-my-labs',
+    method: 'get',
+    params: parameter
+  })
+}
+
+
+export function getLab(parameter) {
+  return axios({
+    url: api.getLab,
+    method: 'get',
+    params: parameter
+  })
+}
+
+
+export function createLab(parameter) {
+  return axios({
+    url: api.createLab,
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function editLab(parameter) {
+  return axios({
+    url: api.editLab,
+    method: 'post',
+    data: parameter
+  })
+}
+
+
+export function filterProblems(parameter) {
+  return axios({
+    url: api.filterProblems,
     method: 'get',
     params: parameter
   })
@@ -17,8 +64,9 @@ export function deleteLab(parameter) {
 
 export function getProblems(parameter) {
   return axios({
-    url: api.role,
+    url: api.getProblems,
     method: 'get',
     params: parameter
   })
 }
+

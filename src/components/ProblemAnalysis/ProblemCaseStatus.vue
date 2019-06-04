@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import {get_submission_tags} from '../../api/courseAnalysis.js'
+import {getProblemSubmissiontags} from '../../api/problemAnalysis.js'
 export default {
   data() {
     this.passTestCaseSettings = {
@@ -45,9 +45,8 @@ export default {
   },
   created: function() {
     const that = this
-    // 这里添加course_id
-    const course_id = 1
-    get_submission_tags(course_id).then(
+    const problem_id = that.$route.params.problem_id
+    getProblemSubmissiontags(problem_id).then(
       (response) => {
         const data = response.ans
         for (let i = 0; i < data.length; i++) {

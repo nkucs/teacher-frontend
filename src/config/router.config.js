@@ -112,8 +112,15 @@ export const asyncRouterMap = [
         path: '/exam/list',
         name: '考试中心',
         component: BlankLayout,
-        meta: { title: '考试中心', icon: 'dashboard', permission: [ 'dashboard' ] },
-        children: [{
+        meta: { title: '考试中心', permission: [ 'dashboard' ] },
+        children: [
+          {
+            path: '/exam/examlist',
+            name: '获取考试列表',
+            component: () => import('@/views/exam/ExamList'),
+            meta: { title: '获取考试列表'}
+          },
+        {
           path: '/exam/addproblems',
           name: '添加考试题目',
           component: () => import('@/views/exam/AddProblems'),
@@ -133,20 +140,23 @@ export const asyncRouterMap = [
         }]
       },
       {
-        path: '/experiment/list',
+        path: '/experiment/list/:id',
         name: '实验列表',
+        hidden: true,
         component: () => import('@/views/experiment/ExperimentList'),
         meta: { title: '实验列表', icon: 'dashboard', permission: [ 'dashboard' ] }
       },
       {
         path: '/experiment/new',
         name: '新建实验',
+        hidden: true,
         component: () => import('@/views/experiment/CreateExperiment'),
         meta: { title: '新建实验', icon: 'dashboard', permission: [ 'dashboard' ] }
       },
       {
-        path: '/experiment/edit',
+        path: '/experiment/edit/:id',
         name: '编辑实验',
+        hidden: true,
         component: () => import('@/views/experiment/EditExperiment'),
         meta: { title: '编辑实验', icon: 'dashboard', permission: [ 'dashboard' ] }
       },

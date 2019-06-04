@@ -20,7 +20,6 @@
 
 <script>
 import { distribution } from '@/api/distribution'
-
 export default {
   props: {
     studentId: {
@@ -55,11 +54,13 @@ export default {
           { '时间段': '22:00-24:00', '提交数': 0, 'AC数': 0 }
         ]
       },
-      start_date: this.formatDate(new Date()),
-      end_date: this.formatDate(new Date())
+      start_date: 0,
+      end_date: 0
     }
   },
   created: function () {
+    this.start_date = this.formatDate(this.minusDay(new Date(), 1))
+    this.end_date = this.formatDate(new Date())
     this.sendRequest()
   },
   methods: {
@@ -93,13 +94,12 @@ export default {
 
     sendRequest: function() {
       var that = this
-      console.log(that)
       distribution({
         student_id: that.studentId,
         start_date: that.start_date,
         end_date: that.end_date
       }).then(function(res) {
-        that.chartData.rows = res.ans
+        that.chartData['rows'] = res.ans
       })
     },
 

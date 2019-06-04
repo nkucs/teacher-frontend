@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { caseTagStatistics } from '@/api/distribution'
 export default {
   data () {
     this.chartSettings = {
@@ -29,6 +30,15 @@ export default {
         ]
       }
     }
+  },
+  created() {
+    var that = this
+    caseTagStatistics({
+        student_id: '1000000',
+        status: 2
+      }).then(function(res) {
+        that.chartData['rows'] = res
+      })
   }
 }
 </script>
