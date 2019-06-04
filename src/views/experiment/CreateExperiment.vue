@@ -312,13 +312,15 @@ export default {
 
     // final form content for submitting
     formValues: null,
-
+    courseId: null,
   }),
 
   mounted() {
     const self = this
     self.form = self.$form.createForm(self)
     self.search()
+    console.log('query', this.$route.query)
+    this.courseId = this.$route.query.course_id
   },
 
   computed: {
@@ -440,24 +442,21 @@ export default {
       // 调用新建实验的 API
       this.formValues.start_time = this.formValues.start_time.format('YYYY-MM-DD HH:mm:ss')
       this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss')
-      this.formValues.course_id = 1
+      this.formValues.course_id = this.courseId
       this.formValues.problems = this.selectedDataSource
-      console.log("选中的题目有：", this.selectedDataSource)
+      console.log('选中的题目有：', this.selectedDataSource)
       console.log('front end: ', this.formValues)
 
       const labParams = {...this.formValues}
-      createLab(labParams).then(function (res) {
-        console.log('successfully create a new lab: ', res)
-      }).catch(function (err) {
-        console.log('fail to create a new lab: ', err)
-      })
-
       this.confirmLoading = true
-      setTimeout(() => {
+      createLab(labParams).then((res) => {
+        console.log('successfully create a new lab: ', res)
         this.submitVisible = false
         this.confirmLoading = false
-        this.$router.push({path:'/experiment/list'})
-      }, 500)
+        this.$router.push({path:`/course/details?courseID=${this.courseId}`})
+      }).catch((err) => {
+        console.log('fail to create a new lab: ', err)
+      })
     },
     cancelSubmit() {
       this.submitVisible = false
