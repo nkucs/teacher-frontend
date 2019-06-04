@@ -1,8 +1,6 @@
 <template>
   <div>
-
     <h2 class="mainTitle">编辑实验</h2>
-
     <a-form id="components-form-demo-validate-other" :form="form">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
         {{ lab.name }}
@@ -27,6 +25,7 @@
           </span>
         </a-table>
       </a-form-item>
+
       <a-form-item v-bind="formItemLayout" label="开始时间：" >
         {{ lab.startTime }}
       </a-form-item>
@@ -36,12 +35,10 @@
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="是否提交实验报告：">
-        {{ lab.reportRequired==="y"?"是":"否" }}
+        {{ lab.reportRequired === 'y' ? '是' : '否' }}
       </a-form-item>
-      <a-form-item
-        v-bind="formItemLayout"
-        label="实验报告权重"
-      >
+
+      <a-form-item v-bind="formItemLayout" label="实验报告权重">
         {{ lab.attachmentWeight }} %
       </a-form-item>
     </a-form>
@@ -50,7 +47,7 @@
 
 <script>
 import moment from 'moment'
-import { getLab, getSubmissionFile } from '@/api/experiment'
+import { getLab, getSubmissionFile, getProblems } from '@/api/experiment'
 
 const columnsWithFilter = [
   {
@@ -76,9 +73,10 @@ const columnsWithFilter = [
     dataIndex: 'tags',
     width: '30%',
     scopedSlots: {
-        customRender: 'tags',
-      },
-  }]
+      customRender: 'tags',
+    },
+  },
+]
 
 const columns =  [
   {
@@ -88,7 +86,7 @@ const columns =  [
   {
     title: '名称',
     dataIndex: 'name',
-    width: '25%',
+    width: '40%',
   },
   {
     title: '教师',
@@ -97,31 +95,25 @@ const columns =  [
 
   },
   {
-  title: '标签',
-  key: 'tags',
-  dataIndex: 'tags',
-  scopedSlots: { customRender: 'tags' },
-  width: '30%'
+    title: '标签',
+    key: 'tags',
+    dataIndex: 'tags',
+    scopedSlots: { customRender: 'tags' },
+    width: '30%',
   },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    scopedSlots: { customRender: 'operation' },
-    width: '16%'
-  }]
+]
 
 const formItemLayout = {
   labelCol: {
-    span: 6
+    span: 6,
   },
   wrapperCol: {
-    span: 14
+    span: 14,
   },
 }
 
 export default {
   data: () => ({
-    // lab
     id: '',
     lab: '',
     formItemLayout,
@@ -129,7 +121,7 @@ export default {
     columns,
     columnsWithFilter,
     pagination: {
-      defaultPageSize: 6
+      defaultPageSize: 6,
     },
   }),
 
@@ -138,19 +130,10 @@ export default {
   },
 
   created(){
-    this.id=this.$route.params.id
+    this.id = this.$route.params.id
     this.selectedDataSource = []
-    for (let i=0; i<10; i++) {
-      this.selectedDataSource.push({
-        key: i, // necessary
-        id: i,
-        name: 'problem ' + i,
-        teacherName: 'teacher ' + i,
-        tags: ['sort', 'recursion']
-      })
-    }
     getLab({
-      lab_id: this.id
+      lab_id: this.id,
     }).then(res => {
       this.lab = {
         name: res.data.name,
@@ -158,16 +141,33 @@ export default {
         startTime: moment(res.data.start_time).format('YYYY-MM-DD HH:mm:ss'),
         endTime: moment(res.data.end_time).format('YYYY-MM-DD HH:mm:ss'),
         files: res.data.files,
-        reportRequired: res.data.report_required?'y':'n',
+        reportRequired: res.data.report_required ? 'y' : 'n',
         attachmentWeight: res.data.attachment_weight,
       }
+    })
+    getProblems({
+      lab_id: this.id,
+    }).then(response => {
+      const problems = response.data.problems
+      for (let i=0; i<problems.length; i++) {
+        const pro = problems[i]
+        this.selectedDataSource.push({
+          key: pro.code,
+          id: pro.code,
+          name: pro.name,
+          teacherName: response.data.teacher_names[i],
+          tags: response.data.tag_names[i],
+        })
+      }
+    }).catch(err => {
+      console.log(`fail to get problems for lab ${this.lab_id}`, err)
     })
   },
 
   methods: {
     download(key){
       getSubmissionFile({
-        attachment_id: this.lab.files[key].id
+        attachment_id: this.lab.files[key].id,
       }).then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
@@ -203,5 +203,4 @@ export default {
   width: 180px;
   margin: 0 8px 8px 0;
 }
-
 </style>
