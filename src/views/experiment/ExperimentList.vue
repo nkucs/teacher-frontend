@@ -48,11 +48,11 @@
       >
         <template slot-scope="text, record">
           <span>
-            <a href="javascript:;" target="_blank" @click="editLab(record.problem_id)">编辑</a>
+            <a href="javascript:;" target="_blank" @click="editLab(record.lab_id)">编辑</a>
             <a-divider type="vertical" />
-            <a href="javascript:;" target="_blank" @click="performance(record.problem_id)">完成情况</a>
+            <a href="javascript:;" target="_blank" @click="performance(record.lab_id)">完成情况</a>
             <a-divider type="vertical" />
-            <a href="javascript:;" target="_blank" @click="deleteLab(record.problem_id)">删除</a>
+            <a href="javascript:;" target="_blank" @click="deleteLab(record.lab_id)">删除</a>
           </span>
         </template>
       </a-table-column>
@@ -171,7 +171,7 @@ export default {
       }).then(() => {
         console.log(`delete lab ${labId} successfully`)
         for (var item in self.listData) {
-          if (self.listData[item].id === labId) {
+          if (self.listData[item].lab_id === labId) {
             self.listData.splice(item, 1)
             break
           }

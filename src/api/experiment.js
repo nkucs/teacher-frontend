@@ -15,7 +15,7 @@ const api = {
 export function deleteLab(parameter) {
   return axios({
     url: '/teacher/lab/delete-lab/',
-    method: 'get',
+    method: 'post',
     params: parameter
   })
 }
