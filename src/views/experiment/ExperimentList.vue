@@ -194,16 +194,14 @@ export default {
 
     self.courseID = id
 
-    console.log('COURSE ID', this.$route.query)
-
     getLabs({
       course_id: id,
       page: 1
     })
     .then(response => {
       console.log(response)
-      self.listData = response.labs
-      pages = response.total_pages
+      self.listData = response.data.labs
+      pages = response.data.total_pages
       for (let i = 2; i <= pages; i++) {
         getLabs({
           course_id: id,
@@ -211,7 +209,7 @@ export default {
         })
         .then(response => {
           console.log(response)
-          self.listData = response.labs.reduce( function (coll, item) {
+          self.listData = response.data.labs.reduce( function (coll, item) {
             coll.push(item)
             return coll
           }, self.listData)
