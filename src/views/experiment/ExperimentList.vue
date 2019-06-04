@@ -48,11 +48,11 @@
       >
         <template slot-scope="text, record">
           <span>
-            <a href="javascript:;" target="_blank" @click="editLab(record.problem_id)">编辑</a>
+            <a href="javascript:;" target="_blank" @click="editLab(record.lab_id)">编辑</a>
             <a-divider type="vertical" />
-            <a href="javascript:;" target="_blank" @click="performance(record.problem_id)">完成情况</a>
+            <a href="javascript:;" target="_blank" @click="performance(record.lab_id)">完成情况</a>
             <a-divider type="vertical" />
-            <a href="javascript:;" target="_blank" @click="deleteLab(record.problem_id)">删除</a>
+            <a href="javascript:;" target="_blank" @click="deleteLab(record.lab_id)">删除</a>
           </span>
         </template>
       </a-table-column>
@@ -171,7 +171,7 @@ export default {
       }).then(() => {
         console.log(`delete lab ${labId} successfully`)
         for (var item in self.listData) {
-          if (self.listData[item].id === labId) {
+          if (self.listData[item].lab_id === labId) {
             self.listData.splice(item, 1)
             break
           }
@@ -194,16 +194,14 @@ export default {
 
     self.courseID = id
 
-    console.log('COURSE ID', this.$route.query)
-
     getLabs({
       course_id: id,
       page: 1
     })
     .then(response => {
       console.log(response)
-      self.listData = response.labs
-      pages = response.total_pages
+      self.listData = response.data.labs
+      pages = response.data.total_pages
       for (let i = 2; i <= pages; i++) {
         getLabs({
           course_id: id,
@@ -211,7 +209,7 @@ export default {
         })
         .then(response => {
           console.log(response)
-          self.listData = response.labs.reduce( function (coll, item) {
+          self.listData = response.data.labs.reduce( function (coll, item) {
             coll.push(item)
             return coll
           }, self.listData)
