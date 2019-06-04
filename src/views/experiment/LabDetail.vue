@@ -50,7 +50,7 @@
 
 <script>
 import moment from 'moment'
-import { getLab, getSubmissionFile } from '@/api/experiment'
+import { getLab, getSubmissionFile, getProblems } from '@/api/experiment'
 
 const columnsWithFilter = [
   {
@@ -88,7 +88,7 @@ const columns =  [
   {
     title: '名称',
     dataIndex: 'name',
-    width: '25%',
+    width: '40%',
   },
   {
     title: '教师',
@@ -97,18 +97,13 @@ const columns =  [
 
   },
   {
-  title: '标签',
-  key: 'tags',
-  dataIndex: 'tags',
-  scopedSlots: { customRender: 'tags' },
-  width: '30%'
-  },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    scopedSlots: { customRender: 'operation' },
-    width: '16%'
-  }]
+    title: '标签',
+    key: 'tags',
+    dataIndex: 'tags',
+    scopedSlots: { customRender: 'tags' },
+    width: '30%'
+  }
+]
 
 const formItemLayout = {
   labelCol: {
@@ -140,15 +135,6 @@ export default {
   created(){
     this.id=this.$route.params.id
     this.selectedDataSource = []
-    for (let i=0; i<10; i++) {
-      this.selectedDataSource.push({
-        key: i, // necessary
-        id: i,
-        name: 'problem ' + i,
-        teacherName: 'teacher ' + i,
-        tags: ['sort', 'recursion']
-      })
-    }
     getLab({
       lab_id: this.id
     }).then(res => {
@@ -161,6 +147,23 @@ export default {
         reportRequired: res.data.report_required?'y':'n',
         attachmentWeight: res.data.attachment_weight,
       }
+    })
+    getProblems({
+      lab_id: this.id
+    }).then(response => {
+      const problems = response.data.problems
+      for (let i=0; i<problems.length; i++) {
+        const pro = problems[i]
+        this.selectedDataSource.push({
+          key: pro.code,
+          id: pro.code,
+          name: pro.name,
+          teacherName: response.data.teacher_names[i],
+          tags: response.data.tag_names[i]
+        })
+      }
+    }).catch(err => {
+      console.log(`fail to get problems for lab ${this.lab_id}`, err)
     })
   },
 
