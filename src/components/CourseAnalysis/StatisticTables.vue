@@ -1,5 +1,5 @@
 <template>
-  <a-card :loading="loading" :bordered="false" title="提交次数列表">
+  <a-card :bordered="false" title="提交次数列表">
     <a-table :columns="columns" :dataSource="ListData">
       <a slot="name" slot-scope="text, record" href="javascript:;" @click="transferToProblem(record)">{{ text }}</a>
       <span slot="customTitle">名称</span>
@@ -15,7 +15,7 @@ import { problemTables } from '@/api/courseAnalysis'
 
 export default {
   created() {
-    problemTables('1').then((response) => {
+    problemTables(this.$route.query.course_id).then((response) => {
       if (response.length != 0) {
         this.ListData = response
       }

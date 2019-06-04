@@ -1,6 +1,6 @@
 <template>
-  <a-card :loading="loading" :bordered="false" title="提交次数统计">
-    <a-menu v-model="current" mode="horizontal">
+  <a-card :bordered="false" title="提交次数统计">
+    <a-menu mode="horizontal">
       <a-menu-item @click="sendSubmissionCountMsg(1, 'day')" key="day">
         <a-icon type="calendar"/>日
       </a-menu-item>
@@ -26,15 +26,14 @@ import { getSubmissionCount } from '@/api/courseAnalysis'
 export default {
 
   created() {
-    getSubmissionCount(1, 'day').then((response) => {
-      console.log(response)
+    getSubmissionCount(this.$route.query.course_id, 'day').then((response) => {
       if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
             this.LineChartData_day.rows[i]['总提交次数'] = response['data']['total'][i]
             this.LineChartData_day.rows[i]['AC提交次数'] = response['data']['AC'][i]
             this.LineChartData_day.rows[i]['非AC提交次数'] = response['data']['not_AC'][i]
-            this.LineChartData = this.LineChartData_day
           }
+          this.LineChartData = this.LineChartData_day
       }
     })
 
@@ -115,7 +114,6 @@ export default {
     sendSubmissionCountMsg: function(course_id, date_range) {
       if (date_range == 'day') {
         getSubmissionCount(1, 'day').then((response) => {
-        console.log('enter day')
         if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
             this.LineChartData_day.rows[i]['总提交次数'] = response['data']['total'][i]
