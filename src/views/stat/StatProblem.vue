@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import Runtimes from '@/components/chart/RunTimes'
+  import Runtimes from '@/components/ProblemAnalysis/RunTimes'
   import ProblemCaseStatus from '@/components/ProblemAnalysis/ProblemCaseStatus'
   import ProblemSubmissionCount from '@/components/ProblemAnalysis/ProblemSubmissionCount'
   export default {
