@@ -9,6 +9,12 @@
 <script>
 import { caseTagStatistics } from '@/api/distribution'
 export default {
+  props: {
+    studentNumber: {
+      type: String,
+      default: '1000000'
+    }
+  },
   data () {
     this.chartSettings = {
       metrics: ['数量'],
@@ -34,7 +40,7 @@ export default {
   created() {
     var that = this
     caseTagStatistics({
-        student_id: '1000000',
+        student_id: that.studentNumber,
         status: 2
       }).then(function(res) {
         that.chartData['rows'] = res
