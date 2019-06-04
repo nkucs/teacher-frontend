@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div>
     <a-row>
 
@@ -93,95 +93,95 @@
 
 
 <script>
-  const columns = [{
-      dataIndex: 'problemID',
-      key: 'name',
-      slots: {
-        title: 'customTitle'
-      },
-      scopedSlots: {
-        customRender: 'name'
-      },
-    }, {
-      title: '题目名称',
-      dataIndex: 'problemName',
-    }, {
-      title: '测试数',
-      dataIndex: 'testNumber',
-    }, {
-      title: '分值',
-      dataIndex: 'scores',
-
+const columns = [{
+    dataIndex: 'problemID',
+    key: 'name',
+    slots: {
+      title: 'customTitle'
     },
-    {
-      title: '',
-      key: 'action',
-      scopedSlots: {
-        customRender: 'action'
-      },
-    }
-  ]
-
-  const dataA = [{
-    key: '1',
-    problemID: '21132',
-    problemName: 'A+B',
-    testNumber: '99',
-    scores: '100'
-  }, {
-    key: '1',
-    problemID: '21132',
-    problemName: 'A+B',
-    testNumber: '99',
-    scores: '100'
-  }, {
-    key: '1',
-    problemID: '21132',
-    problemName: 'A+B',
-    testNumber: '99',
-    scores: '100'
-  }, ]
-  const dataB = [{
-    key: '1',
-    problemID: '21132',
-    problemName: 'A+B',
-    testNumber: '99',
-    scores: '100'
-  }, {
-    key: '1',
-    problemID: '21132',
-    problemName: 'A+B',
-    testNumber: '99',
-    scores: '100'
-  }, {
-    key: '1',
-    problemID: '21132',
-    problemName: 'A+B',
-    testNumber: '99',
-    scores: '100'
-  }, ]
-  export default {
-    data() {
-      return {
-        dataA,
-        dataB,
-        columns,
-        examName: '2019-2020年第2学期 算法导论考试',
-        examTime: '2019.4.1 14:00 - 2019.4.1 15:00',
-      }
+    scopedSlots: {
+      customRender: 'name'
     },
-    methods: {
-      getProblemDetial() {},
-      deleteProblem() {}
-    }
+  }, {
+    title: '题目名称',
+    dataIndex: 'problemName',
+  }, {
+    title: '测试数',
+    dataIndex: 'testNumber',
+  }, {
+    title: '分值',
+    dataIndex: 'scores',
+
+  },
+  {
+    title: '',
+    key: 'action',
+    scopedSlots: {
+      customRender: 'action'
+    },
   }
+]
+
+const dataA = [{
+  key: '1',
+  problemID: '21132',
+  problemName: 'A+B',
+  testNumber: '99',
+  scores: '100'
+}, {
+  key: '1',
+  problemID: '21132',
+  problemName: 'A+B',
+  testNumber: '99',
+  scores: '100'
+}, {
+  key: '1',
+  problemID: '21132',
+  problemName: 'A+B',
+  testNumber: '99',
+  scores: '100'
+}, ]
+const dataB = [{
+  key: '1',
+  problemID: '21132',
+  problemName: 'A+B',
+  testNumber: '99',
+  scores: '100'
+}, {
+  key: '1',
+  problemID: '21132',
+  problemName: 'A+B',
+  testNumber: '99',
+  scores: '100'
+}, {
+  key: '1',
+  problemID: '21132',
+  problemName: 'A+B',
+  testNumber: '99',
+  scores: '100'
+}, ]
+export default {
+  data() {
+    return {
+      dataA,
+      dataB,
+      columns,
+      examName: '2019-2020年第2学期 算法导论考试',
+      examTime: '2019.4.1 14:00 - 2019.4.1 15:00',
+    }
+  },
+  methods: {
+    getProblemDetial() {},
+    deleteProblem() {}
+  }
+}
 </script>
 
 <style scoped>
-  .body-text-1 {
-    color: rgba(122, 12, 110, 1);
-    font-size: 20px;
-    line-height: 150%;
+.body-text-1 {
+  color: rgba(122, 12, 110, 1);
+  font-size: 20px;
+  line-height: 150%;
 
-  }
+}
 </style>

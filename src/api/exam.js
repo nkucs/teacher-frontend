@@ -1,6 +1,10 @@
 import { axios } from '@/utils/request'
 
 const api = {
+  addexam: '/exam/examlist/add-exam',
+  getnowexam:'/exam/examlist/get-nowexam',
+  getlastexam:'/exam/examlist/get-lastexam',
+  deleteexam: '/exam/examlist/delete-exam',
   getexamproblem:'/techer/exam/get-examproblem',
   getexamstudent: '/exam/student/get-examstudent',
   getallstudent: '/exam/student/get-allstudent',
@@ -8,13 +12,42 @@ const api = {
   addstudent: '/exam/student/add-student',
   deletestudent: '/exam/student/delete-student',
   fixstudent: '/exam/student/fix-student',
-  // searchidstudent: '/exam/student/get-idstudent',
-  // searchnamestudent: '/exam/student/get-namestudent',
-  // searchidstuall: '/exam/student/get-idstuall',
-  // searchnamestuall: '/exam/student/get-namestuall',
+  getallproblem: '/exam/examlist/get-allproblem'
 }
 
 // export default api
+
+export function addexam(parameter) {
+  return axios({
+    url: api.addexam,
+    method: 'post',
+    data: parameter
+  })
+}
+export function getnowexam(parameter) {
+  return axios({
+    url: api.getnowexam,    //后端url，对接时修改
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getlastexam(parameter) {
+  return axios({
+    url: api.getlastexam,    //后端url，对接时修改
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function deleteexam(parameter){
+  return axios({
+    url: api.deleteexam,    //后端url，对接时修改
+    method: 'post',
+    data: parameter
+  })
+}
+
 
 export function getexamproblem(parameter) {
   return axios({
@@ -79,40 +112,10 @@ export function getallcontent(parameter) {
   })
 }
 
-// //按id搜索学生
-// export function searchidstudent(parameter) {
-//   return axios({
-//     url: api.searchidstudent,
-//     method: 'get',
-//     params: parameter
-//   })
-// }
-
-// //按名字搜索学生
-// export function searchnamestudent(parameter) {
-//   return axios({
-//     url: api.searchnamestudent,
-//     method: 'get',
-//     data: parameter
-//   })
-// }
-
-// //按id搜索学生(所有)
-// export function searchidstuall(parameter) {
-//     return axios({
-//       url: api.searchidstuall,
-//       method: 'get',
-//       params: parameter
-//     })
-//   }
-  
-//   //按名字搜索学生(所有)
-// export function searchnamestuall(parameter) {
-//     return axios({
-//       url: api.searchnamestuall,
-//       method: 'get',
-//       data: parameter
-//     })
-//   }
-  
-// // export default api
+export function getallproblem(parameter){
+  return axios({
+    url: api.getallproblem,
+    method: 'get',
+    params: parameter
+  })
+}
