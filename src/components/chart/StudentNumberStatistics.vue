@@ -14,9 +14,11 @@ import { studentnumberstatistics } from '@/api/distribution'
 
   export default {
     props: {
-      courseId: {
-        type: Number,
-        default: 1
+      courseIds: {
+        type: Array,
+        default: function () {
+          return [1, 2, 3, 4, 5]
+        }
       }
     },
     data () {
@@ -39,11 +41,10 @@ import { studentnumberstatistics } from '@/api/distribution'
     methods: {
       sendRequest: function() {
       var that = this
-      console.log(that)
       studentnumberstatistics({
-        course_id: that.courseId
+        course_ids: that.courseIds
       }).then(function(res) {
-        console.log(res)
+        that.chartData.rows = res.ans
       }).catch(function(res) {
         console.log(res)
       })

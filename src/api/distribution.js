@@ -12,9 +12,9 @@ const apis = {
 export function distribution(parameter) { // 其他文件使用本接口时调用test
   return axios({
     url: apis.distribution, // 此处url为上面定义的url
-    method: 'get', // 一般 get 或 post
-    params: parameter // get方法
-    // data: parameter // post方法
+    method: 'post', // 一般 get 或 post
+    // params: parameter // get方法
+    data: parameter // post方法
   })
 }
 
@@ -30,9 +30,9 @@ export function runtimes(parameter) { // 其他文件使用本接口时调用tes
 export function studentnumberstatistics(parameter) { // 其他文件使用本接口时调用test
   return axios({
     url: apis.studentnumberstatistics, // 此处url为上面定义的url
-    method: 'get', // 一般 get 或 post
-    params: parameter // get方法
-    // data: parameter // post方法
+    method: 'post', // 一般 get 或 post
+    // params: parameter // get方法
+    data: parameter // post方法
   })
 }
 
