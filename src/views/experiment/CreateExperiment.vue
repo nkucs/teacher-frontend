@@ -37,14 +37,14 @@
           </span>
           <div class="inlineClass" >
             <label>题目id: </label>
-            <a-input v-model="searchId" placeholder="输入题目id" />
+            <a-input v-model="searchCode" placeholder="输入题目id" />
             <label>题目名称: </label>
             <a-input v-model="searchProblemName" placeholder="输入题目名称" />
             <label>教师姓名: </label>
             <a-input v-model="searchTeacherName" placeholder="输入教师姓名" />
             <label>标签名: </label>
             <a-input v-model="searchTag" placeholder="输入标签名" />
-            <a-button type="primary" @click="handleSearch">搜索</a-button>
+            <a-button type="primary" @click="search">搜索</a-button>
           </div>
         </div>
         <a-table 
@@ -151,21 +151,11 @@
 </template>
 
 <script>
-import { createLab } from '@/api/experiment'
+import { createLab, filterProblems } from '@/api/experiment'
 import upLoadFile from '@/components/upLoadFile'
 
 const selectedDataSource = []
 const allDataSource = []
-
-for (let i=0; i<30; i++) {
-  allDataSource.push({
-    key: i,
-    id: i,
-    name: 'problem' + i,
-    teacherName: '刘明铭',
-    tags: ['sort', 'tree']
-  })
-}
 
 const columnsWithFilter = [
   { // 列描述对象， dataIndex 表示列数据在数据项中的 key 值，声明时和 key 取其一即可，
@@ -216,7 +206,7 @@ const columns =  [
   key: 'tags',
   dataIndex: 'tags',
   scopedSlots: { customRender: 'tags' },
-  width: '30%'
+  width: '25%'
   },
   {
     title: '操作',
@@ -290,7 +280,7 @@ export default {
     confirmLoading: false,
 
     // search related 
-    searchId: '',
+    searchCode: '',
     searchProblemName: '',
     searchTeacherName: '',
     searchTag: '',
@@ -300,7 +290,9 @@ export default {
     columns,
     columnsWithFilter,
     pagination: {
-      defaultPageSize: 6
+      defaultCurrent: 1,
+      defaultPageSize: 6,
+
     },
     selectedRowKeys: [], 
 
@@ -322,9 +314,11 @@ export default {
     formValues: null,
 
   }),
-  
-  beforeCreate() {
-    this.form = this.$form.createForm(this)
+
+  mounted() {
+    const self = this
+    self.form = self.$form.createForm(self)
+    self.search()
   },
 
   computed: {
@@ -340,32 +334,92 @@ export default {
       this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
       this.selectedRowKeys = selectedRowKeys.filter(item => item !== key)
     },
+
     handleAdd () {
-      // 获取全部练习题的 API 
       this.exerciseAdditionVisible = true
     },
-    handleSearch() {
-      // 调用根据题目ID, 题目名称, 教师姓名，题目标签搜索题目的 API => this.allDataSource 
-      // 输入为空的时候表示默认显示全部的题目
-      // 前端实现
+
+    search() {
+      const self = this
+      self.allDataSource = []
+      filterProblems({
+        code: self.searchCode,
+        page: 1,
+        tag_name: self.searchTag,
+        problem_name: self.searchProblemName,
+        teacher_name: self.searchTeacherName
+      })
+    .then(response => {
+      console.log('返回搜索到的题目结果是：', response)
+      // 初始化 table 中的数据
+      for(let i=0; i<response.data.problems.length; i++) {
+        const pro = response.data.problems[i]
+        self.allDataSource.push({
+          key: pro.code,
+          id: pro.code,
+          name: pro.name,
+          teacherName: response.data.teacher_names[i],
+          tags: response.data.tag_names[i]
+        })
+      }
+      const pages = response.data.total_pages
+      for (let i = 2; i <= pages; i++) {
+        filterProblems({
+            code: self.searchCode,
+            page: i,
+            tag_name: self.searchTag,
+            problem_name: self.searchProblemName,
+            teacher_name: self.searchTeacherName
+        })
+        .then(response => {
+          console.log(response)
+          for(let i=0; i<response.data.problems.length; i++) {
+            const pro = response.data.problems[i]
+            self.allDataSource.push({
+              key: pro.code,
+              id: pro.code,
+              name: pro.name,
+              teacherName: response.data.teacher_names[i],
+              tags: response.data.tag_names[i]
+            })
+          }
+        })
+        .catch(fail => {
+          console.log(fail)
+          console.log('获取题目列表错误')
+        })
+      }
+    })
+    .catch(fail => {
+      console.log(fail)
+      console.log('无法获取题目列表')
+    })
     },
+
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
+
     confirmAdd() {
       this.confirmLoading = true
       setTimeout(() => {
         this.exerciseAdditionVisible = false
         this.confirmLoading = false
-        this.selectedDataSource = []
+        const currentSelected = []
+  
         for (const key in this.selectedRowKeys) {
           const value = this.selectedRowKeys[key]
-          const records = this.allDataSource.filter(item => item.key === value)
-          this.selectedDataSource.push(records[0])
+          let records = this.allDataSource.filter(item => item.key === value)
+          if (records.length === 0) {
+            records = this.selectedDataSource.filter(item => item.key === value)
+          }
+          currentSelected.push(records[0])
         }
+        this.selectedDataSource = currentSelected
         console.log(this.selectedDataSource)
       }, 500)
     },
+
     cancelAdd() {
       this.exerciseAdditionVisible = false
     },
@@ -388,6 +442,7 @@ export default {
       this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss')
       this.formValues.course_id = 1
       this.formValues.problems = this.selectedDataSource
+      console.log("选中的题目有：", this.selectedDataSource)
       console.log('front end: ', this.formValues)
 
       const labParams = {...this.formValues}
