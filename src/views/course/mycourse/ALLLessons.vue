@@ -95,12 +95,14 @@ export default {
       }
       else if (this.coursename === '') {
         seekcourse({
+          'page': this.page,
+          'pageLength': 10,
           'name': this.coursename,
           'teacher': this.teachername
         }).then(response => {
           console.log(`seek successfully`)
-          this.page = response.current_page
-          this.total = response.total_pages * 10
+          this.page = response.currentPage
+          this.total = response.totalPages * 10
           this.data = response.courses
         }).catch((fail) => {
           alert('查找失败！')
@@ -109,12 +111,14 @@ export default {
       }
       else if (this.teachername === '') {
         seekcourse({
+          'page': this.page,
+          'pageLength': 10,
           'teacher': this.teachername,
           'name': this.coursename
         }).then(response => {
           console.log(`seek successfully`)
-          this.page = response.current_page
-          this.total = response.total_pages * 10
+          this.page = response.currentPage
+          this.total = response.totalPages * 10
           this.data = response.courses
         }).catch((fail) => {
           alert('查找失败！')
@@ -124,12 +128,14 @@ export default {
       }
       else {
         seekcourse({
+          'page': this.page,
+          'pageLength': 10,
           'teacher': this.teachername,
           'name': this.coursename
         }).then(response => {
           console.log(`seek successfully`)
-          this.page = response.current_page
-          this.total = response.total_pages * 10
+          this.page = response.currentPage
+          this.total = response.totalPages * 10
           this.data = response.courses
         }).catch((fail) => {
           alert('查找失败！')
@@ -140,7 +146,7 @@ export default {
     reset () {
       this.coursename = ''
       this.teachername = ''
-      this.getallcourse
+      this.getallcourse()
     },
     copycourse () {
       copycourse({
@@ -156,8 +162,8 @@ export default {
       getallcourse({
         'page': this.page,
         'pageLength': 10,
-        'name': this.courseName,
-        'teacher': this.teacherName
+        'name': this.coursename,
+        'teacher': this.teachername
       }).then((response) => {
         console.log(`get all courses successfully.`)
         this.data = response.courses

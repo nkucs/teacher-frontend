@@ -21,12 +21,12 @@
 </template>
 
 <script>
-import { getSubmissionCount } from '@/api/courseAnalysis'
+import { getProblemSubmissionCount } from '@/api/problemAnalysis'
 
 export default {
 
   created() {
-    getSubmissionCount(1, 'day').then((response) => {
+    getProblemSubmissionCount(this.$route.params.problem_id, 'day').then((response) => {
       console.log(response)
       if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
@@ -112,9 +112,9 @@ export default {
   },
 
   methods: {
-    sendSubmissionCountMsg: function(course_id, date_range) {
+    sendSubmissionCountMsg: function(problem_id, date_range) {
       if (date_range == 'day') {
-        getSubmissionCount(1, 'day').then((response) => {
+        getProblemSubmissionCount(this.$route.params.problem_id, 'day').then((response) => {
         console.log('enter day')
         if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
@@ -128,7 +128,7 @@ export default {
       }
 
       else if (date_range == 'week') {
-        getSubmissionCount(1, 'week').then((response) => {
+        getProblemSubmissionCount(this.$route.params.problem_id, 'week').then((response) => {
         if (response['data'].length != 0) {
           let i = 0
           for (const date in response['data']['total']) {
@@ -144,7 +144,7 @@ export default {
       }
 
       else if (date_range == 'month') {
-        getSubmissionCount(1, 'month').then((response) => {
+        getProblemSubmissionCount(this.$route.params.problem_id, 'month').then((response) => {
         console.log('enter month')
         if (response['data'].length != 0) {
           for (let i = 0; i < 12; i++) {
@@ -158,7 +158,7 @@ export default {
       }
 
       else if (date_range == 'year') {
-        getSubmissionCount(1, 'year').then((response) => {
+        getProblemSubmissionCount(this.$route.params.problem_id, 'year').then((response) => {
         if (response['data'].length != 0) {
           let i = 0
           for (const date in response['data']['total']) {

@@ -2,27 +2,27 @@ import { axios } from '@/utils/request'
 // import Qs from 'qs'
 
 const api = {
-  getProblems: '/teacher/lecture/get-problems',
+  getLabs: '/teacher/lab/get-my-labs',
   deleteLab: '/teacher/lab/delete-lab',
   createLab: '/teacher/lab/create-lab',
   editLab: '/teacher/lab/edit-lab',
   getLab: '/teacher/lab/get-lab/',
-  getSubmissionFile: '/teacher/lab/get-submission-file'
+  getSubmissionFile: '/teacher/lab/get-submission-file',
+  filterProblems: '/teacher/lab/filter-problems',
+  getProblems: '/teacher/lab/get-problems'
 }
-
-export default api
 
 export function deleteLab(parameter) {
   return axios({
-    url: api.user,
+    url: '/teacher/lab/delete-lab',
     method: 'get',
     params: parameter
   })
 }
 
-export function getProblems(parameter) {
+export function getLabs(parameter) {
   return axios({
-    url: api.role,
+    url: '/teacher/lab/get-my-labs',
     method: 'get',
     params: parameter
   })
@@ -60,5 +60,21 @@ export function getSubmissionFile(parameter) {
     method: 'get',
     params: parameter,
     responseType: 'blob'
+  })
+}
+
+export function filterProblems(parameter) {
+  return axios({
+    url: api.filterProblems,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getProblems(parameter) {
+  return axios({
+    url: api.getProblems,
+    method: 'get',
+    params: parameter
   })
 }

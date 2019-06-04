@@ -5,17 +5,10 @@
 </template>
 
 <script>
-import { runtimes } from '@/api/distribution'
+import { getruntimes } from '@/api/problemAnalysis'
 export default {
-  props: {
-    problemId:{
-      type: Number,
-      default: 0
-    }
-  },
   data () {
     return {
-      problem_id: 0,
       charData: {
         columns: ['时间', '占比'],
         rows: []
@@ -43,10 +36,9 @@ export default {
       }
     },
     sendRequest: function() {
-      var that = this
-      runtimes({
-        problem_id: that.problemId
-      }).then(function(res) {
+      const that = this
+      getruntimes(that.$route.params.problem_id)
+      .then(function(res) {
         that.initData(res.interval, res.data)
       }).catch(function(res) {
         console.log(res)

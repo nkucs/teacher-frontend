@@ -37,14 +37,14 @@
           </span>
           <div class="inlineClass" >
             <label>题目id: </label>
-            <a-input v-model="searchId" placeholder="输入题目id" />
+            <a-input v-model="searchCode" placeholder="输入题目id" />
             <label>题目名称: </label>
             <a-input v-model="searchProblemName" placeholder="输入题目名称"/>
             <label>教师姓名: </label>
             <a-input v-model="searchTeacherName" placeholder="输入教师姓名" />
             <label>标签名: </label>
             <a-input v-model="searchTag" placeholder="输入标签名" />
-            <a-button type="primary" @click="handleSearch">搜索</a-button>
+            <a-button type="primary" @click="search">搜索</a-button>
           </div>
         </div>
         <a-table
@@ -68,19 +68,34 @@
       <a-form-item v-bind="formItemLayout" label="实验名称：">
         <a-input
           placeholder='请输入实验名称'
-          v-decorator="['experiment-name', expNameConfig]"
+          v-decorator="['name', {
+            initialValue: lab_name,
+            rules: [
+              {
+                required: true,
+                message: '实验名称不能为空'
+              }
+            ]
+          }]"
         />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验描述：">
         <a-input
           placeholder='请输入实验描述'
-          v-decorator="['experiment-description',expDescriptionConfig]"
+          v-decorator="['description', {
+            initialValue: lab_description,
+            rules: [
+              {
+                required: true,
+                message: '实验描述不能为空'
+              }
+            ]
+          }]"
         />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验附件">
-        <!--all attachments-->
         <upLoadFile></upLoadFile>
       </a-form-item>
 
@@ -104,20 +119,41 @@
       </a-form-item>
       <a-form-item v-bind="formItemLayout" label="开始时间：" >
         <a-date-picker
-          v-decorator="['start-date-time-picker', startDatePickerConfig]"
+          v-decorator="['start_time',{
+            initialValue: lab_start_time,
+            rules: [{
+              type: 'object',
+              required: true,
+              message: '请选择时间！'
+            }]
+          }]"
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="截止时间：">
         <a-date-picker
-          v-decorator="['end-date-time-picker', endDatePickerConfig]"
+          v-decorator="['end_time', {
+            initialValue: lab_end_time,
+            rules: [{
+              type: 'object',
+              required: true,
+              message: '请选择时间！'
+            }]
+          }]"
           show-time
           format="YYYY-MM-DD HH:mm:ss" />
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="是否提交实验报告：">
-        <a-radio-group v-decorator="['radio-group', radioConfig]">
+        <a-radio-group
+          v-decorator="['report_required', {
+            initialValue: lab_report_required,
+            rules: [{
+              required: true,
+              message: '请确定是否需要提交实验报告！'
+            }]
+          }]">
           <a-radio value="y">
             是
           </a-radio>
@@ -131,7 +167,9 @@
         label="实验报告权重"
       >
         <a-input-number
-          v-decorator="['input-number', weightConfig]"
+          v-decorator="['attachment_weight',{
+            initialValue: lab_attachment_weight
+          }]"
           :min="1"
           :max="100"
         />
@@ -152,6 +190,7 @@
 </template>
 
 <script>
+import {getLab, editLab, getProblems, filterProblems} from '@/api/experiment'
 import upLoadFile from '@/components/upLoadFile'
 import moment from 'moment'
 
@@ -243,16 +282,19 @@ export default {
     confirmLoading: false,
 
     // search related
-    searchId: '',
+    searchCode: '',
     searchProblemName: '',
     searchTeacherName: '',
     searchTag: '',
     // table related configuration
+    selectedDataSource: [],
+    allDataSource: [],
     columns,
     columnsWithFilter,
     pagination: {
       defaultPageSize: 6
     },
+    selectedRowKeys: [], 
 
     // tips and modal related configuration
     cancelModalText: '是否放弃编辑实验？！',
@@ -263,105 +305,58 @@ export default {
 
     // final form content for submitting
     formValues: null,
-
+    lab_id: 13,
+    lab_name: '',
+    lab_description: '',
+    lab_attachment_weight: 0,
+    lab_report_required: 'y',
+    lab_start_time: moment('2015/01/01','YYYY/MM/DD'),
+    lab_end_time: moment('2015/01/01','YYYY/MM/DD')
   }),
 
-  beforeCreate() {
+  mounted() {
     this.form = this.$form.createForm(this)
-    // 获取实验详情的 API 和 所有实验题目的 API
-    // => lab {lab.name, lab.description, lab.start_time, lanb.end_time, lab.exercises[], lab.reportRequired,}
-    // this.selectedDataSource
-    // 获取所有实验题目的 API
-    // => this.allDataSource
-    this.lab = {
-        name: 'a + b',
-        description: 'calculate a + b',
-        attachment_weight: 80,
-        problem_weight: 20,
-        start_time: moment('2015/01/01','YYYY/MM/DD'),
-        end_time: moment('2015/01/01','YYYY/MM/DD'),
-        reportRequired: 'y',
-
+    this.search()
+    // 从 url 中获取实验 id 
+    this.lab_id = this.$route.params.id
+    const parameter = {
+      lab_id: this.lab_id
     }
+    // 获取实验 API 
+    getLab(parameter).then( res => {
+        console.log(`successfully get lab ${parameter.lab_id} `, res)
+        this.lab_name = res.data.name
+        this.lab_description = res.data.description
+        this.lab_attachment_weight = res.data.attachment_weight
+        this.lab_report_required = res.data.report_required === true ? 'y' : 'n' 
+        this.lab_start_time = moment(res.data.start_time)
+        this.lab_end_time = moment(res.data.end_time)
+      }).catch(function (err) {
+        console.log(`fail to get lab ${this.lab_id}: `, err)
+    })
 
-    this.selectedDataSource = []
-    for (let i=0; i<10; i++) {
+    getProblems(parameter).then(response => {
+      const problems = response.data.problems
+      for (let i=0; i<problems.length; i++) {
+        const pro = problems[i]
         this.selectedDataSource.push({
-          key: i, // necessary
-          id: i,
-          name: 'problem ' + i,
-          teacherName: 'teacher ' + i,
-          tags: ['sort', 'recursion']
+          key: pro.code,
+          id: pro.code,
+          name: pro.name,
+          teacherName: response.data.teacher_names[i],
+          tags: response.data.tag_names[i]
         })
-    }
-
-    this.allDataSource = []
-    for (let i=0; i< 20; i+=2) {
-      this.allDataSource.push({
-        key: i, // necessary
-        id: i,
-        name: 'problem ' + i,
-        teacherName: 'teacher ' + i,
-        tags: ['sort', 'recursion']
-      })
-    }
-
-    this.selectedRowKeys = []
-    for (const key in this.selectedDataSource) {
-      if (key in this.allDataSource) {
-        this.selectedRowKeys.push(key)
       }
-    }
 
-    this.expNameConfig = {
-      initialValue: this.lab.name,
-      rules: [
-        {
-          required: true,
-          message: '实验名称不能为空'
-        }
-      ]
+      // 根据问题 id 初始化表格
+    for (const key in this.selectedDataSource) {
+      this.selectedRowKeys.push(this.selectedDataSource[key].key)
     }
+    console.log('初始化后的 selectedRowKeys 值：', this.selectedRowKeys)
 
-    this.expDescriptionConfig = {
-      initialValue: this.lab.description,
-      rules: [
-        {
-          required: true,
-          message: '实验描述不能为空'
-        }
-      ]
-    }
-
-    this.startDatePickerConfig = {
-      initialValue: this.lab.start_time,
-      rules: [{
-        type: 'object',
-        required: true,
-        message: '请选择时间！'
-      }]
-    }
-
-    this.endDatePickerConfig = {
-      initialValue: this.lab.end_time,
-      rules: [{
-        type: 'object',
-        required: true,
-        message: '请选择时间！'
-      }]
-    }
-
-    this.radioConfig = {
-      initialValue: this.lab.reportRequired,
-      rules: [{
-        required: true,
-        message: '请确定是否需要提交实验报告！'
-      }]
-    }
-
-    this.weightConfig = {
-      initialValue: this.lab.attachment_weight
-    }
+    }).catch(err => {
+      console.log(`fail to get problems for lab ${this.lab_id}`, err)
+    })
   },
 
   computed: {
@@ -373,30 +368,97 @@ export default {
   methods: {
     onDelete (key) {
       const selectedDataSource = [...this.selectedDataSource]
+      const selectedRowKeys = [...this.selectedRowKeys]
       this.selectedDataSource = selectedDataSource.filter(item => item.key !== key)
+      this.selectedRowKeys = selectedRowKeys.filter(item => item !== key)
     },
     handleAdd () {
-      // 调用获取全部练习题目的 API => this.allDataSource
       this.exerciseAdditionVisible = true
     },
-    handleSearch() {
-      // 调用根据题目ID, 题目名称, 教师姓名，题目标签搜索题目的 API => this.allDataSource
+    
+    search() {
+      console.log('search all datasource')
+      const self = this
+      self.allDataSource = []
+      filterProblems({
+        code: self.searchCode,
+        page: 1,
+        tag_name: self.searchTag,
+        problem_name: self.searchProblemName,
+        teacher_name: self.searchTeacherName
+      })
+    .then(response => {
+      console.log('返回搜索到的题目结果是：', response)
+      // 初始化 table 中的数据
+      for(let i=0; i<response.data.problems.length; i++) {
+        const pro = response.data.problems[i]
+        self.allDataSource.push({
+          key: pro.code,
+          id: pro.code,
+          name: pro.name,
+          teacherName: response.data.teacher_names[i],
+          tags: response.data.tag_names[i]
+        })
+      }
+      const pages = response.data.total_pages
+      for (let i = 2; i <= pages; i++) {
+        filterProblems({
+            code: self.searchCode,
+            page: i,
+            tag_name: self.searchTag,
+            problem_name: self.searchProblemName,
+            teacher_name: self.searchTeacherName
+        })
+        .then(response => {
+          console.log(response)
+          for(let i=0; i<response.data.problems.length; i++) {
+            const pro = response.data.problems[i]
+            self.allDataSource.push({
+              key: pro.code,
+              id: pro.code,
+              name: pro.name,
+              teacherName: response.data.teacher_names[i],
+              tags: response.data.tag_names[i]
+            })
+          }
+        })
+        .catch(fail => {
+          console.log(fail)
+          console.log('获取题目列表错误')
+        })
+      }
+    })
+    .catch(fail => {
+      console.log(fail)
+      console.log('无法获取题目列表')
+    })
     },
+
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
+
     confirmAdd() {
+      console.log('确定添加，this.selectedRowKeys :', this.selectedRowKeys)
       this.confirmLoading = true
       setTimeout(() => {
         this.exerciseAdditionVisible = false
         this.confirmLoading = false
+        const currentSelected = []
+  
         for (const key in this.selectedRowKeys) {
           const value = this.selectedRowKeys[key]
-          const records = this.allDataSource.filter(item => item.key === value)
-          this.selectedDataSource.push(records[0])
+          let records = this.allDataSource.filter(item => item.key === value)
+          if (records.length === 0) {
+            records = this.selectedDataSource.filter(item => item.key === value)
+          }
+          currentSelected.push(records[0])
         }
+        this.selectedDataSource = currentSelected
+        console.log('已选择题目：', this.selectedDataSource)
       }, 500)
     },
+    
     cancelAdd() {
       this.exerciseAdditionVisible = false
     },
@@ -405,18 +467,31 @@ export default {
       e.preventDefault()
       this.form.validateFields((err, values) => {
         if (!err) {
-          // get values from form
           this.submitVisible = true
           this.formValues = values
         }
       })
     },
     confirmSubmit() {
-      // upload and create a new lab with : this.formValues, this.selectedDataSource
+      // upload and edit this lab with : this.formValues, this.selectedDataSource
       this.confirmLoading = true
+      // 调用编辑实验的 API
+      this.formValues.lab_id = this.lab_id
+      this.formValues.start_time = this.formValues.start_time.format('YYYY-MM-DD HH:mm:ss')
+      this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss')
+      this.formValues.problems = this.selectedDataSource
+      
+      const labParams = {...this.formValues}
+      editLab(labParams).then(function (res) {
+        console.log('successfully edit a lab: ', res)
+      }).catch(function (err) {
+        console.log('fail to create a new lab: ', err)
+      })
+
       setTimeout(() => {
         this.submitVisible = false
         this.confirmLoading = false
+        
         // 调用编辑实验的 API 并回到实验列表页面
         this.$router.push({path:'/experiment/list'})
       }, 500)

@@ -40,7 +40,7 @@
         :wrapper-col="{ span: 12 }"
       >
         <a-upload
-          action="/"
+          action="http://127.0.0.1:8080/course/createlecture"
           :multiple="true"
           :fileList="fileList"
           @change="fileChange"
@@ -131,8 +131,9 @@ export default {
 
       // 1. Limit the number of uploaded files
       //    Only to show two recent uploaded files, and old ones will be replaced by the new
-      fileList = fileList.slice(-2)
-
+      //fileList = fileList.slice(-2)
+      this.fileList = fileList
+      console.log(this.fileList)
       // 2. read from response and show file link
       fileList = fileList.map((file) => {
         if (file.response) {
@@ -150,7 +151,7 @@ export default {
         return false
       })
 
-      this.fileList = fileList
+      //this.fileList = fileList
 
     },
     chooseProblem (e) {
