@@ -99,16 +99,16 @@ const columns =  [
     key: 'tags',
     dataIndex: 'tags',
     scopedSlots: { customRender: 'tags' },
-    width: '30%'
+    width: '30%',
   },
 ]
 
 const formItemLayout = {
   labelCol: {
-    span: 6
+    span: 6,
   },
   wrapperCol: {
-    span: 14
+    span: 14,
   },
 }
 
@@ -133,7 +133,7 @@ export default {
     this.id = this.$route.params.id
     this.selectedDataSource = []
     getLab({
-      lab_id: this.id
+      lab_id: this.id,
     }).then(res => {
       this.lab = {
         name: res.data.name,
@@ -146,7 +146,7 @@ export default {
       }
     })
     getProblems({
-      lab_id: this.id
+      lab_id: this.id,
     }).then(response => {
       const problems = response.data.problems
       for (let i=0; i<problems.length; i++) {
@@ -167,7 +167,7 @@ export default {
   methods: {
     download(key){
       getSubmissionFile({
-        attachment_id: this.lab.files[key].id
+        attachment_id: this.lab.files[key].id,
       }).then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
