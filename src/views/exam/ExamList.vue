@@ -114,7 +114,7 @@ export default {
       listData,
       pagination: {
         onChange: page => {
-          // console.log(page);
+          console.log(page)
         },
         pageSize: 4
       },

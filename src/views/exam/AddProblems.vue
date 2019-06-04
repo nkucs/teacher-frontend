@@ -30,7 +30,7 @@
           <a-divider type="horizontal"/>
           <ve-ring :judge-width="true" :settings="chartSettings" :data="chartData"></ve-ring>
           <div class="rate">
-            <h3>通过率： {{averageAcRatio}} %</h3>
+            <h3>通过率： {{ averageAcRatio }} %</h3>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
 
 <script>
 import { getAllProblems } from '@/api/problem'
-import { getallcourse } from '@api/course'
+// import { getallcourse } from '@api/course'
 
 const examColumns = [
   {

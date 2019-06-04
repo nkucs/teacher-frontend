@@ -336,9 +336,9 @@ export default {
     })
 
     getProblems(parameter).then(response => {
-      let problems = response.data.problems
+      const problems = response.data.problems
       for (let i=0; i<problems.length; i++) {
-        let pro = problems[i]
+        const pro = problems[i]
         this.selectedDataSource.push({
           key: pro.code,
           id: pro.code,
@@ -352,7 +352,7 @@ export default {
     for (const key in this.selectedDataSource) {
       this.selectedRowKeys.push(this.selectedDataSource[key].key)
     }
-    console.log("初始化后的 selectedRowKeys 值：", this.selectedRowKeys)
+    console.log('初始化后的 selectedRowKeys 值：', this.selectedRowKeys)
 
     }).catch(err => {
       console.log(`fail to get problems for lab ${this.lab_id}`, err)
@@ -377,7 +377,7 @@ export default {
     },
     
     search() {
-      console.log("search all datasource")
+      console.log('search all datasource')
       const self = this
       self.allDataSource = []
       filterProblems({
@@ -439,7 +439,7 @@ export default {
     },
 
     confirmAdd() {
-      console.log("确定添加，this.selectedRowKeys :", this.selectedRowKeys)
+      console.log('确定添加，this.selectedRowKeys :', this.selectedRowKeys)
       this.confirmLoading = true
       setTimeout(() => {
         this.exerciseAdditionVisible = false
@@ -455,7 +455,7 @@ export default {
           currentSelected.push(records[0])
         }
         this.selectedDataSource = currentSelected
-        console.log("已选择题目：", this.selectedDataSource)
+        console.log('已选择题目：', this.selectedDataSource)
       }, 500)
     },
     
