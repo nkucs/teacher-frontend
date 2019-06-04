@@ -1,8 +1,6 @@
 <template>
   <div>
-
     <h2 class="mainTitle">编辑实验</h2>
-
     <a-form id="components-form-demo-validate-other" :form="form">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
         {{ lab.name }}
@@ -27,6 +25,7 @@
           </span>
         </a-table>
       </a-form-item>
+
       <a-form-item v-bind="formItemLayout" label="开始时间：" >
         {{ lab.startTime }}
       </a-form-item>
@@ -36,12 +35,10 @@
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="是否提交实验报告：">
-        {{ lab.reportRequired==="y"?"是":"否" }}
+        {{ lab.reportRequired === 'y' ? '是' : '否' }}
       </a-form-item>
-      <a-form-item
-        v-bind="formItemLayout"
-        label="实验报告权重"
-      >
+
+      <a-form-item v-bind="formItemLayout" label="实验报告权重">
         {{ lab.attachmentWeight }} %
       </a-form-item>
     </a-form>
@@ -76,9 +73,10 @@ const columnsWithFilter = [
     dataIndex: 'tags',
     width: '30%',
     scopedSlots: {
-        customRender: 'tags',
-      },
-  }]
+      customRender: 'tags',
+    },
+  },
+]
 
 const columns =  [
   {
@@ -102,7 +100,7 @@ const columns =  [
     dataIndex: 'tags',
     scopedSlots: { customRender: 'tags' },
     width: '30%'
-  }
+  },
 ]
 
 const formItemLayout = {
@@ -116,7 +114,6 @@ const formItemLayout = {
 
 export default {
   data: () => ({
-    // lab
     id: '',
     lab: '',
     formItemLayout,
@@ -124,7 +121,7 @@ export default {
     columns,
     columnsWithFilter,
     pagination: {
-      defaultPageSize: 6
+      defaultPageSize: 6,
     },
   }),
 
@@ -133,7 +130,7 @@ export default {
   },
 
   created(){
-    this.id=this.$route.params.id
+    this.id = this.$route.params.id
     this.selectedDataSource = []
     getLab({
       lab_id: this.id
@@ -144,7 +141,7 @@ export default {
         startTime: moment(res.data.start_time).format('YYYY-MM-DD HH:mm:ss'),
         endTime: moment(res.data.end_time).format('YYYY-MM-DD HH:mm:ss'),
         files: res.data.files,
-        reportRequired: res.data.report_required?'y':'n',
+        reportRequired: res.data.report_required ? 'y' : 'n',
         attachmentWeight: res.data.attachment_weight,
       }
     })
@@ -159,7 +156,7 @@ export default {
           id: pro.code,
           name: pro.name,
           teacherName: response.data.teacher_names[i],
-          tags: response.data.tag_names[i]
+          tags: response.data.tag_names[i],
         })
       }
     }).catch(err => {
@@ -206,5 +203,4 @@ export default {
   width: 180px;
   margin: 0 8px 8px 0;
 }
-
 </style>
