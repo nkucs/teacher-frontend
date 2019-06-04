@@ -80,7 +80,7 @@
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="实验附件">
-        <!-- <upLoadFile></upLoadFile> -->
+        <upLoadFile></upLoadFile>
       </a-form-item>
 
       <a-form-item v-bind="formItemLayout" label="练习题目">

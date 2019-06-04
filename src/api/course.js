@@ -9,10 +9,17 @@ const api = {
   addcourse: '/teacher/course/add-course',
   getmystudents: '/statistic/course/get-my-students',
   getmyproblems: '/statistic/course/get-my-problems'
-
+  getnowcourse:'/teacher/course/get-now-course'
 }
 
 // export default api
+export function getnowcourse(parameter) {
+  return axios({
+    url: api.getnowcourse,
+    method: 'get',
+    params: parameter
+  })
+}
 
 export function deletecourse(parameter) {
   return axios({
