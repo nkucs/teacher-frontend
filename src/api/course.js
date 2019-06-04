@@ -8,7 +8,7 @@ const api = {
   copycourse: '/teacher/course/duplicate-course',
   addcourse: '/teacher/course/add-course',
   getmystudents: '/statistic/course/get-my-students',
-  getmyproblems: '/statistic/course/get-my-problems'
+  getmyproblems: '/statistic/course/get-my-problems',
   getnowcourse:'/teacher/course/get-now-course'
 }
 
