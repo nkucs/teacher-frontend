@@ -44,7 +44,7 @@
             <a-input v-model="searchTeacherName" placeholder="输入教师姓名" />
             <label>标签名: </label>
             <a-input v-model="searchTag" placeholder="输入标签名" />
-            <a-button type="primary" @click="handleSearch">搜索</a-button>
+            <a-button type="primary" @click="search">搜索</a-button>
           </div>
         </div>
         <a-table
@@ -190,7 +190,7 @@
 </template>
 
 <script>
-import {getLab, editLab} from '@/api/experiment'
+import {getLab, editLab, getProblems, filterProblems} from '@/api/experiment'
 import upLoadFile from '@/components/upLoadFile'
 import moment from 'moment'
 
@@ -305,7 +305,7 @@ export default {
 
     // final form content for submitting
     formValues: null,
-    lab_id: 14,
+    lab_id: 13,
     lab_name: '',
     lab_description: '',
     lab_attachment_weight: 0,
@@ -314,8 +314,9 @@ export default {
     lab_end_time: moment('2015/01/01','YYYY/MM/DD')
   }),
 
-  created() {
+  mounted() {
     this.form = this.$form.createForm(this)
+    this.search()
     // 从 url 中获取实验 id 
     this.lab_id = this.$route.params.id
     const parameter = {
@@ -334,27 +335,32 @@ export default {
         console.log(`fail to get lab ${this.lab_id}: `, err)
     })
 
-    // 这里根据上面的 res 得到这个实验对应的 problem id
-    for (let i=0; i<4; i++) {
+    getProblems(parameter).then(response => {
+      let problems = response.data.problems
+      for (let i=0; i<problems.length; i++) {
+        let pro = problems[i]
         this.selectedDataSource.push({
-          key: i, // necessary
-          id: i,
-          name: 'problem ' + i,
-          teacherName: '刘明铭',
-          tags: ['sort', 'tree']
+          key: pro.code,
+          id: pro.code,
+          name: pro.name,
+          teacherName: response.data.teacher_names[i],
+          tags: response.data.tag_names[i]
         })
-    }
+      }
+    }).catch(err => {
+      console.log(`fail to get problems for lab ${this.lab_id}`, err)
+    })
 
-    // 这里获取全部实验的 API 
-    for (let i=0; i<30; i++) {
-      this.allDataSource.push({
-        key: i,
-        id: i,
-        name: 'problem' + i,
-        teacherName: '刘明铭',
-        tags: ['sort', 'tree']
-      })
-    }
+    // 这里根据上面的 res 得到这个实验对应的 problem id
+    // for (let i=0; i<4; i++) {
+    //     this.selectedDataSource.push({
+    //       key: i, // necessary
+    //       id: i,
+    //       name: 'problem ' + i,
+    //       teacherName: '刘明铭',
+    //       tags: ['sort', 'tree']
+    //     })
+    // }
 
     // 根据问题 id 初始化表格
     for (const key in this.selectedDataSource) {
@@ -380,25 +386,88 @@ export default {
     handleAdd () {
       this.exerciseAdditionVisible = true
     },
-    handleSearch() {
-
+    
+    search() {
+      const self = this
+      self.allDataSource = []
+      filterProblems({
+        code: self.searchCode,
+        page: 1,
+        tag_name: self.searchTag,
+        problem_name: self.searchProblemName,
+        teacher_name: self.searchTeacherName
+      })
+    .then(response => {
+      console.log('返回搜索到的题目结果是：', response)
+      // 初始化 table 中的数据
+      for(let i=0; i<response.data.problems.length; i++) {
+        const pro = response.data.problems[i]
+        self.allDataSource.push({
+          key: pro.code,
+          id: pro.code,
+          name: pro.name,
+          teacherName: response.data.teacher_names[i],
+          tags: response.data.tag_names[i]
+        })
+      }
+      const pages = response.data.total_pages
+      for (let i = 2; i <= pages; i++) {
+        filterProblems({
+            code: self.searchCode,
+            page: i,
+            tag_name: self.searchTag,
+            problem_name: self.searchProblemName,
+            teacher_name: self.searchTeacherName
+        })
+        .then(response => {
+          console.log(response)
+          for(let i=0; i<response.data.problems.length; i++) {
+            const pro = response.data.problems[i]
+            self.allDataSource.push({
+              key: pro.code,
+              id: pro.code,
+              name: pro.name,
+              teacherName: response.data.teacher_names[i],
+              tags: response.data.tag_names[i]
+            })
+          }
+        })
+        .catch(fail => {
+          console.log(fail)
+          console.log('获取题目列表错误')
+        })
+      }
+    })
+    .catch(fail => {
+      console.log(fail)
+      console.log('无法获取题目列表')
+    })
     },
+
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
+
     confirmAdd() {
       this.confirmLoading = true
-      this.selectedDataSource = []
       setTimeout(() => {
         this.exerciseAdditionVisible = false
         this.confirmLoading = false
+        const currentSelected = []
+  
         for (const key in this.selectedRowKeys) {
           const value = this.selectedRowKeys[key]
-          const records = this.allDataSource.filter(item => item.key === value)
-          this.selectedDataSource.push(records[0])
+          let records = this.allDataSource.filter(item => item.key === value)
+          if (records.length === 0) {
+            records = this.selectedDataSource.filter(item => item.key === value)
+          }
+          currentSelected.push(records[0])
         }
+        this.selectedDataSource = currentSelected
+        console.log(this.selectedDataSource)
       }, 500)
     },
+    
     cancelAdd() {
       this.exerciseAdditionVisible = false
     },

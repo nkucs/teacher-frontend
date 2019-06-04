@@ -7,7 +7,8 @@ const api = {
   createLab: '/teacher/lab/create-lab',
   editLab: '/teacher/lab/edit-lab',
   getLab: '/teacher/lab/get-lab/',
-  filterProblems: '/teacher/lab/filter-problems'
+  filterProblems: '/teacher/lab/filter-problems',
+  getProblems: '/teacher/lab/get-problems'
 }
 
 export function deleteLab(parameter) {
@@ -56,6 +57,14 @@ export function editLab(parameter) {
 export function filterProblems(parameter) {
   return axios({
     url: api.filterProblems,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getProblems(parameter) {
+  return axios({
+    url: api.getProblems,
     method: 'get',
     params: parameter
   })
