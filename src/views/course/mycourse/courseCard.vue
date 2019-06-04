@@ -42,31 +42,13 @@ const dataSource = [
     id:'1',
     name: '算法导论',
       time:'2019年春季学期',
-      content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'
+      content:'课程描述'
   },
   {
     id:'123',
-    name: '876',
+    name: 'java',
       time:'2019年春季学期',
-      content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'
-  },
-  {
-    id:'123',
-    name: '123123',
-      time:'2019年春季学期',
-      content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'
-  },
-  {
-    id:'123',
-    name: '777dfdfg',
-      time:'2019年春季学期',
-      content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'
-  },
-  {
-    id:'123',
-    name: 'sdfsdf',
-      time:'2019年春季学期',
-      content:'在中台产品的研发过程中，会出现不同的设计规范和实现方式，但其中往往存在很多类似的页面'
+      content:'课程描述'
   },
 
 ]
@@ -109,7 +91,7 @@ const dataSource = [
     },
     getnowcourse() {
       getnowcourse({
-        teacherId:this.teacher_id
+        'teacherNumber': this.teacher_id
       }).then((response) => {
         console.log(`get my courses successfully.`)
         this.dataSource = response.courseList
