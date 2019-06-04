@@ -2,11 +2,12 @@ import { axios } from '@/utils/request'
 // import Qs from 'qs'
 
 const api = {
-  getProblems: '/teacher/lab/get-my-labs',
+  getLabs: '/teacher/lab/get-my-labs',
   deleteLab: '/teacher/lab/delete-lab',
   createLab: '/teacher/lab/create-lab',
   editLab: '/teacher/lab/edit-lab',
-  getLab: '/teacher/lab/get-lab/'
+  getLab: '/teacher/lab/get-lab/',
+  filterProblems: '/teacher/lab/filter-problems'
 }
 
 export function deleteLab(parameter) {
@@ -50,3 +51,13 @@ export function editLab(parameter) {
     data: parameter
   })
 }
+
+
+export function filterProblems(parameter) {
+  return axios({
+    url: api.filterProblems,
+    method: 'get',
+    params: parameter
+  })
+}
+
