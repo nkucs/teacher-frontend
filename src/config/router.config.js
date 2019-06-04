@@ -135,18 +135,21 @@ export const asyncRouterMap = [
       {
         path: '/experiment/list/:id',
         name: '实验列表',
+        hidden: true,
         component: () => import('@/views/experiment/ExperimentList'),
         meta: { title: '实验列表', icon: 'dashboard', permission: [ 'dashboard' ] }
       },
       {
         path: '/experiment/new',
         name: '新建实验',
+        hidden: true,
         component: () => import('@/views/experiment/CreateExperiment'),
         meta: { title: '新建实验', icon: 'dashboard', permission: [ 'dashboard' ] }
       },
       {
-        path: '/experiment/edit',
+        path: '/experiment/edit/:id',
         name: '编辑实验',
+        hidden: true,
         component: () => import('@/views/experiment/EditExperiment'),
         meta: { title: '编辑实验', icon: 'dashboard', permission: [ 'dashboard' ] }
       },

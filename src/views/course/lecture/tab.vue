@@ -13,12 +13,14 @@
           <a-icon type="experiment" />
           实验课管理
         </span>
+        <experiment-list></experiment-list>
       </a-tab-pane>
       <a-tab-pane key="3">
         <span slot="tab">
           <a-icon type="project" />
           考试管理
         </span>
+        
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -26,6 +28,7 @@
 
 <script>
 import lecture from './Lecture.vue'
+import ExperimentList from '@/views/experiment/ExperimentList.vue'
 export default {
   data () {
     return {
@@ -35,7 +38,8 @@ export default {
     }
   },
   components: {
-    lecture
+    lecture,
+    ExperimentList
   }
 }
 </script>
