@@ -442,7 +442,7 @@ export default {
       // 调用新建实验的 API
       this.formValues.start_time = this.formValues.start_time.format('YYYY-MM-DD HH:mm:ss')
       this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss')
-      this.formValues.course_id = 1
+      this.formValues.course_id = this.courseId
       this.formValues.problems = this.selectedDataSource
       console.log('选中的题目有：', this.selectedDataSource)
       console.log('front end: ', this.formValues)
