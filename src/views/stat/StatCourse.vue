@@ -6,7 +6,7 @@
           <a-card @click='seeDetail(subIndex-1)' :title='courseInfo[subIndex-1].name' hoverable :bordered=false>
             <a :href='"/stat/detail?id="+ subIndex ' slot='extra'>统计详情</a>
             <p>开课时间：{{ courseInfo[subIndex-1].start_time }}</p>
-            <!-- <p>选课人数：{{ courseInfo[subIndex-1].student_number }}</p> -->
+            <p>课程编号：{{ courseInfo[subIndex-1].course_code }}</p>
             <p>简介：{{ courseInfo[subIndex-1].description }}</p>
           </a-card>
         </a-col>
@@ -41,15 +41,18 @@ export default {
       const that = this
       axios({
         method: 'get',
-        url: '/teacher/course/stat/get-now-course/',
+        // url: '/teacher/course/get-now-course/', 
+        url:'/teacher/course/stat/get-teacher-courses',
         params: {
-          teacherId: that.id()
+          // teacherId: that.id()
+          teacherId: 1
         }
       }).then(response => {
         // courseList:[course_id,name,start_time,end_time,description]
-        if(response.courseList){   
-          that.courseInfo = response.courseList
-          that.courseNum = that.courseInfo.Length
+        console.log(response)
+        if(response.data){   
+          that.courseInfo = response.data
+          that.courseNum = that.courseInfo.length
           console.log(that.courseInfo)
           console.log(that.courseNum)       
         }

@@ -8,11 +8,14 @@
           <a-button type="primary" align="right" @click="seekstudent()">查询</a-button>
           <a-button align="right" @click="resetstudent()">重置</a-button>
         </div>
-        <a-table 
+        <a-table
           :columns="columns1" 
           :dataSource="data1"
           :pagination="studentPagination"
-          @change="updatestudent">
+          @change="updatestudent">  
+          <span slot="name" slot-scope="text, record">
+            <a @click="showStudent(record.number,record.key)">{{ record.name }}</a>
+          </span>
         </a-table>
       </a-tab-pane>
       <a-tab-pane tab="题目" key="2">
@@ -26,9 +29,15 @@
           :dataSource="data2"
           :pagination="problemPagination"
           @change="updateproblem">
+          <span slot="name" slot-scope="text, record">
+            <a @click="showProblem(record.code)">{{ record.name }}</a>
+          </span>
         </a-table>
       </a-tab-pane>
     </a-tabs>
+    <div class="button_class">
+      <a-button type="primary" @click="seeCourseDetail()">课程综合统计</a-button>
+    </div>    
   </div>
 </template>
 
@@ -43,6 +52,7 @@ export default {
       columns1: [{
           title: '姓名',
           dataIndex: 'name', 
+          scopedSlots: { customRender: 'name' },
       }, {
           title: '学号',
           dataIndex: 'number', 
@@ -52,10 +62,11 @@ export default {
       }],
       columns2: [{
           title: '编号',
-          dataIndex: 'id', 
+          dataIndex: 'code', 
       }, {
           title: '名称',
           dataIndex: 'name', 
+          scopedSlots: { customRender: 'name' },
       }, {
           title: '描述',
           dataIndex: 'description',
@@ -64,12 +75,12 @@ export default {
           dataIndex: 'type',
       }],
       studentPagination: {
-        defaultPageSize:1,
+        defaultPageSize:3,
         total:0,
         current: 1
       },
       problemPagination: {
-        defaultPageSize:1,
+        defaultPageSize:3,
         total:0,
         current: 1
       },
@@ -89,7 +100,7 @@ export default {
             course_id: this.courseid,
         }).then(response => {
             const pagination = {...this.studentPagination}
-            pagination.total = parseInt(response.data.totalPages)
+            pagination.total = pagination.defaultPageSize * parseInt(response.data.totalPages)
             pagination.current = parseInt(response.data.current)
             this.data1 = response.data.students
             this.studentPagination = pagination
@@ -115,7 +126,7 @@ export default {
             course_id: this.courseid,
         }).then(response => {
             const pagination = {...this.problemPagination}
-            pagination.total = parseInt(response.data.totalPages)
+            pagination.total = pagination.defaultPageSize * parseInt(response.data.totalPages)
             pagination.current = parseInt(response.data.current)
             this.data2 = response.data.problems
             this.problemPagination = pagination
@@ -139,6 +150,32 @@ export default {
         else {
             this.seekproblem()
         }
+    },
+
+    seeCourseDetail:function(){
+      this.$router.push({
+        name:'课程分析',
+        query:{
+          course_id:this.courseid
+        }
+      })
+    },
+    showProblem:function(number){
+      this.$router.push({
+        name:'题目分析',
+        params:{
+          problem_id:number
+        }
+      })
+    },
+    showStudent:function(number,index){
+      this.$router.push({
+        name:'学生统计',
+        params:{
+          student_number:number,
+          student_id:index
+        }
+      })
     }
   },
   
@@ -149,3 +186,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.button_class {
+  margin-top: 2rem;
+  width:100%;
+  text-align: center
+}
+</style>
