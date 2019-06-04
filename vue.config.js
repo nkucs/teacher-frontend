@@ -67,7 +67,7 @@ module.exports = {
         }
       },
       '/nkcs': {
-        target: 'http://188.131.129.220:8000',
+        target: 'http://localhost:8000',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
