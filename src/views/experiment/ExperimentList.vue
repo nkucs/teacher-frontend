@@ -138,13 +138,14 @@ export default {
     return {
       msg: '实验列表',
       listData,
+      courseID:0
     }
   },
 
   methods: {
     newLab() {
       console.log(`进入新建实验页面`)
-      this.$router.push({ path: '/experiment/new'})
+      this.$router.push({ path: '/experiment/new?course_id=courseID'})
     },
 
     editLab(labId) {
@@ -166,9 +167,7 @@ export default {
       const self = this
       console.log(`删除实验${labId}`)
       deleteLab({
-        params: {
-          lab_id: labId,
-        }
+        lab_id: labId,
       }).then(() => {
         console.log(`delete lab ${labId} successfully`)
         for (var item in self.listData) {
@@ -189,13 +188,17 @@ export default {
     let id, pages
     if (this.$route.params.id) {
       id = this.$route.params.id
+    } else if (this.$route.query.courseID) {
+      id = this.$route.query.courseID
     }
 
+    self.courseID = id
+
+    console.log('COURSE ID', this.$route.query)
+
     getLabs({
-      params: {
-        course_id: id,
-        page: 1
-      }
+      course_id: id,
+      page: 1
     })
     .then(response => {
       console.log(response)
@@ -203,10 +206,8 @@ export default {
       pages = response.total_pages
       for (let i = 2; i <= pages; i++) {
         getLabs({
-          params: {
-            course_id: id,
-            page: i
-          }
+          course_id: id,
+          page: i
         })
         .then(response => {
           console.log(response)
