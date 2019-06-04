@@ -1,4 +1,4 @@
-<template>
+  <template>
   <a-layout id="components-layout-demo-custom-trigger">
     <a-breadcrumb>
       <a-breadcrumb-item>首页</a-breadcrumb-item>
@@ -115,62 +115,88 @@
   </a-layout>
 </template>
 <script>
-import { getexamstudent } from '@/api/exam'
-import { getallstudent } from '@/api/exam'
-import { getallcontent } from '@/api/exam'
-import { addstudent } from '@/api/exam'
-import { deletestudent } from '@/api/exam'
-import { fixstudent } from '@/api/exam'
+import {
+  getexamstudent
+} from '@/api/exam'
+import {
+  getallstudent
+} from '@/api/exam'
+import {
+  getallcontent
+} from '@/api/exam'
+import {
+  addstudent
+} from '@/api/exam'
+import {
+  deletestudent
+} from '@/api/exam'
+import {
+  fixstudent
+} from '@/api/exam'
 // import { searchidstudent } from '@/api/exam'
 // import { searchnamestudent } from '@/api/exam'
 // import { searchidstuall } from '@/api/exam'
 // import { searchnamestuall } from '@/api/exam'
 
-const pagelist= [1,2,5,10,20,50]
+const pagelist = [1, 2, 5, 10, 20, 50]
 
-const allstudentcol = [
-  {
+const allstudentcol = [{
     title: 'ID',
     dataIndex: 'all_id',
-    scopedSlots: { customRender: 'all_id' }
+    scopedSlots: {
+      customRender: 'all_id'
+    }
   },
   {
     title: 'Name',
     dataIndex: 'all_name',
-    scopedSlots: { customRender: 'all_name' }
+    scopedSlots: {
+      customRender: 'all_name'
+    }
   },
   {
     title: '班级',
     dataIndex: 'all_class',
-    scopedSlots: { customRender: 'all_class' }
+    scopedSlots: {
+      customRender: 'all_class'
+    }
   }
 ]
 
-const studentcol = [
-  {
+const studentcol = [{
     title: 'ID',
     dataIndex: 'number',
-    scopedSlots: { customRender: 'number' }
+    scopedSlots: {
+      customRender: 'number'
+    }
   },
   {
     title: 'Name',
     dataIndex: 'name',
-    scopedSlots: { customRender: 'name' }
+    scopedSlots: {
+      customRender: 'name'
+    }
   },
   {
     title: '考试类型',
     dataIndex: 'type',
-    scopedSlots: { customRender: 'type' }
+    scopedSlots: {
+      customRender: 'type'
+    }
   },
   {
     title: '密码',
     dataIndex: 'password',
-    scopedSlots: { customRender: 'password' }
+    scopedSlots: {
+      customRender: 'password'
+    }
   },
   {
     title: 'operation',
     dataIndex: 'operation',
-    scopedSlots: { customRender: 'operation' }
+    scopedSlots: {
+      customRender: 'operation'
+    }
   }
 ]
 export default {
@@ -184,9 +210,8 @@ export default {
       studentcol,
       selectedRowKeys: [],
       selectedRowKeys_t: [],
-      
 
-      cacheData:null,
+      cacheData: null,
       studentdata: null,
       allstudentdata: null,
       searchStudents: '',
@@ -195,11 +220,11 @@ export default {
       studentPagination: {
         total: 0,
         current: 1,
-        pageSize:10,
+        pageSize: 10,
       },
 
       AllstudentPagination: {
-        pageSize:10,
+        pageSize: 10,
         total: 0,
         current: 1
       },
@@ -212,19 +237,18 @@ export default {
     this.exam_id = 1
     this.updateStudentTable()
   },
-  computed: {    
+  computed: {
     rowSelection() {
       let self = this
       return {
-        onChange: function(selectedRowKeys){
+        onChange: function(selectedRowKeys) {
           self.selectedRowKeys = selectedRowKeys
         }
       }
-        
     },
     rowSelection_t() {
       const self = this
-      return {        
+      return {
         onChange: selectedRowKeys => {
           self.selectedRowKeys_t = selectedRowKeys
         }
@@ -253,7 +277,7 @@ export default {
       this._updateStudentTable(page.current)
     },
 
-    callbackAllStudentTable: function(page,pagesize) {
+    callbackAllStudentTable: function(page, pagesize) {
       this._updateAllStudentTable(page.current)
     },
 
@@ -273,18 +297,15 @@ export default {
         page_index: index,
         page_length: self.studentPagination.pageSize
       }).then(response => {
-        const pagination = { ...self.studentPagination }
-        console.log(response.data.totalPages)
+        const pagination = {
+          ...self.studentPagination
+        }
         pagination.total = pagination.pageSize * parseInt(response.data.totalPages) //返回所有的页数
-        
         pagination.current = parseInt(response.data.current)
-        
         self.studentdata = response.data.students
         self.studentPagination = pagination
-        console.log(self.studentPagination)
-        console.log(self.studentdata)
       })
-      
+
     },
 
     _updateAllStudentTable: function(index) {
@@ -302,16 +323,20 @@ export default {
         page_index: index,
         page_length: this.AllstudentPagination.pageSize
       }).then(response => {
-        const pagination = { ...this.AllstudentPagination }
+        const pagination = {
+          ...this.AllstudentPagination
+        }
         pagination.total = pagination.pageSize * parseInt(response.data.totalPages)
-        pagination.current =  parseInt(response.data.current)
+        pagination.current = parseInt(response.data.current)
         this.allstudentdata = response.data.students
         this.AllstudentPagination = pagination
       })
     },
 
     edit: function(number) {
-      this.cacheData = this.studentdata.map(item => ({ ...item }))
+      this.cacheData = this.studentdata.map(item => ({
+        ...item
+      }))
       const newData = [...this.studentdata]
       const target = newData.filter(item => number === item.number)[0]
       if (target) {
@@ -335,7 +360,9 @@ export default {
       if (target) {
         delete target.editable
         this.studentdata = newData
-        this.cacheData = newData.map(item => ({ ...item }))
+        this.cacheData = newData.map(item => ({
+          ...item
+        }))
         //将修改的值传递给后端
         fixstudent({
           exam_id: this.exam_id,
@@ -345,7 +372,6 @@ export default {
         }).then(response => {
           if (!response.data.error) {
             this.$message.success('成功！')
-           
           }
         })
       }
@@ -369,7 +395,7 @@ export default {
       var post = []
 
       if (this.selectedRowKeys.length != 0) {
-       // const newdata = this.studentdata.filter(item => this.selectedRowKeys.includes(item.number)) //获取所有需要删除的id
+        // const newdata = this.studentdata.filter(item => this.selectedRowKeys.includes(item.number)) //获取所有需要删除的id
         const newdata = this.selectedRowKeys //获取所有需要删除的id
         for (var i = 0; i < newdata.length; i++) {
           alert(newdata[i])
@@ -383,21 +409,21 @@ export default {
           if (!response.data.error) {
             this.updateStudentTable()
             this.$message.success('删除成功')
-            this.selectedRowKeys.splice(0,this.selectedRowKeys.length)
+            this.selectedRowKeys.splice(0, this.selectedRowKeys.length)
           }
         })
-        
+
       } else {
         this.$message.error('请勾选要删除的学生')
       }
     },
 
-    getcontent: function(){
-      let res =[]
+    getcontent: function() {
+      let res = []
       var post = []
       let data = ' 学号, 姓名, 考试类型, 密码\n'
       if (this.selectedRowKeys.length != 0) {
-       // const newdata = this.studentdata.filter(item => this.selectedRowKeys.includes(item.number)) //获取所有需要删除的id
+        // const newdata = this.studentdata.filter(item => this.selectedRowKeys.includes(item.number)) //获取所有需要删除的id
         const newdata = this.selectedRowKeys //获取所有需要删除的id
         for (var i = 0; i < newdata.length; i++) {
           post.push(newdata[i]) //设置传参为所有添加的id
@@ -406,10 +432,10 @@ export default {
           student_number: post,
           exam_id: this.exam_id
         }
-          getallcontent(values).then(response => {
+        getallcontent(values).then(response => {
           if (!response.data.error) {
             res = response.data.stu_list
-            for (let i = 0; i < res.length; ++i){
+            for (let i = 0; i < res.length; ++i) {
               let obj = res[i]
               data += obj.number + ',' + obj.name + ',' + obj.type + ',' + obj.password + '\n'
             }
@@ -422,11 +448,11 @@ export default {
 
     exportstu: function() {
       if (this.selectedRowKeys.length != 0) {
-        let res =[]
+        let res = []
         var post = []
         let data = ' 学号, 姓名, 考试类型, 密码\n'
         if (this.selectedRowKeys.length != 0) {
-        // const newdata = this.studentdata.filter(item => this.selectedRowKeys.includes(item.number)) //获取所有需要删除的id
+          // const newdata = this.studentdata.filter(item => this.selectedRowKeys.includes(item.number)) //获取所有需要删除的id
           const newdata = this.selectedRowKeys //获取所有需要删除的id
           for (var i = 0; i < newdata.length; i++) {
             post.push(newdata[i]) //设置传参为所有添加的id
@@ -435,30 +461,29 @@ export default {
             student_number: post,
             exam_id: this.exam_id
           }
-            getallcontent(values).then(response => {
+          getallcontent(values).then(response => {
             if (!response.data.error) {
               res = response.data.stu_list
-              for (let i = 0; i < res.length; ++i){
+              for (let i = 0; i < res.length; ++i) {
                 let obj = res[i]
                 data += obj.number + ',' + obj.name + ',' + obj.type + ',' + obj.password + '\n'
               }
               this.$message.success('获取成功')
               var aTag = document.createElement('a')
-                var blob = new Blob([data])
-                aTag.download = '考试情况.csv'
-                aTag.href = URL.createObjectURL(blob)
-                aTag.click()
-                URL.revokeObjectURL(blob)
-                this.$message.success('导出成功')
+              var blob = new Blob([data])
+              aTag.download = '考试情况.csv'
+              aTag.href = URL.createObjectURL(blob)
+              aTag.click()
+              URL.revokeObjectURL(blob)
+              this.$message.success('导出成功')
             }
           })
         }
-      }
-     else {
+      } else {
         this.$message.error('请勾选要导出的学生')
       }
       //Stupid Code!!!
-      this.selectedRowKeys.splice(0,this.selectedRowKeys.length)
+      this.selectedRowKeys.splice(0, this.selectedRowKeys.length)
       this.updateStudentTable()
     },
 
@@ -476,7 +501,7 @@ export default {
         }
         addstudent(values).then(response => {
           if (!response.data.error) {
-            this.selectedRowKeys_t.splice(0,this.selectedRowKeys_t.length)
+            this.selectedRowKeys_t.splice(0, this.selectedRowKeys_t.length)
             this.updateStudentTable()
             this.updateAllStudentTable()
             this.$message.success('添加成功')
@@ -489,7 +514,7 @@ export default {
     handleCancel() {
       this.searchAllStudents = ''
       this.visible = false
-      this.selectedRowKeys_t.splice(0,this.selectedRowKeys_t.length)
+      this.selectedRowKeys_t.splice(0, this.selectedRowKeys_t.length)
       this.updateAllStudentTable()
     },
   }
@@ -508,14 +533,17 @@ export default {
 .addstudent {
   width: 600px;
 }
+
 .page {
   margin: 20px;
 }
+
 .btn_list {
   align-items: center;
   width: 40%;
   display: inline-block;
 }
+
 .search {
   width: 400px;
   float: right;
@@ -539,6 +567,7 @@ export default {
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
 }
+
 .editable-row-operations a {
   margin-right: 8px;
 }

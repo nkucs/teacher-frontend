@@ -1,4 +1,4 @@
-<template>
+  <template>
   <a-layout id="components-layout-demo-custom-trigger">
     <a-breadcrumb>
       <a-breadcrumb-item>首页</a-breadcrumb-item>
@@ -9,149 +9,210 @@
     </a-breadcrumb>
 
     <div>
-      <!-- <div class="divider">
-        <a-divider :span="4" orientation="left" >当前学期</a-divider>
-      </div>-->
       <div class="personal-mybuluo-head">
         <div class="personal-mybuluo-wording">当前学期</div>
         <div class="personal-border jmu-border-1px border-bottom"></div>
       </div>
 
-      <a-list itemLayout="vertical" size="large" :pagination="pagination " :dataSource="listData">
-        <a-list-item slot="renderItem" slot-scope="item" key="item.title">
+      <a-list itemLayout="vertical" size="large" :pagination="nowCoursePagination" :dataSource="nowCourseData">
+        <a-list-item slot="renderItem" slot-scope="item" key="item.id">
           <div>
             <a-collapse defaultActiveKey="1" class="collapse">
               <a-collapse-panel key="1" :showArrow="false" class="shadow">
                 <template slot="header" class="collapse-panel">
-                  <div style="height:80px;font-size:24px">
-                    {{ item.title }}
-                    <div class="description">{{ item.description }}</div>
-                  </div>
+                  <h1>{{ item.name }}：{{ item.code }}</h1>
+                  <div>{{ item.starttime }} —— {{item.endtime}}</div>
+                  <div class="content">{{ item.description }}</div>
                 </template>
-                <div style="height:360px">
+                <div style="height:360px" >
                   <div :style="{ marginBottom: '16px' }">
-                    <a-button @click="add">ADD</a-button>
+                    <a-button slot="tabBarExtraContent" :ghost="true" style="border: 0px">
+                      <AddExam :parentToChild="item.id" @fflush="updateNowData"></AddExam>
+                      </a-button>
                   </div>
-                  <a-tabs hideAdd v-model="activeKey" type="editable-card" @edit="onEdit">
+
+
+                  <a-tabs hideAdd v-model="item.activeKey" type="editable-card"  >
                     <a-tab-pane
-                      v-for="pane in panes"
+                      v-for="pane in item.exampanes"
                       :tab="pane.title"
                       :key="pane.key"
-                      :closable="pane.closable"
-                    >{{ pane.content }}</a-tab-pane>
+                      :closable="false"
+                      >
+                      <div style="font-size:20px">
+                        考试名称：{{pane.title}}<br>
+                      </div>
+                      <div style="font-size:20px">
+                        开始时间：{{pane.starttime}}<br>
+                        考试时长：{{pane.duration}}<br>
+                      </div>
+                      <div style="font-size:20px">
+                        考试描述：{{pane.content}}
+                      </div>
+                    <div>
+
+                        <a-button><router-link to="/exam/examdetial">查看考试</router-link></a-button>
+                    </div>
+
+                    <div>
+                        <a-button @click="remove(pane)">删除考试</a-button>
+                    </div>
+                    </a-tab-pane>
                   </a-tabs>
                 </div>
               </a-collapse-panel>
             </a-collapse>
           </div>
-          <!-- {{item.content}} -->
         </a-list-item>
       </a-list>
     </div>
 
-    <!--     
-    <a-layout-content
-        :style="{ margin: '40px 80px', padding: '24px', background: '#fff', minHeight: '280px' }"
-    >-->
+
     <div>
       <div class="personal-mybuluo-head">
         <div class="personal-mybuluo-wording">已结束学期</div>
         <div class="personal-border jmu-border-1px border-bottom"></div>
       </div>
-      <a-list itemLayout="vertical" size="large" :pagination="pagination" :dataSource="listData">
-        <a-list-item slot="renderItem" slot-scope="item" key="item.title">
+      <a-list itemLayout="vertical" size="large" :pagination="lastCoursePagination" :dataSource="lastCourseData">
+        <a-list-item slot="renderItem" slot-scope="item" key="item.id">
           <div>
             <a-collapse defaultActiveKey="1" class="collapse">
               <a-collapse-panel key="1" :showArrow="false" class="shadow">
                 <template slot="header" class="collapse-panel">
-                  <div style="height:80px;font-size:24px">
-                    {{ item.title }}
-                    <div class="description">{{ item.description }}</div>
-                  </div>
+                  <h1>{{ item.name }}：{{ item.code }}</h1>
+                  <div>{{ item.starttime }} —— {{item.endtime}}</div>
+                  <div class="content">{{ item.description }}</div>
                 </template>
                 <div style="height:360px">
                   <div :style="{ marginBottom: '16px' }">
-                    <a-button @click="add">ADD</a-button>
                   </div>
-                  <a-tabs hideAdd v-model="activeKey" type="editable-card" @edit="onEdit">
+                  <!-- <a-tabs hideAdd v-model="item.exampanse[0].id" type="editable-card" @edit="onEdit"> -->
+                    <a-tabs hideAdd type="editable-card">
                     <a-tab-pane
-                      v-for="pane in panes"
+                      v-for="pane in item.exampanes"
                       :tab="pane.title"
                       :key="pane.key"
-                      :closable="pane.closable"
-                    >{{ pane.content }}</a-tab-pane>
+                      :closable="false"
+                      >
+                      {{pane.content}}
+                    </a-tab-pane>
                   </a-tabs>
                 </div>
               </a-collapse-panel>
             </a-collapse>
           </div>
-          <!-- {{item.content}} -->
         </a-list-item>
       </a-list>
     </div>
-    <!-- </a-layout-content> -->
   </a-layout>
 </template>
 <script>
-const panes = [
-  { title: 'Tab 1', content: 'Content of Tab 1', key: '1' },
-  { title: 'Tab 2', content: 'Content of Tab 2', key: '2' }
-]
-const listData = []
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://vue.ant.design/',
-    title: '数据结构',
-    description: 'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    content:
-      'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.'
-  })
-}
+import AddExam from './AddExam'
+
+import {
+  getnowexam,
+  getlastexam,
+  deleteexam
+} from '@/api/exam'
 
 export default {
   data() {
     return {
-      listData,
-      pagination: {
-        onChange: page => {
-          console.log(page)
-        },
-        pageSize: 4
+      teacher_id: 1,
+      nowCourseData: [],
+      lastCourseData: [],
+      newTabIndex: 0,
+
+      nowCoursePagination: {
+        pageSize: 4,
+        total: 30,
+        current: 1
       },
-      activeKey: panes[0].key,
-      panes,
-      newTabIndex: 0
+
+      lastCoursePagination: {
+        pageSize: 4,
+        total: 30,
+        current: 1
+      },
+      visible: false,
+
     }
   },
+  components: {
+    AddExam
+  },
   methods: {
-    callback(key) {
-      console.log(key)
+    addexam: function() {
+      this.visible = true
     },
-    onEdit(targetKey, action) {
-      this[action](targetKey)
+    handleCancel: function() {
+      this.visible = false
     },
-    add() {
-      const panes = this.panes
-      const activeKey = `newTab${this.newTabIndex++}`
-      panes.push({ title: `New Tab ${activeKey}`, content: `Content of new Tab ${activeKey}`, key: activeKey })
-      this.panes = panes
-      this.activeKey = activeKey
-    },
-    remove(targetKey) {
-      let activeKey = this.activeKey
-      let lastIndex
-      this.panes.forEach((pane, i) => {
-        if (pane.key === targetKey) {
-          lastIndex = i - 1
+
+    remove(item) {
+      let self = this
+      deleteexam({
+        exam_id: item.exam_id
+      }).then(function(response) {
+        if (!response.data.error) {
+          self.$message.success('删除成功！')
+          self.updateNowData()
+        } else {
+          alert('删除失败！')
         }
+      }).catch((fail) => {
+        alert('删除失败！')
       })
-      const panes = this.panes.filter(pane => pane.key !== targetKey)
-      if (lastIndex >= 0 && activeKey === targetKey) {
-        activeKey = panes[lastIndex].key
-      }
-      this.panes = panes
-      this.activeKey = activeKey
+    },
+    pageChange(page) {
+      this.page = page
+    },
+
+    updateNowData: function() {
+      let self = this
+      getnowexam({
+        teacher_id: this.teacher_id,
+        page_index: self.nowCoursePagination.current,
+        page_length: self.nowCoursePagination.pageSize
+      }).then(function(response) {
+        const pagination = {
+          ...self.nowCoursePagination
+        }
+        pagination.total = pagination.pageSize * parseInt(response.data.totalPages)
+        pagination.current = parseInt(response.data.current)
+        self.nowCourseData = response.data.course_list
+        self.nowCoursePagination = pagination
+      }).catch((fail) => {
+        alert('获取课程列表失败！')
+      })
+    },
+
+    updateLastData: function() {
+      let self = this
+      getlastexam({
+        teacher_id: this.teacher_id,
+        page_index: self.lastCoursePagination.current,
+        page_length: self.lastCoursePagination.pageSize
+      }).then(function(response) {
+        const pagination = {
+          ...self.lastCoursePagination
+        }
+        pagination.total = pagination.pageSize * parseInt(response.data.totalPages)
+        pagination.current = parseInt(response.data.current)
+        self.lastCourseData = response.data.course_list
+        self.lastCoursePagination = pagination
+      }).catch((fail) => {
+        alert('获取课程列表失败！')
+      })
+    },
+
+    update: function() {
+      this.updateNowData()
+      this.updateLastData()
     }
+  },
+  mounted: function() {
+    this.update();
   }
 }
 </script>
@@ -163,14 +224,20 @@ export default {
   background: #666 0px 0px 10px;
 }
 
-.description {
+.content {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 20px;
+  height: 80px;
   margin-top: 20px;
-  font-size: 16px;
+  font-size: 12px;
 }
+
 .collapse {
   margin-left: 9%;
   width: 76%;
 }
+
 .collapse-panel {
   background: whitesmoke;
   /* border-radius: 10px; */
@@ -178,6 +245,7 @@ export default {
   border: 0px;
   overflow: hidden;
 }
+
 /* .divider{
   font-size: 600px;
   background: red;
@@ -239,6 +307,3 @@ export default {
   pointer-events: none;
 }
 </style>
-
-
-
