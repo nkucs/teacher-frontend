@@ -2,7 +2,10 @@
   <div>
     <div class="exam">
       <div class="exam-problems">
-        <h3>题目列表</h3>
+        <div style="display:flex; justify-content:space-between;">
+          <h3>题目列表</h3>
+          <a-button type="primary" icon="check" @click="finish">完成添加</a-button>
+        </div>
         <a-divider type="horizontal"/>
         <a-table :dataSource="examProblems" :columns="examColumns" :pagination="(false)" bordered>
           <template slot="name" slot-scope="text">
@@ -17,16 +20,18 @@
               <a href="javascript:;">删除</a>
             </a-popconfirm>
             <a-divider type="vertical"/>
-            <a href="javascript:;">详情</a>
+            <a href="javascript:;" @click="showDetail(record.id)">详情</a>
           </template>
         </a-table>
       </div>
       <div class="problems-info">
         <h3>提交统计</h3>
-        <a-divider type="horizontal"/>
-        <ve-ring :judge-width="true" :settings="chartSettings" :data="chartData"></ve-ring>
-        <div class="rate">
-          <h3>通过率： {{averageAcRate}} %</h3>
+        <div v-if="examProblems.length !== 0">
+          <a-divider type="horizontal"/>
+          <ve-ring :judge-width="true" :settings="chartSettings" :data="chartData"></ve-ring>
+          <div class="rate">
+            <h3>通过率： {{averageAcRatio}} %</h3>
+          </div>
         </div>
       </div>
     </div>
@@ -44,7 +49,7 @@
         <template slot="operation" slot-scope="text, record">
           <a href="javascript:;" @click="addToExam(record.key)">添加</a>
           <a-divider type="vertical"/>
-          <a href="javascript:;">详情</a>
+          <a href="javascript:;" @click="showDetail(record.id)">详情</a>
         </template>
       </a-table>
     </div>
@@ -52,6 +57,9 @@
 </template>
 
 <script>
+import { getAllProblems } from '@/api/problem'
+import { getallcourse } from '@api/course'
+
 const examColumns = [
   {
     title: 'id',
@@ -63,11 +71,11 @@ const examColumns = [
   },
   {
     title: 'ac次数',
-    dataIndex: 'ac'
+    dataIndex: 'accepted_count'
   },
   {
     title: '提交次数',
-    dataIndex: 'submit'
+    dataIndex: 'submit_count'
   },
   {
     title: '操作',
@@ -87,19 +95,15 @@ const allColumns = [
   },
   {
     title: 'ac次数',
-    dataIndex: 'ac'
+    dataIndex: 'accepted_count'
   },
   {
     title: '提交次数',
-    dataIndex: 'submit'
-  },
-  {
-    title: '所属课程',
-    dataIndex: 'course'
+    dataIndex: 'submit_count'
   },
   {
     title: 'ac率',
-    dataIndex: 'acRate'
+    dataIndex: 'accepted_ratio'
   },
   {
     title: '操作',
@@ -107,10 +111,6 @@ const allColumns = [
     scopedSlots: { customRender: 'operation' }
   }
 ]
-
-const chartSettings = {
-  radius: [60, 80]
-}
 
 var chartData = {
   columns: ['item', 'number'],
@@ -121,61 +121,82 @@ var chartData = {
   ]
 }
 
-var averageAcRate = 0
-
-var examProblems = []
-
-const allProblems = []
-for (let i = 0; i < 50; i++) {
-  const key = i
-  const id = i
-  const name = 'a + b'
-  const ac = [0, 40, 120][i % 3]
-  const submit = 120
-  const course = ['数据结构', '算法设计', 'C++'][i % 3]
-  const acRate = (ac / submit * 100).toFixed(2) + '%'
-  allProblems.push({ key, id, name, ac, submit, course, acRate })
-}
-
 export default {
   data() {
     return {
       examColumns,
       allColumns,
-      examProblems,
-      allProblems,
+      examProblems: [],
+      allProblems: [],
       chartData,
-      averageAcRate,
-      chartSettings
+      chartSettings: { radius: [60, 80] },
+      averageAcRatio: 0
     }
   },
 
+  mounted() {
+    this.loadAllProblems()
+  },
+
   methods: {
+    loadAllProblems() {
+      getAllProblems({
+          page: 1
+        }).then(response => {
+          this.dataRender(response.data.problems)
+        }).catch(error => {
+          console.log(error)
+        })
+    },
+
+    dataRender(data) {
+      data.map(item => {
+        this.allProblems.push({
+          key: item.id,
+          id: item.id,
+          name: item.name,
+          accepted_count: item.accepted_count,
+          submit_count: item.submit_count,
+          accepted_ratio: (item.accepted_count === 0) ? 
+            0 : (item.accepted_count / item.submit_count * 100).toFixed(2) + '%'
+        })
+      })
+    },
+
+    finish() {
+      this.$router.push({
+        name: '考试详情',
+        params: {
+          examProblems: this.examProblems
+        }
+      })
+    },
+
     remove(key) {
       const examProblems = [...this.examProblems]
       const problem = examProblems.filter(item => item.key === key)[0]
       const index = examProblems.indexOf(problem)
       this.examProblems.splice(index, 1)
       
-      if (problem.ac === 0) {
+      if (problem.accepted_ratio === 0) {
         this.chartData.rows[2]['number'] -= 1
-      } else if (problem.ac === problem.submit) {
+      } else if (problem.accepted_ratio === '100%') {
         this.chartData.rows[0]['number'] -= 1
       } else {
         this.chartData.rows[1]['number'] -= 1
       }
       this.$message.success('删除成功', 1.5)
 
-      let ac = 0
-      let submit = 0
+      let accepted_count = 0
+      let submit_count = 0
       if (this.examProblems.length !== 0) {
         this.examProblems.map(item => {
-          ac += item.ac
-          submit += item.submit
+          accepted_count += item.accepted_count
+          submit_count += item.submit_count
         })
-        this.averageAcRate = (ac / submit * 100).toFixed(2)
+        this.averageAcRatio = (accepted_count / submit_count * 100).toFixed(2)
       } else {
-        this.averageAcRate = 0
+        this.averageAcRatio = 0
       }
     },
 
@@ -188,28 +209,37 @@ export default {
       if (allId.indexOf(problem.id) === -1) {
         this.examProblems.push(problem)
         this.$message.success('成功添加至考试题目', 1.5)
-        if (problem.ac === 0) {
+        if (problem.accepted_ratio === 0) {
           this.chartData.rows[2]['number'] += 1
-        } else if (problem.ac === problem.submit) {
+        } else if (problem.accepted_ratio === '100%') {
           this.chartData.rows[0]['number'] += 1
         } else {
           this.chartData.rows[1]['number'] += 1
         }
 
-        let ac = 0
-        let submit = 0
+        let accepted_count = 0
+        let submit_count = 0
         this.examProblems.map(item => {
-          ac += item.ac
-          submit += item.submit
+          accepted_count += item.accepted_count
+          submit_count += item.submit_count
         })
-        this.averageAcRate = (ac / submit * 100).toFixed(2)
-        console.log(this.averageAcRate)
+        this.averageAcRatio = (accepted_count / submit_count * 100).toFixed(2)
       } else {
         this.$message.warning('已添加至考试题目', 1.5)
       }
     },
 
-    newProblem() {},
+    showDetail(problem_id) {
+      this.$router.push({
+        path: `/problem/preview/${problem_id}`
+      })
+    },
+
+    newProblem() {
+      this.$router.push({
+        path: '/problem/add'
+      })
+    },
 
     onSearch() {}
   }
