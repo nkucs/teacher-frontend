@@ -145,7 +145,7 @@ export default {
   methods: {
     newLab() {
       console.log(`进入新建实验页面`)
-      this.$router.push({ path: '/experiment/new?course_id=courseID'})
+      this.$router.push({ path: `/experiment/new?course_id=${this.courseID}`})
     },
 
     editLab(labId) {
