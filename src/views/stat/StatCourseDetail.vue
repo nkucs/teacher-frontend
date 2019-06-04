@@ -14,7 +14,7 @@
           :pagination="studentPagination"
           @change="updatestudent">  
           <span slot="name" slot-scope="text, record">
-            <a @click="showStudent(record.number,record.key)">{{record.name}}</a>
+            <a @click="showStudent(record.number,record.key)">{{ record.name }}</a>
           </span>
         </a-table>
       </a-tab-pane>
@@ -30,7 +30,7 @@
           :pagination="problemPagination"
           @change="updateproblem">
           <span slot="name" slot-scope="text, record">
-            <a @click="showProblem(record.code)">{{record.name}}</a>
+            <a @click="showProblem(record.code)">{{ record.name }}</a>
           </span>
         </a-table>
       </a-tab-pane>
