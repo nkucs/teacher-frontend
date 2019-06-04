@@ -1,14 +1,14 @@
 <template>
-  <a-card :loading="loading" :bordered="false" title="测例标签">
+  <a-card :bordered="false" title="测例标签">
     <a-row :gutter="12">
       <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-        <a-card :loading="loading" :bordered="false">
+        <a-card :bordered="false">
           <ve-bar :data="testCaseData" :settings="passTestCaseSettings"></ve-bar>
           <div class="stext">通过测例标签</div>
         </a-card>
       </a-col>
       <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-        <a-card :loading="loading" :bordered="false">
+        <a-card :bordered="false">
           <ve-bar :data="testCaseData" :settings="notPassTestCaseSettings"></ve-bar>
           <div class="stext">未通过测例标签</div>
         </a-card>
@@ -46,12 +46,10 @@ export default {
   created: function() {
     const that = this
     // 这里添加course_id
-    const course_id = 1
-    get_submission_tags(course_id).then(
+    get_submission_tags(this.$route.query.course_id).then(
       (response) => {
         const data = response.ans
         for (let i = 0; i < data.length; i++) {
-          console.log(data[i])
           that.testCaseData.rows.push(data[i])
         }
       }
