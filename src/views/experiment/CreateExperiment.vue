@@ -442,6 +442,7 @@ export default {
       this.formValues.end_time = this.formValues.end_time.format('YYYY-MM-DD HH:mm:ss')
       this.formValues.course_id = 1
       this.formValues.problems = this.selectedDataSource
+      console.log("选中的题目有：", this.selectedDataSource)
       console.log('front end: ', this.formValues)
 
       const labParams = {...this.formValues}
