@@ -37,7 +37,7 @@
           </span>
           <div class="inlineClass" >
             <label>题目id: </label>
-            <a-input v-model="searchId" placeholder="输入题目id" />
+            <a-input v-model="searchCode" placeholder="输入题目id" />
             <label>题目名称: </label>
             <a-input v-model="searchProblemName" placeholder="输入题目名称"/>
             <label>教师姓名: </label>
@@ -282,7 +282,7 @@ export default {
     confirmLoading: false,
 
     // search related
-    searchId: '',
+    searchCode: '',
     searchProblemName: '',
     searchTeacherName: '',
     searchTag: '',
@@ -347,27 +347,16 @@ export default {
           tags: response.data.tag_names[i]
         })
       }
+
+      // 根据问题 id 初始化表格
+    for (const key in this.selectedDataSource) {
+      this.selectedRowKeys.push(this.selectedDataSource[key].key)
+    }
+    console.log("初始化后的 selectedRowKeys 值：", this.selectedRowKeys)
+
     }).catch(err => {
       console.log(`fail to get problems for lab ${this.lab_id}`, err)
     })
-
-    // 这里根据上面的 res 得到这个实验对应的 problem id
-    // for (let i=0; i<4; i++) {
-    //     this.selectedDataSource.push({
-    //       key: i, // necessary
-    //       id: i,
-    //       name: 'problem ' + i,
-    //       teacherName: '刘明铭',
-    //       tags: ['sort', 'tree']
-    //     })
-    // }
-
-    // 根据问题 id 初始化表格
-    for (const key in this.selectedDataSource) {
-      if (key in this.allDataSource) {
-        this.selectedRowKeys.push(parseInt(key))
-      }
-    }
   },
 
   computed: {
@@ -388,6 +377,7 @@ export default {
     },
     
     search() {
+      console.log("search all datasource")
       const self = this
       self.allDataSource = []
       filterProblems({
@@ -449,6 +439,7 @@ export default {
     },
 
     confirmAdd() {
+      console.log("确定添加，this.selectedRowKeys :", this.selectedRowKeys)
       this.confirmLoading = true
       setTimeout(() => {
         this.exerciseAdditionVisible = false
@@ -464,7 +455,7 @@ export default {
           currentSelected.push(records[0])
         }
         this.selectedDataSource = currentSelected
-        console.log(this.selectedDataSource)
+        console.log("已选择题目：", this.selectedDataSource)
       }, 500)
     },
     
