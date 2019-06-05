@@ -67,12 +67,9 @@ module.exports = {
         }
       },
       '/nkcs': {
-        target: 'http://localhost:8000',
+        target: 'http://188.131.129.220',
         ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/nkcs': '/'
-        }
+        changeOrigin: true
       }
     }
   },

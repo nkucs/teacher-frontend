@@ -365,6 +365,7 @@
           .then(function(res) {
             alert('创建成功')
             console.log(res)
+            this.$emit('getProblemId', res.id)
           })
           .catch(function(err) {
             console.log(err)

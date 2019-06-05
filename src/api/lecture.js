@@ -31,7 +31,7 @@ export function addProblem(parameter) {
   return axios({
     url: api.addProblem,
     method: 'post',
-    params: parameter
+    data: parameter
   })
 }
 
