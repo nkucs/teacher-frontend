@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="mainTitle">编辑实验</h2>
+    <h2 class="mainTitle">实验详情</h2>
     <a-form id="components-form-demo-validate-other" :form="form">
       <a-form-item v-bind="formItemLayout" label="实验名称：">
         {{ lab.name }}
