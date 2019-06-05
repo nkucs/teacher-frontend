@@ -311,10 +311,13 @@ export default {
     lab_attachment_weight: 0,
     lab_report_required: 'y',
     lab_start_time: moment('2015/01/01','YYYY/MM/DD'),
-    lab_end_time: moment('2015/01/01','YYYY/MM/DD')
+    lab_end_time: moment('2015/01/01','YYYY/MM/DD'),
+    courseId: '',
   }),
 
   mounted() {
+    console.log('query', this.$route.query)
+    this.courseId = this.$route.query.course_id
     this.form = this.$form.createForm(this)
     this.search()
     // 从 url 中获取实验 id 
@@ -482,18 +485,19 @@ export default {
       this.formValues.problems = this.selectedDataSource
       
       const labParams = {...this.formValues}
-      editLab(labParams).then(function (res) {
+      editLab(labParams).then((res) => {
         console.log('successfully edit a lab: ', res)
+        this.submitVisible = false
+        this.confirmLoading = false
+        
+        // 调用编辑实验的 API 并回到实验列表页面
+        this.$router.push({path:`/course/details?courseID=${this.courseId}`})
       }).catch(function (err) {
         console.log('fail to create a new lab: ', err)
       })
 
       setTimeout(() => {
-        this.submitVisible = false
-        this.confirmLoading = false
         
-        // 调用编辑实验的 API 并回到实验列表页面
-        this.$router.push({path:'/experiment/list'})
       }, 500)
     },
     cancelSubmit() {
@@ -508,7 +512,7 @@ export default {
       setTimeout(() => {
         this.cancelSubmitVisible = false
         this.confirmLoading = false
-        this.$router.push({path:'/experiment/list'})
+        this.$router.push({path:`/course/details?courseID=${this.courseId}`})
       }, 500)
     },
     abandonCancel() {
