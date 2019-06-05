@@ -127,7 +127,7 @@ export default {
 
     editLab(labId) {
       console.log(`进入实验${labId}的编辑页面`)
-      this.$router.push({ path: `/experiment/edit/${labId}`})
+      this.$router.push({ path: `/experiment/edit/${labId}/?course_id=${this.courseID}`})
     },
 
     performance(labId) {
