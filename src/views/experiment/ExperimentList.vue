@@ -28,7 +28,7 @@
       >
         <template slot-scope="text, record">
           <span>
-            <a href="javascript:;" target="_blank" @click="toLab(record.problem_id)"> {{ record.name }} </a>
+            <a href="javascript:;" target="_blank" @click="toLab(record.lab_id)"> {{ record.name }} </a>
           </span>
         </template>
       </a-table-column>
@@ -173,6 +173,7 @@ export default {
       console.log(response)
       self.listData = response.data.labs
       pages = response.data.total_pages
+      console.log('listData',self.listData)
       for (let i = 2; i <= pages; i++) {
         getLabs({
           course_id: id,
