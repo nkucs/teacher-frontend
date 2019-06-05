@@ -63,6 +63,7 @@ export default {
   data () {
     return {
       problemIds: [],
+      lectureId: '',
       data: [],
       columns,
       selectedRowKeys: []
