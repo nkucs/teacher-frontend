@@ -62,7 +62,12 @@ export default {
   },
   data () {
     return {
+<<<<<<< HEAD
       problemIds: [],
+=======
+      lectureId: 1,
+      problem_ids: [],
+>>>>>>> 1f58bfc0fe654d3251721365cc4133cea92f48f2
       data: [],
       columns,
       selectedRowKeys: []
