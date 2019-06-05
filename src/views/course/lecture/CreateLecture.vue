@@ -2,7 +2,7 @@
   <div>
     <a-form
       :form="form"
-      @submit="handleSubmit"
+      @submit="handleCreateSubmit"
     >
       <a-form-item
         label="课时名称："
@@ -40,7 +40,7 @@
         :wrapper-col="{ span: 12 }"
       >
         <a-upload
-          action="http://127.0.0.1:8080/course/createlecture"
+          action="http://188.131.129.220/course/createlecture"
           :multiple="true"
           :fileList="fileList"
           @change="fileChange"
@@ -102,7 +102,7 @@ export default {
       this.courseId = this.$route.query.courseID
   },
   methods: {
-    handleSubmit (e) {
+    handleCreateSubmit (e) {
       const that = this
       const courseId = this.courseId
 
@@ -116,9 +116,12 @@ export default {
             .then(function (res) {
               console.log(res)
               that.lectureData = res.data
+              that.$router.push({ path: '/course/details', query:{courseID: courseId}})
+              that.$message.success('创建课时成功')
             })
             .catch(function (err) {
               console.log(err)
+              that.$message.error('创建课时失败')
             })
         }
       })
@@ -155,12 +158,30 @@ export default {
 
     },
     chooseProblem (e) {
-      this.handleSubmit(e)
+      const that = this
+      const courseId = this.courseId
+
+      e.preventDefault()
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.log('Received values of form: ', values)
+          const lectureParams = { ...values,'course_id':courseId }
+
+          createLecture(lectureParams)
+            .then(function (res) {
+              console.log(res)
+              that.lectureData = res.data
+            })
+            .catch(function (err) {
+              console.log(err)
+            })
+        }
+      })
       console.log('new problem')
       this.$router.push({
-        path:'/course/chooseproblem',
+        path:'/course/details/chooseproblem',
         query:{
-          lectureId: 10//this.lectureData['lecture_id']
+          lectureId: this.lectureData['lecture_id']
         }
       })
     }

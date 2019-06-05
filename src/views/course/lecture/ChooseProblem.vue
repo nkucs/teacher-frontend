@@ -5,7 +5,12 @@
         <a-icon type="bars" />
         选择题目
       </span>
-      <problemList></problemList>
+      <a-table
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        :columns="columns"
+        :dataSource="data"
+      >
+      </a-table>
       <a-button
         :style="{ marginTop: '8px' }"
         type="primary"
@@ -19,7 +24,7 @@
         <a-icon type="form" />
         新建题目
       </span>
-      <newProblem></newProblem>
+      <newProblem @getProblemId="getProblemId"></newProblem>
       <a-button
         :style="{ marginTop: '8px' }"
         type="primary"
@@ -34,28 +39,68 @@
 <script>
 import { addProblem } from '@/api/lecture'
 import newProblem from '@/views/problem/ProblemDetail'
-import problemList from '@/views/problem/ProblemList'
+import { getAllProblems } from '@/api/problem'
+const columns = [
+  {
+    title: 'id',
+    dataIndex: 'problem_id'
+  },
+  {
+    title: '题目名称',
+    dataIndex: 'problem_name'
+  },
+    {
+    title: '创建时间',
+    dataIndex: 'created_time'
+  }
+]
 
 export default {
   name: 'ChooseProblem',
   components: {
-      newProblem,
-      problemList
+    newProblem
   },
   data () {
     return {
       lectureId: 1,
-      problemIds: [{
-        'problem_id' : 1
-      }, {
-        'problem_id' : 3
-      }]
+      problem_ids: [],
+      data: [],
+      columns,
+      selectedRowKeys: []
     }
   },
   mounted () {
       this.lectureId = this.$route.query.lectureId
+      this.loadProblems()
+      console.log('receive lectureId:', this.lectureId)
   },
   methods: {
+    getProblemId(id) {
+      this.problemIds.push({
+        problem_id: id
+      })
+    },
+    onSelectChange(selectedRowKeys) {
+      console.log('selectedRowKeys changed: ', selectedRowKeys)
+      this.selectedRowKeys = selectedRowKeys
+    },
+    loadProblems() {
+      getAllProblems({
+        page: 1
+      }).then(response => {
+        console.log('下面是resonse:', response)
+        const resData = response.data.problems
+        for (var i = 0; i < resData.length; i++) {
+          this.data.push({
+            problem_id: resData[i].id,
+            problem_name: resData[i].name,
+            created_time: resData[i].created_at
+          })
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     addProblem () {
       const problemIds = this.problemIds
       const problemParams = {'lecture_id': this.lectureId, problemIds}
